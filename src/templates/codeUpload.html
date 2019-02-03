@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <!-- Bootstrap core CSS -->
+    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    </head>
+    <body>
+    
+        <div class="form-group shadow-textarea" id= "codeArea">
+                <textarea onchange = "pasted(event)" i class="form-control z-depth-1 prettyprint" id="exampleFormControlTextarea6" rows="15" placeholder="Paste Code Here..."></textarea>
+                </div>
+        <input id = "codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
+        <input type = "button" class="btn btn-info btn-block my-4" value = "submit" onclick = "showContents()"/>
+        <script>
+            function pasted(event)
+            {
+                if(event.target.value!=null)
+                {
+                    document.getElementById("codeFile").disabled = true;
+                }
+            }
+            function uploaded(event)
+            {
+                if(event.target.files!=null)
+                {
+
+                    const reader = new FileReader()
+                    reader.onload = event => {
+                       
+                            document.body.removeChild(document.body.firstChild);
+                        pre = document.createElement("pre");
+                        pre.className="prettyprint mx-2 px-2 my-2 py-2";
+                    pre.innerHTML = event.target.result;
+                    document.body.insertBefore(pre,document.body.firstChild);
+                    PR.prettyPrint();
+                    }
+                    cont  = reader.readAsText(event.target.files[0]);
+                    
+                }
+            }
+        </script>
+    </body>
+</html>
