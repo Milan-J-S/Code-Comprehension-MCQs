@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <!-- Bootstrap core CSS -->
+    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
+    </head>
+    <body>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <figure>
+        <figcaption>Your code title</figcaption>
+        <pre>
+            <code  id="srccode" contenteditable spellcheck="false">
+            <!-- your code here -->
+            package main
+
+            
+            func main() {
+                ch := make(chan float64)
+                ch <- 1.0e10    // magic number
+                x, ok := <- ch
+        defer fmt.Println(`exitting now\`)
+                go println(len("hello world!"))
+                return
+            }
+            </code>
+        </pre>
+        </figure>
+        <input type = "button" value = "submit" onclick = "showContents()"/>
+        <script>
+            function showContents()
+            {
+                alert(document.getElementById("srccode").value);
+            }
+        </script>
+    </body>
+</html>
