@@ -16,6 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/html/html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
@@ -24,19 +26,22 @@
     <body>
     
 
-        <textarea onchange = "pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea" rows="15" placeholder="Paste Code Here..."></textarea>
+        <textarea onchange = "pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea" rows="25" placeholder="Paste Code Here..."></textarea>
 
-        <select class="browser-default custom-select" onchange="changeLang(event)">
+        <select class="browser-default custom-select" id="lang_op" onchange="changeLang(event)">
             <option selected value="text/x-csrc">C</option>
             <option value="text/x-c++src">C++</option>
             <option value="python">Python</option>
             <option value="text/x-java">Java</option>
-            <option value="text/x-html">HTML</option>
+            <option value="text/html">HTML</option>
             <option value="javascript">JavaScript</option>
         </select>
         <input id = "codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
-        <input type = "button" class="btn btn-info btn-block my-4" value = "submit" onclick = "showContents()"/>
+        <input type = "button" class="btn btn-info btn-block my-4" value = "submit"/>
         <script>
+
+            lang_op = document.getElementById("lang_op");
+
             myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
                lineNumbers: true,
                 mode:  "Java",
@@ -61,18 +66,46 @@
 
                     const reader = new FileReader()
                     reader.onload = event => {
-                        alert(event.target.result);
                         myCodeMirror.getDoc().setValue(event.target.result);
                     }
                     cont  = reader.readAsText(event.target.files[0]);
-                    
+                    name = event.target.files[0].name.split(".")[1];
+                    switch(name)
+                    {
+                        case "py":
+                            lang_op.value = "python";
+                            changeLang();
+                            break;
+                        case "c":
+                            lang_op.value = "text/x-csrc";
+                            changeLang();
+                            break;
+                        case "cpp":
+                            lang_op.value = "text/x-c++src";
+                            changeLang();
+                            break;
+                        case "html":
+                            lang_op.value = "text/html";
+                            changeLang();
+                            break;
+                        case "java":
+                            lang_op.value = "text/x-java";
+                            changeLang();
+                            break;
+                        case "js":
+                        case "njs":
+                            lang_op.value = "javascript";
+                            changeLang();
+                            break;
+                        
+                            
+                    }
                 }
             }
 
-            function changeLang(event)
+            function changeLang()
             {
-                myCodeMirror.setOption("mode",event.target.value);
-                alert(myCodeMirror.getOption("mode"));
+                myCodeMirror.setOption("mode",lang_op.value);
             }
 
            
