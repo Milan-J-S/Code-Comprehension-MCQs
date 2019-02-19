@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <!-- Bootstrap core CSS -->
+    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/html/html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+
+    </head>
+    <body>
+            <div id="fb-root"></div>
+            <script async defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2&appId=2267352216854621&autoLogAppEvents=1"></script>
+    
+        <div id="fb-root"></div>
+        <script async defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2"></script>
+
+        <textarea  i class="form-control z-depth-1 prettyprint" id="codeTextArea" rows="25" placeholder="Paste Code Here...">{{data}}</textarea>
+        <br>
+        <div class="fb-comments"></div>
+        <script>
+            myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
+               lineNumbers: true,
+                mode:  "text/x-csrc",
+                styleActiveLine :true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+            });
+
+            // var xhr = new XMLHttpRequest();
+            // xhr.open("GET", "http://localhost:5000/getFile", true);
+            // xhr.onreadystatechange = populateCode;
+            // xhr.send();
+
+            // function populateCode()
+            // {
+            //     if(xhr.readyState == 4 && xhr.status == 200)
+            //     {
+            //         // alert(xhr.response);
+            //         response = JSON.parse(xhr.response)
+            //         myCodeMirror.getDoc().setValue(response.data);
+            //         myCodeMirror.setOption("mode",response.mode);
+            //     }
+            // }
+
+        
+        </script>
+        
+    </body>
+</html>
