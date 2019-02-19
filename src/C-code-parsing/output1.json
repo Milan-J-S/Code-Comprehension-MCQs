@@ -1,0 +1,218 @@
+{
+    "_nodetype": "FileAST",
+    "coord": null,
+    "ext": [
+        {
+            "_nodetype": "FuncDef",
+            "body": {
+                "_nodetype": "Compound",
+                "block_items": [
+                    {
+                        "_nodetype": "For",
+                        "cond": {
+                            "_nodetype": "BinaryOp",
+                            "coord": "test.c:3:17",
+                            "left": {
+                                "_nodetype": "ID",
+                                "coord": "test.c:3:17",
+                                "name": "i"
+                            },
+                            "op": "<",
+                            "right": {
+                                "_nodetype": "Constant",
+                                "coord": "test.c:3:19",
+                                "type": "int",
+                                "value": "10"
+                            }
+                        },
+                        "coord": "test.c:3:5",
+                        "init": {
+                            "_nodetype": "DeclList",
+                            "coord": "test.c:3:5",
+                            "decls": [
+                                {
+                                    "_nodetype": "Decl",
+                                    "bitsize": null,
+                                    "coord": "test.c:3:13",
+                                    "funcspec": [],
+                                    "init": {
+                                        "_nodetype": "Constant",
+                                        "coord": "test.c:3:15",
+                                        "type": "int",
+                                        "value": "0"
+                                    },
+                                    "name": "i",
+                                    "quals": [],
+                                    "storage": [],
+                                    "type": {
+                                        "_nodetype": "TypeDecl",
+                                        "coord": "test.c:3:13",
+                                        "declname": "i",
+                                        "quals": [],
+                                        "type": {
+                                            "_nodetype": "IdentifierType",
+                                            "coord": "test.c:3:9",
+                                            "names": [
+                                                "int"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "next": {
+                            "_nodetype": "Assignment",
+                            "coord": "test.c:3:22",
+                            "lvalue": {
+                                "_nodetype": "ID",
+                                "coord": "test.c:3:22",
+                                "name": "i"
+                            },
+                            "op": "+=",
+                            "rvalue": {
+                                "_nodetype": "Constant",
+                                "coord": "test.c:3:25",
+                                "type": "int",
+                                "value": "3"
+                            }
+                        },
+                        "stmt": {
+                            "_nodetype": "Compound",
+                            "block_items": [
+                                {
+                                    "_nodetype": "For",
+                                    "cond": {
+                                        "_nodetype": "BinaryOp",
+                                        "coord": "test.c:5:21",
+                                        "left": {
+                                            "_nodetype": "ID",
+                                            "coord": "test.c:5:21",
+                                            "name": "j"
+                                        },
+                                        "op": "<",
+                                        "right": {
+                                            "_nodetype": "Constant",
+                                            "coord": "test.c:5:23",
+                                            "type": "int",
+                                            "value": "10"
+                                        }
+                                    },
+                                    "coord": "test.c:5:9",
+                                    "init": {
+                                        "_nodetype": "DeclList",
+                                        "coord": "test.c:5:9",
+                                        "decls": [
+                                            {
+                                                "_nodetype": "Decl",
+                                                "bitsize": null,
+                                                "coord": "test.c:5:17",
+                                                "funcspec": [],
+                                                "init": {
+                                                    "_nodetype": "Constant",
+                                                    "coord": "test.c:5:19",
+                                                    "type": "int",
+                                                    "value": "0"
+                                                },
+                                                "name": "j",
+                                                "quals": [],
+                                                "storage": [],
+                                                "type": {
+                                                    "_nodetype": "TypeDecl",
+                                                    "coord": "test.c:5:17",
+                                                    "declname": "j",
+                                                    "quals": [],
+                                                    "type": {
+                                                        "_nodetype": "IdentifierType",
+                                                        "coord": "test.c:5:13",
+                                                        "names": [
+                                                            "int"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "next": {
+                                        "_nodetype": "Assignment",
+                                        "coord": "test.c:5:26",
+                                        "lvalue": {
+                                            "_nodetype": "ID",
+                                            "coord": "test.c:5:26",
+                                            "name": "j"
+                                        },
+                                        "op": "+=",
+                                        "rvalue": {
+                                            "_nodetype": "Constant",
+                                            "coord": "test.c:5:29",
+                                            "type": "int",
+                                            "value": "1"
+                                        }
+                                    },
+                                    "stmt": {
+                                        "_nodetype": "Compound",
+                                        "block_items": [
+                                            {
+                                                "_nodetype": "FuncCall",
+                                                "args": {
+                                                    "_nodetype": "ExprList",
+                                                    "coord": "test.c:7:20",
+                                                    "exprs": [
+                                                        {
+                                                            "_nodetype": "Constant",
+                                                            "coord": "test.c:7:20",
+                                                            "type": "string",
+                                                            "value": "\"hello\""
+                                                        }
+                                                    ]
+                                                },
+                                                "coord": "test.c:7:13",
+                                                "name": {
+                                                    "_nodetype": "ID",
+                                                    "coord": "test.c:7:13",
+                                                    "name": "printf"
+                                                }
+                                            }
+                                        ],
+                                        "coord": "test.c:6:1"
+                                    }
+                                }
+                            ],
+                            "coord": "test.c:4:1"
+                        }
+                    }
+                ],
+                "coord": "test.c:2:1"
+            },
+            "coord": "test.c:1:6",
+            "decl": {
+                "_nodetype": "Decl",
+                "bitsize": null,
+                "coord": "test.c:1:6",
+                "funcspec": [],
+                "init": null,
+                "name": "func",
+                "quals": [],
+                "storage": [],
+                "type": {
+                    "_nodetype": "FuncDecl",
+                    "args": null,
+                    "coord": "test.c:1:6",
+                    "type": {
+                        "_nodetype": "TypeDecl",
+                        "coord": "test.c:1:6",
+                        "declname": "func",
+                        "quals": [],
+                        "type": {
+                            "_nodetype": "IdentifierType",
+                            "coord": "test.c:1:1",
+                            "names": [
+                                "void"
+                            ]
+                        }
+                    }
+                }
+            },
+            "param_decls": null
+        }
+    ]
+}
