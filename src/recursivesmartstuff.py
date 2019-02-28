@@ -77,32 +77,29 @@ all_codes_tensor = set(all_codes_tensor)
 
 for i in range(len(rec_codes)):
     rec_codes[i] = one_hot(rec_codes[i], round(len(all_codes_tensor)*1.3))
-    rec_codes[i] = np.pad(rec_codes[i], (0, 1000 - len(rec_codes[i])) , 'constant' )
-    print(len(rec_codes[i]))
-
-print(rec_codes[0])
+    rec_codes[i] = np.pad(rec_codes[i], (0, 1000 - len(rec_codes[i])) ,'constant')
 
 print(np.asarray(rec_codes).shape)
 
 # print(np.asarray(comments_tensor).shape)
         
 inputs1 = Input(shape=(1000,))
-am1 = Embedding(10, 128)(inputs1)
-am2 = LSTM(128)(am1)
+am1 = Embedding( round(len(all_codes_tensor)*1.3), 128 )(inputs1)
+am2 = LSTM(256, return_sequences = True)(am1)
+am2 = LSTM(512)(am2)
 inputs2 = Input(shape=(10,78))
 flat = Flatten()(inputs2)
 sm1 = Embedding(len(vocab), 128)(flat)
-sm2 = LSTM(128)(sm1)
+sm2 = LSTM(256, return_sequences = True)(sm1)
+sm2 = LSTM(512)(sm2)
 decoder1 = concatenate([am2, sm2])
 outputs = Dense(len(vocab), activation='softmax')(decoder1)
 
 
-
 # tie it together [article, summary] [word]
 model = Model(inputs=[inputs1, inputs2], outputs=outputs)
-
 print(model.summary())
-model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics = ['accuracy'])
 
 model.fit([np.asarray(rec_codes), np.asarray(comments_tensor)], np.asarray(output_tensor), epochs = 2, verbose = 1)
 
