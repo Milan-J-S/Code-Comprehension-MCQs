@@ -67,7 +67,9 @@ for i in range(len(comments)):
         comment = np.zeros(len(vocab))
         comment[comments_vector[word]] = 1
         output_tensor.append(comment)
-        comment_tensor.append(comment)
+
+        if(len(comment_tensor) < 10):
+            comment_tensor.append(comment)
         # print(len(comment_tensor))
         for j in range(10-len(comment_tensor)):
             comment_tensor.append(np.zeros(len(vocab)))
@@ -76,22 +78,22 @@ for i in range(len(comments)):
 all_codes_tensor = set(all_codes_tensor)
 
 for i in range(len(rec_codes)):
-    rec_codes[i] = one_hot(rec_codes[i], round(len(all_codes_tensor)*1.3))
+    rec_codes[i] = one_hot(rec_codes[i], round(len(all_codes_tensor)*1.3))[:1000]
     rec_codes[i] = np.pad(rec_codes[i], (0, 1000 - len(rec_codes[i])) ,'constant')
 
 print(np.asarray(rec_codes).shape)
 
-# print(np.asarray(comments_tensor).shape)
+print(np.asarray(comments_tensor).shape)
         
 inputs1 = Input(shape=(1000,))
 am1 = Embedding( round(len(all_codes_tensor)*1.3), 128 )(inputs1)
-am2 = LSTM(256, return_sequences = True)(am1)
-am2 = LSTM(512)(am2)
-inputs2 = Input(shape=(10,78))
+am2 = LSTM(256)(am1)
+# am2 = LSTM(512)(am2)
+inputs2 = Input(shape=(10,len(vocab)))
 flat = Flatten()(inputs2)
 sm1 = Embedding(len(vocab), 128)(flat)
-sm2 = LSTM(256, return_sequences = True)(sm1)
-sm2 = LSTM(512)(sm2)
+sm2 = LSTM(256)(sm1)
+# sm2 = LSTM(512)(sm2)
 decoder1 = concatenate([am2, sm2])
 outputs = Dense(len(vocab), activation='softmax')(decoder1)
 
