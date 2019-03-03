@@ -16,7 +16,7 @@ comments_dict = {}
 comments = []
 code_vocab = set()
 code_dict = {}
-
+codes = []
 
 file_path = 'code'
 for root,dirs,files in os.walk(file_path):
@@ -63,11 +63,12 @@ for item in comments:
 
 for item in codes:
     code_tensor = []
+    code = open('code/'+fl).read()
     code = word_tokenize(code)[:1000]
     for i in range(1000):
         code_tensor_local = np.zeros(len(code_vocab))
         if(i < len(code)):
-            code_tensor_local[code_tensor[code[i]]] = 1
+            code_tensor_local[code_dict[code[i]]] = 1
         code_tensor.append(code_tensor_local)    
     code_tensors.append(code_tensor)     
         
