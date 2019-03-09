@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-    <head>
+<head>
     <!-- Bootstrap core CSS -->
-    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
@@ -20,25 +20,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
 
-    </head>
-    <body>
-    
+</head>
+<body>
 
-        <textarea onchange = "pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea" rows="25" placeholder="Paste Code Here..."></textarea>
-
-        <select class="browser-default custom-select" id="lang_op" onchange="changeLang(event)">
-            <option selected value="text/x-csrc">C</option>
-            <option value="text/x-c++src">C++</option>
-            <option value="python">Python</option>
-            <option value="text/x-java">Java</option>
-            <option value="text/html">HTML</option>
-            <option value="javascript">JavaScript</option>
-        </select>
-        <input id = "codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
-        <input type = "button" class="btn btn-info btn-block my-4" value = "submit"/>
-        <script>
+<div>
+    <div style="position:relative;height:80%">
+        <textarea onchange="pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea"
+                  placeholder="Paste Code Here..."></textarea>
+    </div>
+    <select class="browser-default custom-select" id="lang_op" onchange="changeLang(event)">
+        <option selected value="text/x-csrc">C</option>
+        <option value="text/x-c++src">C++</option>
+        <option value="python">Python</option>
+        <option value="text/x-java">Java</option>
+        <option value="text/html">HTML</option>
+        <option value="javascript">JavaScript</option>
+    </select>
+    <input id="codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
+    <input type="button" class="btn btn-info my-4" value="submit"/>
+</div>
+<script>
 
             lang_op = document.getElementById("lang_op");
 
@@ -52,6 +55,8 @@
                 autoCloseTags: true,
                 autoCloseBrackets: true,
             });
+
+
             function pasted(event)
             {
                 if(event.target.value!=null)
@@ -59,6 +64,7 @@
                     document.getElementById("codeFile").disabled = true;
                 }
             }
+
             function uploaded(event)
             {
                 if(event.target.files!=null)
@@ -109,6 +115,7 @@
             }
 
            
-        </script>
-    </body>
+
+</script>
+</body>
 </html>
