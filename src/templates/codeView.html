@@ -23,16 +23,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
 
     </head>
-    <body>
+    <body class = "mw-100">
+
+        <div class="container mx-auto mw-100">
+            <div class="row">
+                <div class="col-sm">
+                        <textarea  id="codeTextArea" placeholder="Paste Code Here...">{{data}}</textarea>
+                </div>
+                <div class="col-sm w-50 float-right sticky-top right-0 mr-5">
+                    <div class="card position-fixed  card-comments mb-3 wow fadeIn w-75 ">
+                        <div class="card-header font-weight-bold">3 comments</div>
+                        <div id="comment_body" class="card-body">
+                            {% for item in rows %}
+                            <div class="media d-block d-md-flex mt-4 w-100 h-25">
+                                <img height = "50px" width="50px" class="d-flex mb-3 mx-auto " src="https://mdbootstrap.com/img/Photos/Avatars/img (20).jpg" alt="Generic placeholder image"> 
+                                <div class="media-body text-center text-md-left ml-md-3 ml-0">
+                                    <h5 class="mt-0 font-weight-bold"> {{item[0]}}
+                                        
+                                    </h5>
+                                    {{item[1]}}
+                                </div>
+                            </div>
             
-        <textarea  class="form-control z-depth-1 prettyprint" id="codeTextArea" placeholder="Paste Code Here...">{{data}}</textarea>
-        <br>
-        <div>
-            {% for item in rows %}
-                <h6> {{item[0]}}: {{item[1]}} {{filename}} </h6>
-            {% endfor %}
+                            {% endfor %}
+                                <div id="new_comment" class="media d-block d-md-flex mt-4 w-50 h-25">
+                                        <!-- Default input -->
+                                        <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>                                    
+                                        <button type="button" class="btn btn-primary" onclick="postIt()">Post</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <input placeholder="Add Comment Here" onblur="addComment(event)">
+            
+        
+        
+    
+        
         <script>
             myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
                lineNumbers: true,
@@ -45,13 +72,50 @@
                 autoCloseBrackets: true,
             });
 
-            function addComment(event)
+            myCodeMirror.setSize("100%","100%")
+
+            function postIt()
+            {
+                post = document.getElementById("userPost");
+                addComment(post.value);
+
+                media = document.createElement("div");
+                media.setAttribute("class","media d-block d-md-flex mt-4 w-100 h-25");
+
+                img = document.createElement("img");
+                img.setAttribute("height","50px");
+                img.setAttribute("width","50px");
+
+                media.appendChild(img);
+
+                mediabody = document.createElement("div");
+                mediabody.setAttribute("class","media-body text-center text-md-left ml-md-3 ml-0");
+
+                h5 = document.createElement("h5");
+                h5.setAttribute("class","mt-0 font-weight-bold");
+                h5.innerHTML="Mizo";
+                mediabody.appendChild(h5);
+                
+                p = document.createElement("p");
+                p.innerHTML = post.value
+                mediabody.appendChild(p);
+
+                media.appendChild(mediabody);
+                
+                new_comment = document.getElementById("new_comment");
+                document.getElementById("comment_body").insertBefore(media, new_comment);
+
+                post.value = "";
+
+            }
+
+            function addComment(comment)
             {
             var xhr = new XMLHttpRequest();
 
             xhr.open("POST", "http://localhost:5000/putConvos", true);
              xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.send("filename={{filename}}&id=1&user=Milan&comment=test");
+            xhr.send("filename={{filename}}&id=1&user=Milan&comment="+comment);
 
            }
 
