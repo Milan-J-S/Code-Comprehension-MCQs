@@ -27,6 +27,12 @@
             
         <textarea  class="form-control z-depth-1 prettyprint" id="codeTextArea" placeholder="Paste Code Here...">{{data}}</textarea>
         <br>
+        <div>
+            {% for item in rows %}
+                <h6> {{item[0]}}: {{item[1]}} {{filename}} </h6>
+            {% endfor %}
+        </div>
+        <input placeholder="Add Comment Here" onblur="addComment(event)">
         <script>
             myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
                lineNumbers: true,
@@ -39,21 +45,17 @@
                 autoCloseBrackets: true,
             });
 
-            // var xhr = new XMLHttpRequest();
-            // xhr.open("GET", "http://localhost:5000/getFile", true);
-            // xhr.onreadystatechange = populateCode;
-            // xhr.send();
+            function addComment(event)
+            {
+            var xhr = new XMLHttpRequest();
 
-            // function populateCode()
-            // {
-            //     if(xhr.readyState == 4 && xhr.status == 200)
-            //     {
-            //         // alert(xhr.response);
-            //         response = JSON.parse(xhr.response)
-            //         myCodeMirror.getDoc().setValue(response.data);
-            //         myCodeMirror.setOption("mode",response.mode);
-            //     }
-            // }
+            xhr.open("POST", "http://localhost:5000/putConvos", true);
+             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("filename={{filename}}&id=1&user=Milan&comment=test");
+
+           }
+
+
 
         
         </script>
