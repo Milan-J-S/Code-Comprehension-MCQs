@@ -15,19 +15,13 @@ def start():
 
 @app.route("/showCode", methods=["GET", "POST"])
 def showCode():
-    filename = request.args['filebirthname']
+    filename = request.args['filename']
 
     filename = 'static/data/' + filename
     print(filename)
     with open(filename) as f:
         return render_template('codeView.html', data=str(f.read()))
 
-    # @app.route("/getFile", methods=["GET","POST"])
-
-
-# def getFile():
-#     with open('static/data/test.c') as f : 
-#         return jsonify(data = str(f.read()), mode = "text/x-csrc" )
 
 @app.route("/showAll")
 def showAll():
@@ -39,7 +33,9 @@ def showAll():
         items.append(di)
     print(items)
     return render_template('showResources.html', items=items)
-
+#
+# @app.route("/fetchConvos")
+# def fetchConvos
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
