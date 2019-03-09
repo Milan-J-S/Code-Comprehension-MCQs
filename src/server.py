@@ -43,7 +43,7 @@ def fetchConvos(filename):
     cur.execute("SELECT user, comment FROM Convos WHERE filename =(?)", (filename,))
     rows = cur.fetchall()
 
-    print(rows);
+    print(rows)
 
     return(rows)
 
@@ -61,7 +61,7 @@ def putConvos():
     cur = con.cursor()
     cur.execute("INSERT INTO Convos VALUES (?,?,?,?)",(filename, id, comment, user) )
     con.commit()
-    return jsonify( added = True)
+    return redirect(url_for('showCode',filename = filename))
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
