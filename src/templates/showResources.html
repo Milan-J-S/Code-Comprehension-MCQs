@@ -1,30 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head>
+<head>
     <!-- Bootstrap core CSS -->
-    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
 
-    </head>
-    <body>
-          <div>
-              {% for item in items %}
-              <form>
-              <a href="/showCode?filename={{item.title}}">{{item.title}}</a>
-              <br>
-              <br>
-              <form>
-              {% endfor %}
-          </div> 
-           
-        
-    </body>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark primary-color">
+    <a class="navbar-brand" href="#">Intelligent Teaching Assistant</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/">Upload Code</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/showAll"> <span class="sr-only">(current)</span>View Codes</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div>
+    {% for item in items %}
+    <form>
+        <a href="/showCode?filename={{item.filename}}">{{item.title}}</a>
+        <br>
+        <br>
+        <form>
+            {% endfor %}
+</div>
+
+
+</body>
 </html>
