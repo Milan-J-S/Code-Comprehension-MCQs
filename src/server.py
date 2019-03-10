@@ -17,6 +17,13 @@ def convertToDict(x):
     obj['title'] = x[1];
     return obj;
 
+def generateRandomFilename():
+    filename = ''
+    for i in range(10):
+        filename+=(chr(random.randrange(97,123)))
+    return filename
+
+
 @app.route("/")
 def start():
     return render_template('codeUpload.html')
@@ -88,7 +95,8 @@ def putCode():
     lang = request.form['lang']
     description = request.form['description']
 
-    filename = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+
+    filename = generateRandomFilename()
 
     print(content)
 
