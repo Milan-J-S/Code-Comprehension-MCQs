@@ -8,7 +8,7 @@ from os import listdir
 
 app = Flask(__name__)
 
-
+print("connection recieved")
 # CORS(app)
 
 def convertToDict(x):
@@ -16,6 +16,13 @@ def convertToDict(x):
     obj['filename'] = x[0];
     obj['title'] = x[1];
     return obj;
+
+def generateRandomFilename():
+    filename = ''
+    for i in range(10):
+        filename+=(chr(random.randrange(97,123)))
+    return filename
+
 
 @app.route("/")
 def start():
@@ -47,13 +54,6 @@ def showAll():
 
     return render_template('showResources.html', items=items)
 
-    for f in listdir('static/data'):
-        print(f)
-        di = {}
-        di['title'] = f
-        items.append(di)
-    print(items)
-    return render_template('showResources.html', items=items)
 
 def fetchConvos(filename):
     con = sqlite3.connect("database.db")
@@ -88,7 +88,8 @@ def putCode():
     lang = request.form['lang']
     description = request.form['description']
 
-    filename = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+
+    filename = generateRandomFilename()
 
     print(content)
 
@@ -109,4 +110,4 @@ def putCode():
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', threaded=True)
