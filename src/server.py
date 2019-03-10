@@ -106,6 +106,38 @@ def putCode():
 
     return jsonify(filename = filename)
 
+@app.route("/userExists", methods= ["POST"])
+def userExists():
+    email = request.form['email']
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM Login where email = (?)", (email,))
+    rows = cur.fetchall()
+
+    return jsonify(success = len(rows))
+
+@app.route("/login", methods= ["POST"])
+def login():
+    email = request.form['email']
+    pw = request.form['password']
+    operation = request.form['operation']
+
+    if(operation == 'login'):
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute("SELECT pw FROM Login where email = (?)", (email,))
+        rows = cur.fetchall()
+
+        return jsonify(auth = (rows[0].pw == pw))
+
+    else:
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute("INSERT INTO Login values = (?,?)", (email, pw))
+        con.commit()
+
+        return jsonify(auth=True)
+
 
 
 if __name__ == '__main__':
