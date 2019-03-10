@@ -1,3 +1,6 @@
+import random
+import string
+
 from flask import Flask, request, jsonify, session, g, redirect, url_for, abort, \
     render_template, flash, send_from_directory
 import sqlite3
@@ -22,8 +25,8 @@ def showCode():
 
 
 
-    with open(full_filename) as f:
-        return render_template('codeView.html', data=str(f.read()), rows = rows, filename = str(filename))
+    f=  open(full_filename)
+    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename)
 
 
 @app.route("/showAll")
@@ -62,6 +65,32 @@ def putConvos():
     cur.execute("INSERT INTO Convos VALUES (?,?,?,?)",(filename, id, comment, user) )
     con.commit()
     return redirect(url_for('showCode',filename = filename))
+
+@app.route("/putCode", methods= ["POST"])
+def putCode():
+    poster = request.form['poster']
+    content = request.form['content']
+    lang = request.form['lang']
+    description = request.form['description']
+
+    filename = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+
+    print(content)
+
+    file = open('static/data/'+filename, "w+")
+    file.write(content)
+    file.close()
+
+    print("written to file ", filename );
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", ( poster, filename, description, lang ))
+    con.commit()
+
+    return jsonify(filename = filename)
+
+
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
