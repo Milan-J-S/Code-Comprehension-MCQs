@@ -11,6 +11,12 @@ app = Flask(__name__)
 
 # CORS(app)
 
+def convertToDict(x):
+    obj = {}
+    obj['filename'] = x[0];
+    obj['title'] = x[1];
+    return obj;
+
 @app.route("/")
 def start():
     return render_template('codeUpload.html')
@@ -32,6 +38,15 @@ def showCode():
 @app.route("/showAll")
 def showAll():
     items = []
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT filename, description FROM Codes")
+    rows = cur.fetchall()
+
+    items = map( convertToDict, rows)
+
+    return render_template('showResources.html', items=items)
+
     for f in listdir('static/data'):
         print(f)
         di = {}
