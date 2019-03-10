@@ -128,12 +128,12 @@ def login():
         cur.execute("SELECT pw FROM Login where email = (?)", (email,))
         rows = cur.fetchall()
 
-        return jsonify(auth = (rows[0].pw == pw))
+        return jsonify(auth = (rows[0][0] == pw))
 
     else:
         con = sqlite3.connect("database.db")
         cur = con.cursor()
-        cur.execute("INSERT INTO Login values = (?,?)", (email, pw))
+        cur.execute("INSERT INTO Login values (?,?)", (email, pw))
         con.commit()
 
         return jsonify(auth=True)

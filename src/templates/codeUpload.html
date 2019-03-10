@@ -61,9 +61,11 @@
           aria-expanded="false">
           <img height="30px" width = "30px" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" class="rounded-circle z-depth-0" alt="avatar image">
         </a>
-        <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-55">
-          <a class="dropdown-item" href="#">Profile</a>
-            <input class = "dropdown-item" placeholder="username"/>
+        <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center" aria-labelledby="navbarDropdownMenuLink-55">
+            <a class="dropdown-item" href="#">Login Or SignUp</a>
+            <input id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
+            <input type="password" id="passw" class = "form-control my-3" placeholder="password"/>
+            <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto" value="LOGIN" onclick="loginRequest()">
         </div>
       </li>
     </ul>
@@ -159,6 +161,78 @@
             function changeLang()
             {
                 myCodeMirror.setOption("mode",lang_op.value);
+            }
+
+            var operation = "signup";
+
+            function loginRequest()
+            {
+                email = document.getElementById("email").value;
+                passw = document.getElementById("passw").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/login");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            // alert(JSON.parse(xhr.response));
+                            if(JSON.parse(xhr.response).auth==true)
+                            {
+                            //    document.setCookie("username",email);
+                               document.getElementById("passw").style.background = "white";
+                               document.getElementById("passw").value = "";
+                               document.getElementById("email").value = "";
+                               document.getElementById("codeTextArea").click();
+
+                            }
+                            else{
+                            document.getElementById("passw").style.background = "red";
+                            }
+
+                        }
+                }
+                postvars = "email="+email+"&password="+passw+"&operation="+operation;
+
+                xhr.send(postvars);
+
+                
+
+
+            }
+
+            
+
+            function checkUser()
+            {
+                email = document.getElementById("email").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/userExists");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            if(JSON.parse(xhr.response).success>0)
+                            {
+                                operation = "login";
+                                document.getElementById("loginBtn").setAttribute("value","LOGIN");
+                            }
+                            else{
+                                operation="signup"
+                                document.getElementById("loginBtn").setAttribute("value","SIGN UP");
+                            }
+
+                        }
+                }
+                postvars = "email="+email;
+
+                xhr.send(postvars);
+
+
             }
 
             function saveCode()
