@@ -128,6 +128,8 @@ def login():
         cur.execute("SELECT pw FROM Login where email = (?)", (email,))
         rows = cur.fetchall()
 
+        print(rows)
+
         return jsonify(auth = (rows[0][0] == pw))
 
     else:
