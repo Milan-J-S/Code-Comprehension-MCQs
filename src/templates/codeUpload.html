@@ -65,6 +65,7 @@
             <a class="dropdown-item" href="#">Login Or SignUp</a>
             <input id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
             <input type="password" id="passw" class = "form-control my-3" placeholder="password"/>
+            <input type="password" id="confirmpassw" style="display:none" class = "form-control my-3" placeholder="confirm password"/>
             <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto" value="LOGIN" onclick="loginRequest()">
         </div>
       </li>
@@ -219,10 +220,12 @@
                             if(JSON.parse(xhr.response).success>0)
                             {
                                 operation = "login";
+                                document.getElementById("confirmpassw").style.display = 'none';
                                 document.getElementById("loginBtn").setAttribute("value","LOGIN");
                             }
                             else{
-                                operation="signup"
+                                operation="signup";
+                                document.getElementById("confirmpassw").style.display = 'block';
                                 document.getElementById("loginBtn").setAttribute("value","SIGN UP");
                             }
 
