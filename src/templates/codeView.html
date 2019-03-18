@@ -30,7 +30,7 @@
     <body class = "mw-100">
 
 
-    <nav class="mb-1 navbar navbar-expand-lg navbar-dark black lighten-1 ">
+    <nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
   <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
     aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,17 +70,17 @@
 
         <div class="container mx-auto mw-100">
             <div class="row">
-                <div class="col-sm px-0">
+                <div class="col-sm-8 px-0">
                         <textarea  id="codeTextArea">{{data}}</textarea>
                 </div>
-                <div class="col-sm w-50 float-right sticky-top right-0 px-0">
-                    <div class="card position-fixed  card-comments mb-3 wow fadeIn w-75 ">
-                        <div class="card-header font-weight-bold">3 comments</div>
-                        <div id="comment_body" class="card-body">
+                <div class="col-sm-4 float-right sticky px-0 " >
+                    <div class="card card-comments mb-3 wow fadeIn w-100 ">
+                        <div class="card-header font-weight-bold sticky w-100">{{rows|length}} posts</div>
+                        <div id="comment_body" class="card-body  smooth-scroll">
                             {% for item in rows %}
-                            <div class="media d-block d-md-flex mt-4 w-100 h-25">
+                            <div class="media  d-block d-md-flex mt-4 h-25">
                                 <img height = "50px" width="50px" class="d-flex mb-3 mx-auto " src="https://mdbootstrap.com/img/Photos/Avatars/img (20).jpg" alt="Generic placeholder image">
-                                <div class="media-body text-center text-md-left ml-md-3 ml-0">
+                                <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75" style = "overflow:none">
                                     <h5 class="mt-0 font-weight-bold"> {{item[0]}}
 
                                     </h5>
@@ -89,16 +89,16 @@
                             </div>
 
                             {% endfor %}
-                                <div id="new_comment" class="media d-block d-md-flex mt-4 w-50 h-25">
+                                <div id="new_comment" class="media d-block d-md-flex mt-4 w-100 h-25">
                                         <!-- Default input -->
                                         <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>
-                                        <button type="button" class="btn btn-primary" onclick="postIt()">Post</button></div>
+
+                                    <button type="button" class="btn btn-primary" onclick="postIt()">Post</button></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
 
 
@@ -137,7 +137,7 @@
 
                 h5 = document.createElement("h5");
                 h5.setAttribute("class","mt-0 font-weight-bold");
-                h5.innerHTML="Mizo";
+                h5.innerHTML="{{user}}";
                 mediabody.appendChild(h5);
                 
                 p = document.createElement("p");
@@ -158,7 +158,7 @@
             var xhr = new XMLHttpRequest();
 
             xhr.open("POST", "http://localhost:5000/putConvos", true);
-             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.send("filename={{filename}}&id=1&user=Milan&comment="+comment);
 
            }
