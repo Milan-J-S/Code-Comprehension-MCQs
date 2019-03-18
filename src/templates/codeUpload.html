@@ -59,6 +59,7 @@
       <li class="nav-item avatar dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
+            <span id="userName" style="color:white">{{username}}</span>
           <img height="30px" width = "30px" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" class="rounded-circle z-depth-0" alt="avatar image">
         </a>
         <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center" aria-labelledby="navbarDropdownMenuLink-55">
@@ -184,8 +185,10 @@
                             //    document.setCookie("username",email);
                                document.getElementById("passw").style.background = "white";
                                document.getElementById("passw").value = "";
+                               document.getElementById("confirmpassw").value = "";
                                document.getElementById("email").value = "";
                                document.getElementById("codeTextArea").click();
+                               document.getElementById("userName").innerHTML = email.split("@")[0];
 
                             }
                             else{
