@@ -5,6 +5,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}" ></script>
 
+    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
+    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/src/line/highlight.js')}}"></script>
+    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/mode/clike/clike.js')}}"></script>
+    <link href="{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.css')}}" rel="stylesheet">
 
     <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
@@ -12,7 +16,7 @@
     <!-- Your custom styles (optional) -->
     <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
@@ -23,11 +27,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
 
     </head>
-    <body class = "mw-100">
+    <body class = "mw-100 ">
 
 
     <nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
@@ -39,15 +42,15 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Home
+        <a class="nav-link" href="/">Home
 
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Upload Code</a>
+        <a class="nav-link" href="/upload">Upload Code</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="/showAll"><span class="sr-only">(current)</span>View Codes</a>
+        <a class="nav-link" href="/"><span class="sr-only">(current)</span>View Codes</a>
       </li>
 
     </ul>
@@ -56,11 +59,15 @@
       <li class="nav-item avatar dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
-          <img height="30px" width = "30px" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" class="rounded-circle z-depth-1" alt="avatar image">
+            <span id="userName" style="color:white">{{username}}</span>
+          <img height="30px" width = "30px" src="{{ url_for('static',filename = 'user-white.svg')}}" class="rounded-circle z-depth-1" alt="avatar image">
         </a>
-        <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-55">
-          <a class="dropdown-item" href="#">Profile</a>
-            <input class = "dropdown-item" placeholder="username"/>
+        <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center" aria-labelledby="navbarDropdownMenuLink-55">
+            <a class="dropdown-item" href="#">Login Or SignUp</a>
+            <input id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
+            <input type="password" id="passw" class = "form-control my-3" placeholder="password"/>
+            <input type="password" id="confirmpassw" style="display:none" class = "form-control my-3" placeholder="confirm password"/>
+            <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto" value="LOGIN" onclick="loginRequest()">
         </div>
       </li>
     </ul>
@@ -68,8 +75,12 @@
 </nav>
 <!--/.Navbar -->
 
-        <div class="container mx-auto mw-100">
-            <div class="row">
+    <div class="scrollbar scrollbar-primary">
+  <div class="force-overflow"></div>
+</div>
+
+        <div class="h-100 container mx-auto mw-100 scrollbar scrollbar-primary">
+            <div class="force-overflow row">
                 <div class="col-sm-8 px-0">
                         <textarea  id="codeTextArea">{{data}}</textarea>
                 </div>
@@ -79,8 +90,8 @@
                         <div id="comment_body" class="card-body  smooth-scroll">
                             {% for item in rows %}
                             <div class="media  d-block d-md-flex mt-4 h-25">
-                                <img height = "50px" width="50px" class="d-flex mb-3 mx-auto " src="https://mdbootstrap.com/img/Photos/Avatars/img (20).jpg" alt="Generic placeholder image">
-                                <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75" style = "overflow:none">
+                                <img height = "50px" width="50px" class="d-flex mb-3 mx-auto " src="{{ url_for('static',filename = 'user-white.svg')}}" alt="Generic placeholder image">
+                                <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75 " style = "overflow:none">
                                     <h5 class="mt-0 font-weight-bold"> {{item[0]}}
 
                                     </h5>
@@ -127,6 +138,7 @@
                 media.setAttribute("class","media d-block d-md-flex mt-4 w-100 h-25");
 
                 img = document.createElement("img");
+                img.setAttribute("src","{{ url_for('static',filename = 'user-white.svg')}}");
                 img.setAttribute("height","50px");
                 img.setAttribute("width","50px");
 
@@ -137,7 +149,7 @@
 
                 h5 = document.createElement("h5");
                 h5.setAttribute("class","mt-0 font-weight-bold");
-                h5.innerHTML="{{user}}";
+                h5.innerHTML="{{username}}";
                 mediabody.appendChild(h5);
                 
                 p = document.createElement("p");
@@ -159,9 +171,84 @@
 
             xhr.open("POST", "http://localhost:5000/putConvos", true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.send("filename={{filename}}&id=1&user=Milan&comment="+comment);
+            xhr.send("filename={{filename}}&id=1&comment="+comment);
 
            }
+           var operation = "signup";
+
+            function loginRequest()
+            {
+                email = document.getElementById("email").value;
+                passw = document.getElementById("passw").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/login");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            // alert(JSON.parse(xhr.response));
+                            if(JSON.parse(xhr.response).auth==true)
+                            {
+                            //    document.setCookie("username",email);
+                               document.getElementById("passw").style.background = "white";
+                               document.getElementById("passw").value = "";
+                               document.getElementById("confirmpassw").value = "";
+                               document.getElementById("email").value = "";
+                               document.getElementById("codeTextArea").click();
+                               document.getElementById("userName").innerHTML = email.split("@")[0];
+
+                            }
+                            else{
+                            document.getElementById("passw").style.background = "red";
+                            }
+
+                        }
+                }
+                postvars = "email="+email+"&password="+passw+"&operation="+operation;
+
+                xhr.send(postvars);
+
+
+
+
+            }
+
+
+
+            function checkUser()
+            {
+                email = document.getElementById("email").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/userExists");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            if(JSON.parse(xhr.response).success>0)
+                            {
+                                operation = "login";
+                                document.getElementById("confirmpassw").style.display = 'none';
+                                document.getElementById("loginBtn").setAttribute("value","LOGIN");
+                            }
+                            else{
+                                operation="signup";
+                                document.getElementById("confirmpassw").style.display = 'block';
+                                document.getElementById("loginBtn").setAttribute("value","SIGN UP");
+                            }
+
+                        }
+                }
+                postvars = "email="+email;
+
+                xhr.send(postvars);
+
+
+            }
 
         </script>
 
