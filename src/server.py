@@ -24,7 +24,7 @@ def generateRandomFilename():
     return filename
 
 
-@app.route("/")
+@app.route("/upload")
 def start():
 
     return render_template('codeUpload.html', username = request.cookies.get("user","Login/Sign Up").split("@")[0])
@@ -40,10 +40,10 @@ def showCode():
 
 
     f=  open(full_filename)
-    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename, user = request.cookies.get("user"))
+    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename, username = request.cookies.get("user","Login/Sign Up").split("@")[0])
 
 
-@app.route("/showAll")
+@app.route("/")
 def showAll():
     items = []
     con = sqlite3.connect("database.db")
@@ -53,7 +53,7 @@ def showAll():
 
     items = map( convertToDict, rows)
 
-    resp = make_response(render_template('showResources.html', items=items))
+    resp = make_response(render_template('showResources.html', items=items, username = request.cookies.get("user","Login/Sign Up").split("@")[0]))
     resp.set_cookie("test","test")
 
     return(resp)
@@ -64,9 +64,7 @@ def fetchConvos(filename):
     cur = con.cursor()
     cur.execute("SELECT user, comment FROM Convos WHERE filename =(?)", (filename,))
     rows = cur.fetchall()
-
     print(rows)
-
     return(rows)
 
 
@@ -152,7 +150,7 @@ def login():
 
         resp = jsonify(auth=True)
 
-    resp.set_cookie("user",email)
+    resp.set_cookie("user",email.split("@")[0])
     return(resp)
 
 
