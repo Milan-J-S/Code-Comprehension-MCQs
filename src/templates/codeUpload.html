@@ -2,7 +2,9 @@
 <html>
 <head>
     <!-- Bootstrap core CSS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+
+    <script src = "{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
 
      <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
      <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/addon/edit/closebrackets.js')}}"></script>
@@ -192,7 +194,6 @@
                 {
                         if(xhr.readyState == 4 && xhr.status == 200 )
                         {
-                            // alert(JSON.parse(xhr.response));
                             if(JSON.parse(xhr.response).auth==true)
                             {
                             //    document.setCookie("username",email);
@@ -258,7 +259,6 @@
             {
                 code = myCodeMirror.getDoc().getValue();
 
-                alert(code);
 
             var xhr = new XMLHttpRequest();
 
