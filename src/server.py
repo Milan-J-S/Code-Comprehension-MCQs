@@ -4,7 +4,15 @@ import string
 from flask import Flask, request, jsonify, session, g, redirect, url_for, abort, \
     render_template, make_response
 import sqlite3
+import numpy as np
+
+from sklearn.neighbors import NearestNeighbors
+
+
 from os import listdir
+
+from nltk.tokenize import word_tokenize
+import os
 
 app = Flask(__name__)
 
@@ -13,9 +21,9 @@ print("connection recieved")
 
 def convertToDict(x):
     obj = {}
-    obj['filename'] = x[0];
-    obj['title'] = x[1];
-    return obj;
+    obj['filename'] = x[0]
+    obj['title'] = x[1]
+    return obj
 
 def generateRandomFilename():
     filename = ''
@@ -152,6 +160,51 @@ def login():
 
     resp.set_cookie("user",email.split("@")[0])
     return(resp)
+
+def KNN(code_tensors, comments):
+    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
+    distances, indices = nbrs.kneighbors(np.asarray(code_tensors[1:10]))
+
+    print(distances, indices)
+
+    for index in indices[0]:
+        print(comments[index])
+
+def clusterCodes():
+    filepath = 'code'
+    codes = []
+    comments = []
+    code_vocab = set()
+    for root,dirs,files in os.walk(filepath):
+        for f in files:
+            code = open('code/'+f).read()
+            codes.append(word_tokenize(code))
+            for word in word_tokenize(code):
+                code_vocab.add(word)
+
+            comment = open('comments/'+f).read()
+            comments.append(comment)
+
+    code_dict = dict()
+
+    code_tensors = []
+
+    i = 0
+    for word in code_vocab:
+        code_dict[word] = i
+        i+=1
+
+
+    for code in codes:
+        code_tensor = np.zeros(750)
+        for i in range(min(750,len(code))):
+            code_tensor[i] = code_dict[code[i]]
+        code_tensors.append(code_tensor)
+    print(code_tensors)
+
+    KNN(code_tensors, comments)
+
+clusterCodes()
 
 
 
