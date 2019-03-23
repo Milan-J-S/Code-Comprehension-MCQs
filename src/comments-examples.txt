@@ -1,0 +1,185 @@
+insert at position in array
+find lowest difference between consecutive numbers in list
+recursive search on binary tree
+recursive function to traverse binary tree
+select operation
+recursive split and sort
+insert into a heap
+delete element at start of list
+main function to do sorting
+bubble sort an array
+print all elements of a priority queue
+check if all elements of array are 0
+input of array
+scan inputs
+recursive split and sort
+create child processes
+complement the value of an element
+scan numbers and print function result
+print all elements in the list
+check if stack is empty
+insert element into circular list
+insert at end of double linked list
+delete element from dynamic array
+create a structure
+get text input and call function
+sorts a list
+insert element into heap
+print all elements of dynamic list
+start day of a month
+recursive search for pattern in string
+select operation
+main function to do sorting
+scan a string and call a function
+print all elements in the list
+duplicate a structure
+print ll elements of array
+print all elements of a heap
+number to symbol mapping
+print all elements of a circular list
+subtract value of two structures
+insert element into linked list
+add value of two structures
+search for element in a tree
+insert at end of array
+number to symbol mapping
+input of 2D matrix
+insert into a heap
+swap two elements
+insert into linked list
+sort a list splitting into two
+sorts a list
+find sum of last 2 elements of list and add to list
+insert element to start of list
+increment and print all elements of list
+graph search
+read string from input
+delete elements from heap
+insert at start of linked list
+recursive split and sort
+open a file and write 
+execute a function on the shell
+map char to number
+delete element from binary search tree
+print all elements of double linked list
+delete at start of circular list
+element at end of list
+print all elements in the list
+input of array
+check if value is 2015,16,17 or 19
+open a file and read
+define a structure
+complement of a number
+main function to do sorting
+print all elements of a circular list
+insert at end of linked list
+sort a list
+take string input and call function
+find minimum of binary search tree
+scan a string and call a function
+insert element into linked list
+pop from stack
+insert element into tree
+insert element into circular list
+insert at start of doubly linked list
+transforms on a string
+remove element from top of stack
+create a structure element
+find the minimum difference between elements in a list 
+insert at start of array
+insert element at end of circular list
+perform operation on 2D array
+input two strings
+delete at end of double linked list
+perform least recently used replacement
+copy a string
+pop from stack
+recursive split and sort
+convert list to heap
+traversal of graph depth first
+insert element into heap
+recursive traversal of graph
+find the last occurence of element in list
+sum of elements of binary tree
+delete element from circular list
+adjust elements of heap
+print all elements of linked list
+delete at start of double linked list
+find smallest difference between two numbers in list 
+reverse the elements of linked list
+main function to do sorting
+merge 2 lists in order
+find max of binary search tree
+print all elements of linked list
+print maximum of array
+delete maximum element in heap
+insert element into min heap
+read and write a file
+recursive multiplication of structure values
+insert element into binary search tree
+delete element from heap 
+search for a string in another string
+recursive multiplication of structure values
+delete at end of circular list
+push element to top of stack
+print all elements of list
+select operation
+print all elements in the list
+scan and print 5 integers
+create a hash table
+open a file and read
+binary search on list
+print all elements of dynamic list
+transform to postfix equation
+select operation
+nu
+input and print a list
+select operation
+search for element in list
+delete element from dynamic array
+delete from start of array
+modulus of the exponential of a number
+recursive function to compute height of binary tree
+divide value of two structures 
+delete from end of array
+convert string from one form to another
+comparison of value of structures
+push to stack
+print all elements of linked list
+insert element into dynamic array
+multiply value of two structures
+print details of a structure 
+number to symbol mapping
+search for a key in a binary tree
+insert element into dynamic array
+print all elements of key in list
+map char to number
+delete element at end of list
+take inputs for actions
+create binary counter list
+insert at sorted position in list
+print a number
+split and sort list
+return first element of list
+select operation
+delete at position in array
+main function to do sorting
+read integer input and call function 
+recursive counting sort
+merge 2 lists in order
+select an operation
+open a file and write 
+print all elements in the list
+insert element at end of list
+main function to do sorting
+insert element into max heap
+push element to top of stack
+create a number of processes
+merge 2 lists in order
+delete element from max heap
+insert element to start of circular list
+print element at top of stack
+remove maximum element of heap
+delete element from min heap
+merge 2 lists in order
+compute value of a polynomial

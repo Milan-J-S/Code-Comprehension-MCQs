@@ -2,7 +2,7 @@ import random
 import string
 
 from flask import Flask, request, jsonify, session, g, redirect, url_for, abort, \
-    render_template, flash, send_from_directory
+    render_template, make_response
 import sqlite3
 from os import listdir
 
@@ -24,9 +24,10 @@ def generateRandomFilename():
     return filename
 
 
-@app.route("/")
+@app.route("/upload")
 def start():
-    return render_template('codeUpload.html')
+
+    return render_template('codeUpload.html', username = request.cookies.get("user","Login/Sign Up").split("@")[0])
 
 
 @app.route("/showCode", methods=["GET", "POST"])
@@ -39,10 +40,10 @@ def showCode():
 
 
     f=  open(full_filename)
-    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename)
+    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename, username = request.cookies.get("user","Login/Sign Up").split("@")[0])
 
 
-@app.route("/showAll")
+@app.route("/")
 def showAll():
     items = []
     con = sqlite3.connect("database.db")
@@ -52,7 +53,10 @@ def showAll():
 
     items = map( convertToDict, rows)
 
-    return render_template('showResources.html', items=items)
+    resp = make_response(render_template('showResources.html', items=items, username = request.cookies.get("user","Login/Sign Up").split("@")[0]))
+    resp.set_cookie("test","test")
+
+    return(resp)
 
 
 def fetchConvos(filename):
@@ -60,9 +64,7 @@ def fetchConvos(filename):
     cur = con.cursor()
     cur.execute("SELECT user, comment FROM Convos WHERE filename =(?)", (filename,))
     rows = cur.fetchall()
-
     print(rows)
-
     return(rows)
 
 
@@ -71,7 +73,10 @@ def putConvos():
     filename = request.form['filename']
     id = request.form['id']
     comment = request.form['comment']
-    user = request.form['user']
+
+    user = request.cookies.get("user")
+
+
 
     print("filename = "+filename)
 
@@ -83,11 +88,14 @@ def putConvos():
 
 @app.route("/putCode", methods= ["POST"])
 def putCode():
-    poster = request.form['poster']
+
     content = request.form['content']
     lang = request.form['lang']
     description = request.form['description']
 
+    user = request.cookies.get("user")
+
+    print(request.cookies)
 
     filename = generateRandomFilename()
 
@@ -101,7 +109,7 @@ def putCode():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", ( poster, filename, description, lang ))
+    cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", ( user, filename, description, lang ))
     con.commit()
 
     return jsonify(filename = filename)
@@ -130,7 +138,9 @@ def login():
 
         print(rows)
 
-        return jsonify(auth = (rows[0][0] == pw))
+        resp = jsonify(auth = (rows[0][0] == pw))
+
+
 
     else:
         con = sqlite3.connect("database.db")
@@ -138,7 +148,10 @@ def login():
         cur.execute("INSERT INTO Login values (?,?)", (email, pw))
         con.commit()
 
-        return jsonify(auth=True)
+        resp = jsonify(auth=True)
+
+    resp.set_cookie("user",email.split("@")[0])
+    return(resp)
 
 
 
