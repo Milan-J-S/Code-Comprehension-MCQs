@@ -4,23 +4,43 @@ encoder_model = load_model("enc.h5")
 decoder_model = load_model("dec.h5")
 
 import numpy as np
+from nltk.tokenize import word_tokenize
+
 
 import pickle
 
 code_tensors = []
+codes = []
+code_vocab = set()
+
+code = open("code.txt","r+").read()
+codes.append(word_tokenize(code))
+for word in (word_tokenize(code)):
+    code_vocab.add(word)
+
+code_dict = pickle.load(open("code_dict.pickle", "rb+"))
+
+print(code_dict)
+
+for item in codes:
+    code_tensor = []
+    code_word = np.zeros(len(code_vocab)+4)
+    code_word[1] = 1
+    code_tensor.append(code_word)
+    for i in range(750):
+        code_word = np.zeros(len(code_vocab)+4)
+        if(i < len(item)):
+            code_word[code_dict[item[i]]+4] = 1
+        elif(i == len(item)):
+            code_word[2] = 1
+        else:
+            code_word[0] = 1
+        code_tensor.append(code_word)
+    code_tensors.append(code_tensor)
 
 
-def convert_to_onehot(c):
-    tensor = np.zeros(len(code_dict)+3)
-    return tensor
 
 
-code = open('new_code.txt', 'r+').read()
-code_tensor = convert_to_onehot(code)
-code_tensor = list(map(convert_to_onehot, code_tensor))
-code_tensors.append(code_tensor)
-
-code_tensors = pickle.load(open("code_tensors.pickle", "rb+"))
 comments_reverse_map = pickle.load(open("comments_reverse_map.pickle", "rb+"))
 
 for i in range(1):
