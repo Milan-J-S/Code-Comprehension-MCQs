@@ -271,6 +271,7 @@
             {
                 if(xhr.readyState == 4 && xhr.status == 200)
                 {
+                    showTags(xhr.response)
                     window.location = "/showCode?filename="+JSON.parse(xhr.response).filename;
                 }
             }
@@ -279,6 +280,12 @@
             xhr.send(postvars);
 
 
+            }
+
+            function showTags(response)
+            {
+                tags=JSON.parse(response).tags;
+                alert(tags);
             }
 
 

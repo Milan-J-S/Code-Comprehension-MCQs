@@ -7,6 +7,9 @@ import sqlite3
 import numpy as np
 import re
 
+from nltk.corpus import stopwords
+stop = set(stopwords.words('english'))
+
 from sklearn.neighbors import NearestNeighbors
 
 
@@ -114,14 +117,17 @@ def putCode():
     file.write(content)
     file.close()
 
-    print("written to file ", filename );
+    print("written to file ", filename )
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", ( user, filename, description, lang ))
     con.commit()
 
-    return jsonify(filename = filename)
+    global code_tensors
+    tags = KNN(code_tensors[0])
+
+    return jsonify(filename = filename, tags = tags )
 
 @app.route("/userExists", methods= ["POST"])
 def userExists():
@@ -162,32 +168,44 @@ def login():
     resp.set_cookie("user",email.split("@")[0])
     return(resp)
 
-def KNN(code_tensors, comments):
+def KNN(code_tensor):
+    global code_tensors
+    global commments
+
+    # print(comments)
+
     nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
-    distances, indices = nbrs.kneighbors(np.asarray(code_tensors[10:50]))
+    distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
 
-    # print(distances, indices)
+    print("distances and indices")
+    #print(distances)
+    print(indices[0][0])
 
+    words = dict()
+    #print(comments[indices[0][0]],"\n\n")
+    for j in range(1,len(indices[0])):
 
-    for i in range(0,38):
-        words = dict()
-        print(comments[indices[i][0]],"\n\n")
-        for j in range(1,len(indices[i])):
+        index = indices[0][j]
+        print(comments[index])
 
-            index = indices[i][j]
-            print(comments[index])
-
-            for word in comments[index].split():
+        for word in comments[index].split():
+            if(word not in stop):
                 if(word not in words):
                     words[word] = 0
                 # if(distances[i][j] != 0):
-                words[word] += 1000/(distances[i][j]+1)
+                words[word] += 1000/(distances[0][j]+1)
 
-        words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse = True)
-        print(words_ordered,"\n\n\n")
+    words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse = True)
+    tags = [x[0] for x in words_ordered[:10]]
+    print(tags,"\n\n\n")
+    return tags
 
+code_tensors = []
+comments = []
 
 def clusterCodes():
+    global code_tensors
+    global comments
     filepath = 'code'
     codes = []
     comments = []
@@ -198,7 +216,6 @@ def clusterCodes():
             code = re.sub("\"[^\"]*\"", "0",code)
             code = re.sub("name: [^,}]+", "name",code)
             code = re.sub("value: [^,}]+", "value",code)
-
             codes.append(word_tokenize(code))
             
             for word in word_tokenize(code):
@@ -208,7 +225,6 @@ def clusterCodes():
             comments.append(comment)
 
     code_dict = dict()
-
     code_tensors = []
 
     i = 0
@@ -223,8 +239,6 @@ def clusterCodes():
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
     print(code_tensors)
-
-    KNN(code_tensors, comments)
 
 clusterCodes()
 
