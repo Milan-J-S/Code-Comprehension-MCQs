@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, session, g, redirect, url_for, abort,
     render_template, make_response
 import sqlite3
 import numpy as np
+import re
 
 from sklearn.neighbors import NearestNeighbors
 
@@ -163,12 +164,28 @@ def login():
 
 def KNN(code_tensors, comments):
     nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
-    distances, indices = nbrs.kneighbors(np.asarray(code_tensors[1:10]))
+    distances, indices = nbrs.kneighbors(np.asarray(code_tensors[10:50]))
 
-    print(distances, indices)
+    # print(distances, indices)
 
-    for index in indices[0]:
-        print(comments[index])
+
+    for i in range(0,38):
+        words = dict()
+        print(comments[indices[i][0]],"\n\n")
+        for j in range(1,len(indices[i])):
+
+            index = indices[i][j]
+            print(comments[index])
+
+            for word in comments[index].split():
+                if(word not in words):
+                    words[word] = 0
+                # if(distances[i][j] != 0):
+                words[word] += 1000/(distances[i][j]+1)
+
+        words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse = True)
+        print(words_ordered,"\n\n\n")
+
 
 def clusterCodes():
     filepath = 'code'
@@ -178,7 +195,12 @@ def clusterCodes():
     for root,dirs,files in os.walk(filepath):
         for f in files:
             code = open('code/'+f).read()
+            code = re.sub("\"[^\"]*\"", "0",code)
+            code = re.sub("name: [^,}]+", "name",code)
+            code = re.sub("value: [^,}]+", "value",code)
+
             codes.append(word_tokenize(code))
+            
             for word in word_tokenize(code):
                 code_vocab.add(word)
 
