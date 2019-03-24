@@ -7,20 +7,28 @@ import sqlite3
 import numpy as np
 import re
 
-from nltk.corpus import stopwords
-stop = set(stopwords.words('english'))
+
 
 from sklearn.neighbors import NearestNeighbors
 
-
 from os import listdir
+import json
 
 from nltk.tokenize import word_tokenize
+
+import nltk
+nltk.download('corpus')
+
+from nltk.corpus import stopwords
+stop = set(stopwords.words('english'))
+
 import os
 
 app = Flask(__name__)
 
 print("connection recieved")
+
+
 # CORS(app)
 
 def convertToDict(x):
@@ -29,17 +37,44 @@ def convertToDict(x):
     obj['title'] = x[1]
     return obj
 
+
 def generateRandomFilename():
     filename = ''
     for i in range(10):
-        filename+=(chr(random.randrange(97,123)))
+        filename += (chr(random.randrange(97, 123)))
     return filename
+
+
+def generateTags(code):
+
+    code= re.sub(r"#include.*<.+>",'',code)
+
+    print(code)
+    f = open("cleaned.txt", 'w+')
+    f.write(str(code))
+    f.close()
+
+    os.system("pcpp cleaned.txt --line-directive > test.txt")
+    os.system("python parseToJson.py test.txt > test1.txt")
+
+    f = open("test1.txt", "r")
+    AST = json.loads(f.read())
+    print(AST)
+
+    tags = []
+
+    for item in AST['ext']:
+        curfunc = str(item)
+        curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
+        curfunc = curfunc.replace("\'", "")
+        tags.append(KNN(curfunc))
+
+    return tags
 
 
 @app.route("/upload")
 def start():
-
-    return render_template('codeUpload.html', username = request.cookies.get("user","Login/Sign Up").split("@")[0])
+    return render_template('codeUpload.html', username=request.cookies.get("user", "Login/Sign Up").split("@")[0])
 
 
 @app.route("/showCode", methods=["GET", "POST"])
@@ -49,10 +84,9 @@ def showCode():
     full_filename = 'static/data/' + filename
     print(full_filename)
 
-
-
-    f=  open(full_filename)
-    return render_template('codeView.html', data=str(f.read()), rows = rows, filename = filename, username = request.cookies.get("user","Login/Sign Up").split("@")[0])
+    f = open(full_filename)
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename,
+                           username=request.cookies.get("user", "Login/Sign Up").split("@")[0])
 
 
 @app.route("/")
@@ -63,12 +97,13 @@ def showAll():
     cur.execute("SELECT filename, description FROM Codes")
     rows = cur.fetchall()
 
-    items = map( convertToDict, rows)
+    items = map(convertToDict, rows)
 
-    resp = make_response(render_template('showResources.html', items=items, username = request.cookies.get("user","Login/Sign Up").split("@")[0]))
-    resp.set_cookie("test","test")
+    resp = make_response(render_template('showResources.html', items=items,
+                                         username=request.cookies.get("user", "Login/Sign Up").split("@")[0]))
+    resp.set_cookie("test", "test")
 
-    return(resp)
+    return (resp)
 
 
 def fetchConvos(filename):
@@ -77,10 +112,10 @@ def fetchConvos(filename):
     cur.execute("SELECT user, comment FROM Convos WHERE filename =(?)", (filename,))
     rows = cur.fetchall()
     print(rows)
-    return(rows)
+    return (rows)
 
 
-@app.route("/putConvos", methods= ["POST"])
+@app.route("/putConvos", methods=["POST"])
 def putConvos():
     filename = request.form['filename']
     id = request.form['id']
@@ -88,19 +123,17 @@ def putConvos():
 
     user = request.cookies.get("user")
 
-
-
-    print("filename = "+filename)
+    print("filename = " + filename)
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO Convos VALUES (?,?,?,?)",(filename, id, comment, user) )
+    cur.execute("INSERT INTO Convos VALUES (?,?,?,?)", (filename, id, comment, user))
     con.commit()
-    return redirect(url_for('showCode',filename = filename))
+    return redirect(url_for('showCode', filename=filename))
 
-@app.route("/putCode", methods= ["POST"])
+
+@app.route("/putCode", methods=["POST"])
 def putCode():
-
     content = request.form['content']
     lang = request.form['lang']
     description = request.form['description']
@@ -113,23 +146,26 @@ def putCode():
 
     print(content)
 
-    file = open('static/data/'+filename, "w+")
+    file = open('static/data/' + filename, "w+")
     file.write(content)
     file.close()
 
-    print("written to file ", filename )
+    print("written to file ", filename)
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", ( user, filename, description, lang ))
+    cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", (user, filename, description, lang))
     con.commit()
 
+    print(content)
+
     global code_tensors
-    tags = KNN(code_tensors[0])
+    tags = generateTags(content)
 
-    return jsonify(filename = filename, tags = tags )
+    return jsonify(filename=filename, tags=tags)
 
-@app.route("/userExists", methods= ["POST"])
+
+@app.route("/userExists", methods=["POST"])
 def userExists():
     email = request.form['email']
     con = sqlite3.connect("database.db")
@@ -137,15 +173,16 @@ def userExists():
     cur.execute("SELECT * FROM Login where email = (?)", (email,))
     rows = cur.fetchall()
 
-    return jsonify(success = len(rows))
+    return jsonify(success=len(rows))
 
-@app.route("/login", methods= ["POST"])
+
+@app.route("/login", methods=["POST"])
 def login():
     email = request.form['email']
     pw = request.form['password']
     operation = request.form['operation']
 
-    if(operation == 'login'):
+    if (operation == 'login'):
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute("SELECT pw FROM Login where email = (?)", (email,))
@@ -153,7 +190,7 @@ def login():
 
         print(rows)
 
-        resp = jsonify(auth = (rows[0][0] == pw))
+        resp = jsonify(auth=(rows[0][0] == pw))
 
 
 
@@ -165,12 +202,21 @@ def login():
 
         resp = jsonify(auth=True)
 
-    resp.set_cookie("user",email.split("@")[0])
-    return(resp)
+    resp.set_cookie("user", email.split("@")[0])
+    return (resp)
 
-def KNN(code_tensor):
+
+def KNN(code):
     global code_tensors
     global commments
+
+    global code_dict
+
+    code_tensor = np.zeros(750)
+    for i in range(min(750, len(code))):
+        if code[i] in code_dict:
+            code_tensor[i] = code_dict[code[i]]
+
 
     # print(comments)
 
@@ -178,30 +224,33 @@ def KNN(code_tensor):
     distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
 
     print("distances and indices")
-    #print(distances)
+    # print(distances)
     print(indices[0][0])
 
     words = dict()
-    #print(comments[indices[0][0]],"\n\n")
-    for j in range(1,len(indices[0])):
+    # print(comments[indices[0][0]],"\n\n")
+    for j in range(1, len(indices[0])):
 
         index = indices[0][j]
         print(comments[index])
 
         for word in comments[index].split():
-            if(word not in stop):
-                if(word not in words):
+            if (word not in stop):
+                if (word not in words):
                     words[word] = 0
                 # if(distances[i][j] != 0):
-                words[word] += 1000/(distances[0][j]+1)
+                words[word] += 1000 / (distances[0][j] + 1)
 
-    words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse = True)
+    words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
     tags = [x[0] for x in words_ordered[:10]]
-    print(tags,"\n\n\n")
+    print(tags, "\n\n\n")
     return tags
+
 
 code_tensors = []
 comments = []
+code_dict = dict()
+
 
 def clusterCodes():
     global code_tensors
@@ -210,39 +259,36 @@ def clusterCodes():
     codes = []
     comments = []
     code_vocab = set()
-    for root,dirs,files in os.walk(filepath):
+    for root, dirs, files in os.walk(filepath):
         for f in files:
-            code = open('code/'+f).read()
-            code = re.sub("\"[^\"]*\"", "0",code)
-            code = re.sub("name: [^,}]+", "name",code)
-            code = re.sub("value: [^,}]+", "value",code)
+            code = open('code/' + f).read()
+            code = re.sub("\"[^\"]*\"", "0", code)
+            code = re.sub("name: [^,}]+", "name", code)
+            code = re.sub("value: [^,}]+", "value", code)
             codes.append(word_tokenize(code))
-            
+
             for word in word_tokenize(code):
                 code_vocab.add(word)
 
-            comment = open('comments/'+f).read()
+            comment = open('comments/' + f).read()
             comments.append(comment)
 
-    code_dict = dict()
     code_tensors = []
 
     i = 0
     for word in code_vocab:
         code_dict[word] = i
-        i+=1
-
+        i += 1
 
     for code in codes:
         code_tensor = np.zeros(750)
-        for i in range(min(750,len(code))):
+        for i in range(min(750, len(code))):
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
     print(code_tensors)
 
+
 clusterCodes()
-
-
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
