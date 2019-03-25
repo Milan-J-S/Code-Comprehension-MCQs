@@ -61,15 +61,16 @@ def generateTags(code):
     AST = json.loads(f.read())
     print(AST)
 
-    tags = []
+    tags = set()
 
     for item in AST['ext']:
         curfunc = str(item)
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
-        tags.append(KNN(curfunc))
+        for item in KNN(curfunc):
+            tags.add(item)
 
-    return tags
+    return list(tags)
 
 
 @app.route("/upload")

@@ -271,8 +271,7 @@
             {
                 if(xhr.readyState == 4 && xhr.status == 200)
                 {
-                    showTags(xhr.response)
-                    window.location = "/showCode?filename="+JSON.parse(xhr.response).filename;
+                    showTags(xhr.response);
                 }
             }
 
@@ -284,10 +283,38 @@
 
             }
 
+            function changeState(event)
+            {
+                alert(event.target.getAttribute("class"));
+                if(event.target.getAttribute("class") === "btn btn-outline-default waves-effect")
+                    event.target.setAttribute("class","btn btn-outline-danger waves-effect");
+                else
+                    event.target.setAttribute("class","btn btn-outline-default waves-effect");
+
+            }
+
             function showTags(response)
             {
                 tags=JSON.parse(response).tags;
                 alert(tags);
+
+                div = document.createElement("div");
+                for(var i=0;i<tags.length;i++)
+                {
+                    button = document.createElement("button");
+                    button.setAttribute("class", "btn btn-outline-default waves-effect");
+
+                    button.addEventListener('click',changeState, false);
+
+                    button.innerHTML = tags[i];
+                    div.append(button);
+
+                }
+
+                document.body.appendChild(div);
+
+
+
             }
 
 
