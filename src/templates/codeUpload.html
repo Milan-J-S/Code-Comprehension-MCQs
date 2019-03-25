@@ -276,10 +276,10 @@
                 }
             }
 
-            alert(code);
+            code_fin = encodeURIComponent(code)
 
-            postvars = "poster=Milan&content="+code+"&description="+description+"&lang="+lang_op.value;
-            xhr.send(postvars);
+            postvars = "poster=Milan&content="+code_fin+"&description="+description+"&lang="+lang_op.value;
+            xhr.send(String(postvars));
 
 
             }
