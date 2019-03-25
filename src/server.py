@@ -165,6 +165,11 @@ def putCode():
 
     return jsonify(filename=filename, tags=tags)
 
+@app.route("/getTags",methods=["POST"])
+def getTags():
+    content = request.form['content']
+    tags = generateTags(content)
+    return jsonify(tags=tags)
 
 @app.route("/userExists", methods=["POST"])
 def userExists():

@@ -90,9 +90,8 @@
 </nav>
 <!--/.Navbar -->
 
-<div>
     <div style="position:relative;height:80%">
-        <textarea onchange="pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea"
+        <textarea onchange="pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea" onblur="pullTags()"
                   placeholder="Paste Code Here..."></textarea>
     </div>
     <select class="browser-default custom-select" id="lang_op" onchange="changeLang(event)">
@@ -104,9 +103,9 @@
         <option value="javascript">JavaScript</option>
     </select>
     <input id="codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
-    <textarea class="form-control rounded-3 w-75 m-3" id="description" rows="2" placeholder="Description"></textarea>
-    <input type="button" class="btn btn-info my-4" value="submit" onclick="saveCode()"/>
-</div>
+    <textarea class="form-control rounded-3 w-75 m-3" id="description" rows="2" placeholder="Description" ></textarea>
+    <input type="button" class="btn btn-info my-4" value="submit" id="submitbtn" onclick="saveCode()"/>
+
 <script>
 
             lang_op = document.getElementById("lang_op");
@@ -139,6 +138,7 @@
                     const reader = new FileReader()
                     reader.onload = event => {
                         myCodeMirror.getDoc().setValue(event.target.result);
+                        pullTags();
                     }
                     cont  = reader.readAsText(event.target.files[0]);
                     name = event.target.files[0].name.split(".")[1];
@@ -285,7 +285,7 @@
 
             function changeState(event)
             {
-                alert(event.target.getAttribute("class"));
+                //alert(event.target.getAttribute("class"));
                 if(event.target.getAttribute("class") === "btn btn-outline-default waves-effect")
                     event.target.setAttribute("class","btn btn-outline-danger waves-effect");
                 else
@@ -296,7 +296,7 @@
             function showTags(response)
             {
                 tags=JSON.parse(response).tags;
-                alert(tags);
+                //alert(tags);
 
                 div = document.createElement("div");
                 for(var i=0;i<tags.length;i++)
@@ -310,10 +310,37 @@
                     div.append(button);
 
                 }
+                submit_button = document.getElementById("submitbtn");
+                
+                document.body.insertBefore(div,submit_button);
 
-                document.body.appendChild(div);
 
 
+            }
+
+            function pullTags()
+            {
+                code_cont = myCodeMirror.getDoc().getValue();
+                if(code_cont!=null && lang_op.value==="text/x-csrc")
+                {
+                    var xhr = new XMLHttpRequest();
+
+                    xhr.open("POST", "http://localhost:5000/getTags", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                    xhr.onreadystatechange = function()
+                    {
+                        if(xhr.readyState == 4 && xhr.status == 200)
+                        {
+                            showTags(xhr.response);
+                        }
+                    }
+
+                    code_fin = encodeURIComponent(code_cont)
+
+                    postvars = "content="+code_fin;
+                    xhr.send(postvars); 
+                }
 
             }
 
