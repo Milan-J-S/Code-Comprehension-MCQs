@@ -259,26 +259,35 @@
             {
                 code = myCodeMirror.getDoc().getValue();
 
+                tags_to_use = document.getElementsByClassName("btn btn-outline-default waves-effect")
 
-            var xhr = new XMLHttpRequest();
+                tags_send = tags_to_use.map( (x) => x.innerHTML )
 
-            description = document.getElementById("description").value ;
+                var xhr = new XMLHttpRequest();
 
-            xhr.open("POST", "http://localhost:5000/putCode", true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                description = document.getElementById("description").value ;
 
-            xhr.onreadystatechange = function()
-            {
-                if(xhr.readyState == 4 && xhr.status == 200)
+                xhr.open("POST", "http://localhost:5000/putCode", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function()
                 {
-                    showTags(xhr.response);
+                    if(xhr.readyState == 4 && xhr.status == 200)
+                    {
+                        showTags(xhr.response);
+                    }
                 }
-            }
 
-            code_fin = encodeURIComponent(code)
+                code_fin = encodeURIComponent(code)
 
-            postvars = "poster=Milan&content="+code_fin+"&description="+description+"&lang="+lang_op.value;
-            xhr.send(String(postvars));
+                data_send = {
+                    content : code_fin,
+                    description : description,
+                    lang : lang_op.value,
+                    tags : tags_send
+                }
+                console.log(data_send)
+                xhr.send(JSON.stringify(data_send));
 
 
             }
