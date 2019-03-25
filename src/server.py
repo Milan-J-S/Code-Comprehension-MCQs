@@ -26,7 +26,7 @@ import os
 
 app = Flask(__name__)
 
-print("connection recieved")
+# print("connection recieved")
 
 
 # CORS(app)
@@ -49,7 +49,7 @@ def generateTags(code):
 
     code= re.sub(r"#include.*<.+>",'',code)
 
-    print(code)
+    # print(code)
     f = open("cleaned.txt", 'w+')
     f.write(str(code))
     f.close()
@@ -59,7 +59,7 @@ def generateTags(code):
 
     f = open("test1.txt", "r")
     AST = json.loads(f.read())
-    print(AST)
+    # print(AST)
 
     tags = set()
 
@@ -83,7 +83,7 @@ def showCode():
     filename = request.args['filename']
     rows = fetchConvos(filename)
     full_filename = 'static/data/' + filename
-    print(full_filename)
+    # print(full_filename)
 
     f = open(full_filename)
     return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename,
@@ -112,7 +112,7 @@ def fetchConvos(filename):
     cur = con.cursor()
     cur.execute("SELECT user, comment FROM Convos WHERE filename =(?)", (filename,))
     rows = cur.fetchall()
-    print(rows)
+    # print(rows)
     return (rows)
 
 
@@ -135,17 +135,24 @@ def putConvos():
 
 @app.route("/putCode", methods=["POST"])
 def putCode():
-    content = request.form['content']
-    lang = request.form['lang']
-    description = request.form['description']
+
+    payload = request.json
+
+    # print(payload)
+
+    content = payload.get('content','')
+    lang = payload.get('lang','')
+    description = payload.get('description','')
+
+    tags = list(payload.get('tags',''))
 
     user = request.cookies.get("user")
 
-    print(request.cookies)
+    # print(request.cookies)
 
     filename = generateRandomFilename()
 
-    print(content)
+    print("tags = ",tags)
 
     file = open('static/data/' + filename, "w+")
     file.write(content)
@@ -158,12 +165,19 @@ def putCode():
     cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", (user, filename, description, lang))
     con.commit()
 
+    for tag in tags:
+        cur = con.cursor()
+        cur.execute("INSERT INTO Tags VALUES (?)", (tag,))
+        cur.execute("INSERT INTO CodeTags VALUES (?,?)", (filename,tag))
+        con.commit()
+
+
     print(content)
 
-    global code_tensors
-    tags = generateTags(content)
+    # global code_tensors
+    # tags = generateTags(content)
 
-    return jsonify(filename=filename, tags=tags)
+    return jsonify(filename=filename)
 
 @app.route("/getTags",methods=["POST"])
 def getTags():
@@ -194,7 +208,7 @@ def login():
         cur.execute("SELECT pw FROM Login where email = (?)", (email,))
         rows = cur.fetchall()
 
-        print(rows)
+        # print(rows)
 
         resp = jsonify(auth=(rows[0][0] == pw))
 
@@ -218,6 +232,11 @@ def KNN(code):
 
     global code_dict
 
+    code = re.sub("\"[^\"]*\"", "0", code)
+    code = re.sub("name: [^,}]+", "name", code)
+    code = re.sub("value: [^,}]+", "value", code)
+    code = word_tokenize(code)
+
     code_tensor = np.zeros(750)
     for i in range(min(750, len(code))):
         if code[i] in code_dict:
@@ -230,11 +249,11 @@ def KNN(code):
     distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
 
     print("distances and indices")
-    # print(distances)
+    print(distances)
     print(indices[0][0])
 
     words = dict()
-    # print(comments[indices[0][0]],"\n\n")
+    print(comments[indices[0][0]],"\n\n")
     for j in range(1, len(indices[0])):
 
         index = indices[0][j]
@@ -249,7 +268,7 @@ def KNN(code):
 
     words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
     tags = [x[0] for x in words_ordered[:10]]
-    print(tags, "\n\n\n")
+    # print(tags, "\n\n\n")
     return tags
 
 
@@ -291,7 +310,7 @@ def clusterCodes():
         for i in range(min(750, len(code))):
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
-    print(code_tensors)
+    # print(code_tensors)
 
 
 clusterCodes()
