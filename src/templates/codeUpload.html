@@ -103,7 +103,7 @@
         <option value="javascript">JavaScript</option>
     </select>
     <input id="codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
-    <textarea class="form-control rounded-3 w-75 m-3" id="description" rows="2" placeholder="Description" ></textarea>
+    <textarea class="form-control rounded-3 w-75 m-3" id="description" rows="2" placeholder="Description" onclick = "pullTags()" ></textarea>
     <input type="button" class="btn btn-info my-4" value="submit" id="submitbtn" onclick="saveCode()"/>
 
 <script>
@@ -259,7 +259,9 @@
             {
                 code = myCodeMirror.getDoc().getValue();
 
-                tags_to_use = document.getElementsByClassName("btn btn-outline-default waves-effect")
+                tags_to_use = Array.from(document.getElementsByClassName("btn btn-outline-default waves-effect"));
+
+                console.log(tags_to_use);
 
                 tags_send = tags_to_use.map( (x) => x.innerHTML )
 
@@ -268,20 +270,19 @@
                 description = document.getElementById("description").value ;
 
                 xhr.open("POST", "http://localhost:5000/putCode", true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.setRequestHeader("Content-type", "application/json");
 
                 xhr.onreadystatechange = function()
                 {
                     if(xhr.readyState == 4 && xhr.status == 200)
                     {
-                        showTags(xhr.response);
+                        window.location = "/showCode?filename="+JSON.parse(xhr.response).filename;
                     }
                 }
 
-                code_fin = encodeURIComponent(code)
 
                 data_send = {
-                    content : code_fin,
+                    content : code,
                     description : description,
                     lang : lang_op.value,
                     tags : tags_send
@@ -329,8 +330,10 @@
 
             function pullTags()
             {
+
+
                 code_cont = myCodeMirror.getDoc().getValue();
-                if(code_cont!=null && lang_op.value==="text/x-csrc")
+                if(code_cont!=null)
                 {
                     var xhr = new XMLHttpRequest();
 
