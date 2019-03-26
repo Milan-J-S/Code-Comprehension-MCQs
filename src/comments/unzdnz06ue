@@ -1,0 +1,1 @@
+This function returns k'th smallest element in arr[l..r] using QuickSort based method. If k is smaller than number of elements in array. Partition the array around a random element and get position of pivot element in sorted array 

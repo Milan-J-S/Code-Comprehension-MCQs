@@ -1,0 +1,1 @@
+Function to check if n is palindrome. Find the appropriate divisor  to extract the leading digit. If first and last digits are not same then return false. Removing the leading and trailing digits from the number. Reducing divisor by a factor of 2 as 2 digits are dropped

@@ -1,0 +1,1 @@
+ main function to do heap sort. Build heap (rearrange array). One by one extract an element from heap. Move current root to end. call max heapify on the reduced heap 

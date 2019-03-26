@@ -1,0 +1,1 @@
+Merges two subarrays of arr[]. create temp arrays. Copy data to temp arrays L[] and R[]. Merge the temp arrays back into arr[l..r]

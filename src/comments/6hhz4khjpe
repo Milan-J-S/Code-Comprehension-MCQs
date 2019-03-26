@@ -1,0 +1,1 @@
+Function to find Majority element in an array. update maxCount if count of current element is greater if maxCount is greater than n/2 return the corresponding element
