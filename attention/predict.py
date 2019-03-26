@@ -1,9 +1,3 @@
-import tensorflow as tf
-from keras import backend as K
-from keras import regularizers, constraints, initializers, activations
-from keras.layers.recurrent import Recurrent
-from keras.engine import InputSpec
-
 # my imports
 import re
 from keras.models import Model
@@ -17,6 +11,11 @@ import nltk
 nltk.download('punkt')
 
 import pickle
+
+from legacy import AttentionDecoder
+
+from keras.models import load_model
+
 
 
 def convert_to_onehot(c):
@@ -67,3 +66,34 @@ for item in codes:
 # print(code_tensors[3])
 
 print(np.asarray(code_tensors).shape)
+
+automodel = load_model("autoencoder.h5")
+
+attnmodel = load_model("attention.h5", custom_objects={'AttentionDecoder': AttentionDecoder})
+
+code_dict_p = pickle.load(open("code_dict.pickle", "rb+"))
+print(code_dict_p)
+
+comment_tensors_p = pickle.load(open("code_dict.pickle", "rb+"))
+print(comment_tensors_p)
+
+comments_reverse_map_p = pickle.load(open("comments_reverse_map.pickle", "rb+"))
+print(comments_reverse_map_p)
+
+code_tensors = []
+
+code = open("file.txt").read()
+code = re.sub("\"[^\"]*\"", "0", code)
+code = re.sub("name: [^,}]+", "name", code)
+code = re.sub("value: [^,}]+", "value", code)
+
+code_tensor = np.zeros(751)
+item = word_tokenize(code)
+for i in range(min(len(item), 751)):
+    code_tensor[i] = code_dict[item[i]] / 107
+code_tensors.append(code_tensor)
+
+result = automodel.predict(np.asarray(code_tensors))
+
+print(result)
+print(result.shape)
