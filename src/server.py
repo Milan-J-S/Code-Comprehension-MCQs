@@ -86,8 +86,16 @@ def showCode():
     # print(full_filename)
 
     f = open(full_filename)
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename,
-                           username=request.cookies.get("user", "Login/Sign Up").split("@")[0])
+
+    username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT into CodeViews values (?,?,?) ",(filename, username,0))
+    con.commit()
+
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username
+)
 
 
 @app.route("/")
@@ -183,6 +191,9 @@ def putCode():
 def getTags():
     content = request.form['content']
     tags = generateTags(content)
+
+    print("tags generated = ", tags)
+
     return jsonify(tags=tags)
 
 @app.route("/userExists", methods=["POST"])
