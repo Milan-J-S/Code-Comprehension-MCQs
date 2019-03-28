@@ -253,10 +253,6 @@ def KNN(code):
         if code[i] in code_dict:
             code_tensor[i] = code_dict[code[i]]
 
-
-    # print(comments)
-
-    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
     distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
 
     print("distances and indices")
@@ -286,15 +282,55 @@ def KNN(code):
 code_tensors = []
 comments = []
 code_dict = dict()
+nbrs = None
+indices = []
+
+codes_reverse_map = []
+codes_dict = {}
+
+def recommendForUser( user ):
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
+
+    rows = cur.fetchall()
+
+    reco = {}
+
+    print(rows)
+    for item in rows:
+        print(codes_dict[item[0]])
+        for code in indices[codes_dict[item[0]]]:
+            if(code not in reco):
+                reco[code] = 0
+            reco[code]+=1
+
+    print(reco)
+
+    reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
+    reco_ordered = [x[0] for x in reco_ordered[:10]]
+
+    for rec in reco_ordered:
+        print(codes_reverse_map[rec])
+
+
+
+
+
+
 
 
 def clusterCodes():
     global code_tensors
     global comments
+    global nbrs
+    global codes_reverse_map
+    global indices
     filepath = 'code'
     codes = []
     comments = []
     code_vocab = set()
+    i=0
     for root, dirs, files in os.walk(filepath):
         for f in files:
             code = open('code/' + f).read()
@@ -302,6 +338,9 @@ def clusterCodes():
             code = re.sub("name: [^,}]+", "name", code)
             code = re.sub("value: [^,}]+", "value", code)
             codes.append(word_tokenize(code))
+            codes_reverse_map.append(f)
+            codes_dict[f] = i
+            i+=1
 
             for word in word_tokenize(code):
                 code_vocab.add(word)
@@ -316,12 +355,28 @@ def clusterCodes():
         code_dict[word] = i
         i += 1
 
+    j = 0
     for code in codes:
         code_tensor = np.zeros(750)
         for i in range(min(750, len(code))):
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
-    # print(code_tensors)
+
+
+
+    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
+
+    distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
+
+    print(indices)
+
+
+
+    print(nbrs)
+
+    recommendForUser('milan.j.srinivas')
+
+    # print(code_ten sors)
 
 
 clusterCodes()
