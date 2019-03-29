@@ -7,6 +7,7 @@ import sqlite3
 import numpy as np
 import re
 
+user_codes_matrix = []
 
 
 from sklearn.neighbors import NearestNeighbors
@@ -236,6 +237,52 @@ def login():
     resp.set_cookie("user", email.split("@")[0])
     return (resp)
 
+def prepareUserMatrix():
+
+    global user_codes_matrix
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT DISTINCT filename FROM Codes")
+    rows = cur.fetchall()
+
+    print(rows)
+
+    new_codes_dict = {}
+
+    i=0
+    for row in rows:
+        new_codes_dict[row[0]] = i
+        i+=1
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT DISTINCT email FROM Login")
+    rows = cur.fetchall()
+
+    new_users_dict = {}
+
+    i = 0
+    for row in rows:
+        print(row)
+        new_users_dict[row[0].split("@")[0]] = i
+        i += 1
+
+    user_codes_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
+
+    print(user_codes_matrix)
+    print(user_codes_matrix.shape)
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT code,user FROM CodeViews")
+    rows = cur.fetchall()
+
+    for row in rows:
+        user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] += 1
+
+    print(user_codes_matrix)
+
 
 def KNN(code):
     global code_tensors
@@ -374,12 +421,14 @@ def clusterCodes():
 
     print(nbrs)
 
-    recommendForUser('milan.j.srinivas')
+    # recommendForUser('milan.j.srinivas')
 
     # print(code_ten sors)
 
 
 clusterCodes()
+
+prepareUserMatrix()
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
