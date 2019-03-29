@@ -7,6 +7,7 @@ import sqlite3
 import numpy as np
 import re
 
+user_codes_matrix = []
 
 
 from sklearn.neighbors import NearestNeighbors
@@ -236,6 +237,52 @@ def login():
     resp.set_cookie("user", email.split("@")[0])
     return (resp)
 
+def prepareUserMatrix():
+
+    global user_codes_matrix
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT DISTINCT filename FROM Codes")
+    rows = cur.fetchall()
+
+    print(rows)
+
+    new_codes_dict = {}
+
+    i=0
+    for row in rows:
+        new_codes_dict[row[0]] = i
+        i+=1
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT DISTINCT email FROM Login")
+    rows = cur.fetchall()
+
+    new_users_dict = {}
+
+    i = 0
+    for row in rows:
+        print(row)
+        new_users_dict[row[0].split("@")[0]] = i
+        i += 1
+
+    user_codes_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
+
+    print(user_codes_matrix)
+    print(user_codes_matrix.shape)
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT code,user FROM CodeViews")
+    rows = cur.fetchall()
+
+    for row in rows:
+        user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] += 1
+
+    print(user_codes_matrix)
+
 
 def KNN(code):
     global code_tensors
@@ -253,10 +300,6 @@ def KNN(code):
         if code[i] in code_dict:
             code_tensor[i] = code_dict[code[i]]
 
-
-    # print(comments)
-
-    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
     distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
 
     print("distances and indices")
@@ -286,15 +329,55 @@ def KNN(code):
 code_tensors = []
 comments = []
 code_dict = dict()
+nbrs = None
+indices = []
+
+codes_reverse_map = []
+codes_dict = {}
+
+def recommendForUser( user ):
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
+
+    rows = cur.fetchall()
+
+    reco = {}
+
+    print(rows)
+    for item in rows:
+        print(codes_dict[item[0]])
+        for code in indices[codes_dict[item[0]]]:
+            if(code not in reco):
+                reco[code] = 0
+            reco[code]+=1
+
+    print(reco)
+
+    reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
+    reco_ordered = [x[0] for x in reco_ordered[:10]]
+
+    for rec in reco_ordered:
+        print(codes_reverse_map[rec])
+
+
+
+
+
+
 
 
 def clusterCodes():
     global code_tensors
     global comments
+    global nbrs
+    global codes_reverse_map
+    global indices
     filepath = 'code'
     codes = []
     comments = []
     code_vocab = set()
+    i=0
     for root, dirs, files in os.walk(filepath):
         for f in files:
             code = open('code/' + f).read()
@@ -302,6 +385,9 @@ def clusterCodes():
             code = re.sub("name: [^,}]+", "name", code)
             code = re.sub("value: [^,}]+", "value", code)
             codes.append(word_tokenize(code))
+            codes_reverse_map.append(f)
+            codes_dict[f] = i
+            i+=1
 
             for word in word_tokenize(code):
                 code_vocab.add(word)
@@ -316,15 +402,33 @@ def clusterCodes():
         code_dict[word] = i
         i += 1
 
+    j = 0
     for code in codes:
         code_tensor = np.zeros(750)
         for i in range(min(750, len(code))):
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
-    # print(code_tensors)
+
+
+
+    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
+
+    distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
+
+    print(indices)
+
+
+
+    print(nbrs)
+
+    # recommendForUser('milan.j.srinivas')
+
+    # print(code_ten sors)
 
 
 clusterCodes()
+
+prepareUserMatrix()
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
