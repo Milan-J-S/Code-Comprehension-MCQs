@@ -9,7 +9,6 @@ import re
 
 user_codes_matrix = []
 
-
 from sklearn.neighbors import NearestNeighbors
 
 from os import listdir
@@ -18,14 +17,17 @@ import json
 from nltk.tokenize import word_tokenize
 
 import nltk
+
 nltk.download('corpus')
 
 from nltk.corpus import stopwords
+
 stop = set(stopwords.words('english'))
 
 import os
 
 app = Flask(__name__)
+
 
 # print("connection recieved")
 
@@ -39,6 +41,13 @@ def convertToDict(x):
     return obj
 
 
+new_users_dict = {}
+new_codes_dict = {}
+
+new_users_reverse_map = []
+new_codes_reverse_map = []
+
+
 def generateRandomFilename():
     filename = ''
     for i in range(10):
@@ -47,8 +56,7 @@ def generateRandomFilename():
 
 
 def generateTags(code):
-
-    code= re.sub(r"#include.*<.+>",'',code)
+    code = re.sub(r"#include.*<.+>", '', code)
 
     # print(code)
     f = open("cleaned.txt", 'w+')
@@ -81,6 +89,7 @@ def start():
 
 @app.route("/showCode", methods=["GET", "POST"])
 def showCode():
+    global user_codes_matrix
     filename = request.args['filename']
     rows = fetchConvos(filename)
     full_filename = 'static/data/' + filename
@@ -92,25 +101,73 @@ def showCode():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT into CodeViews values (?,?,?) ",(filename, username,0))
+    cur.execute("INSERT into CodeViews values (?,?,?) ", (filename, username, 0))
     con.commit()
 
+    # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
+
+    # user_codes_matrix[use]
+
     return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username
-)
+                           )
+
+
+def recommendCodes(user):
+    user_index = new_users_dict[user]
+
+    user_has_viewed = set()
+
+    for i in range(len(new_codes_dict)):
+        if user_codes_matrix[user_index][i] > 0:
+            user_has_viewed.add(i)
+
+    user_stats_dict = {}
+
+    for j in range(len(new_users_dict)):
+        user_stats_dict[j] = 0
+        for item in user_has_viewed:
+            user_stats_dict[j] += user_codes_matrix[j][item]
+
+    users_ordered = sorted(user_stats_dict.items(), key=lambda kv: kv[1], reverse=True)[1:4]
+
+    code_to_recommend = {}
+
+    for i in range(len(new_codes_dict)):
+        if (i in user_has_viewed):
+            continue
+        code_to_recommend[i] = 0
+        for user in users_ordered:
+            code_to_recommend[i] += user_codes_matrix[user[0]][i]
+
+    codes_ordered = sorted(code_to_recommend.items(), key=lambda kv: kv[1], reverse=True)[1:]
+
+    print(codes_ordered)
+
+    for code in codes_ordered:
+        print(new_codes_reverse_map[code[0]])
+
+    return codes_ordered
 
 
 @app.route("/")
 def showAll():
     items = []
+    code_desc = {}
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT filename, description FROM Codes")
     rows = cur.fetchall()
+    username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
+
+    for row in rows:
+        code_desc[new_codes_dict[row[0]]] = row[1]
+    rows = recommendCodes(username)
+
+    rows = [(x[0], code_desc[x[0]]) for x in rows]
 
     items = map(convertToDict, rows)
 
-    resp = make_response(render_template('showResources.html', items=items,
-                                         username=request.cookies.get("user", "Login/Sign Up").split("@")[0]))
+    resp = make_response(render_template('showResources.html', items=items, username=username))
     resp.set_cookie("test", "test")
 
     return (resp)
@@ -144,16 +201,15 @@ def putConvos():
 
 @app.route("/putCode", methods=["POST"])
 def putCode():
-
     payload = request.json
 
     # print(payload)
 
-    content = payload.get('content','')
-    lang = payload.get('lang','')
-    description = payload.get('description','')
+    content = payload.get('content', '')
+    lang = payload.get('lang', '')
+    description = payload.get('description', '')
 
-    tags = list(payload.get('tags',''))
+    tags = list(payload.get('tags', ''))
 
     user = request.cookies.get("user")
 
@@ -161,7 +217,7 @@ def putCode():
 
     filename = generateRandomFilename()
 
-    print("tags = ",tags)
+    print("tags = ", tags)
 
     file = open('static/data/' + filename, "w+")
     file.write(content)
@@ -176,10 +232,12 @@ def putCode():
 
     for tag in tags:
         cur = con.cursor()
-        cur.execute("INSERT INTO Tags VALUES (?)", (tag,))
-        cur.execute("INSERT INTO CodeTags VALUES (?,?)", (filename,tag))
-        con.commit()
-
+        exists = cur.execute("SELECT * from tag where tag = (?)", (tag,)).fetchall()
+        if (len(exists) == 0):
+            cur.execute("INSERT INTO Tags VALUES (?)", (tag,))
+        cur.execute("INSERT INTO CodeTags VALUES (?,?)", (filename, tag))
+    con.commit()
+    con.close()
 
     print(content)
 
@@ -188,7 +246,8 @@ def putCode():
 
     return jsonify(filename=filename)
 
-@app.route("/getTags",methods=["POST"])
+
+@app.route("/getTags", methods=["POST"])
 def getTags():
     content = request.form['content']
     tags = generateTags(content)
@@ -196,6 +255,7 @@ def getTags():
     print("tags generated = ", tags)
 
     return jsonify(tags=tags)
+
 
 @app.route("/userExists", methods=["POST"])
 def userExists():
@@ -235,11 +295,17 @@ def login():
         resp = jsonify(auth=True)
 
     resp.set_cookie("user", email.split("@")[0])
+    np.append(user_codes_matrix, np.zeros(len(new_codes_dict)))
+    new_users_dict[email.split("@")[0]] = len(new_users_dict)
     return (resp)
 
-def prepareUserMatrix():
 
+def prepareUserMatrix():
     global user_codes_matrix
+    global new_users_dict
+    global new_codes_dict
+    global new_codes_reverse_map
+    global new_users_reverse_map
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -250,10 +316,11 @@ def prepareUserMatrix():
 
     new_codes_dict = {}
 
-    i=0
+    i = 0
     for row in rows:
         new_codes_dict[row[0]] = i
-        i+=1
+        new_codes_reverse_map.append(row[0])
+        i += 1
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -266,9 +333,12 @@ def prepareUserMatrix():
     for row in rows:
         print(row)
         new_users_dict[row[0].split("@")[0]] = i
+        new_users_reverse_map.append(row[0].split("@")[0])
         i += 1
 
-    user_codes_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
+    new_users_dict['Login/Sign Up'] = i
+
+    user_codes_matrix = np.zeros((len(new_users_dict), len(new_codes_dict)))
 
     print(user_codes_matrix)
     print(user_codes_matrix.shape)
@@ -307,7 +377,7 @@ def KNN(code):
     print(indices[0][0])
 
     words = dict()
-    print(comments[indices[0][0]],"\n\n")
+    print(comments[indices[0][0]], "\n\n")
     for j in range(1, len(indices[0])):
 
         index = indices[0][j]
@@ -335,7 +405,8 @@ indices = []
 codes_reverse_map = []
 codes_dict = {}
 
-def recommendForUser( user ):
+
+def recommendForUser(user):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
@@ -348,9 +419,9 @@ def recommendForUser( user ):
     for item in rows:
         print(codes_dict[item[0]])
         for code in indices[codes_dict[item[0]]]:
-            if(code not in reco):
+            if (code not in reco):
                 reco[code] = 0
-            reco[code]+=1
+            reco[code] += 1
 
     print(reco)
 
@@ -359,12 +430,6 @@ def recommendForUser( user ):
 
     for rec in reco_ordered:
         print(codes_reverse_map[rec])
-
-
-
-
-
-
 
 
 def clusterCodes():
@@ -377,7 +442,7 @@ def clusterCodes():
     codes = []
     comments = []
     code_vocab = set()
-    i=0
+    i = 0
     for root, dirs, files in os.walk(filepath):
         for f in files:
             code = open('code/' + f).read()
@@ -387,7 +452,7 @@ def clusterCodes():
             codes.append(word_tokenize(code))
             codes_reverse_map.append(f)
             codes_dict[f] = i
-            i+=1
+            i += 1
 
             for word in word_tokenize(code):
                 code_vocab.add(word)
@@ -409,16 +474,11 @@ def clusterCodes():
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
 
-
-
     nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
 
     distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
 
     print(indices)
-
-
-
     print(nbrs)
 
     # recommendForUser('milan.j.srinivas')
@@ -429,6 +489,35 @@ def clusterCodes():
 clusterCodes()
 
 prepareUserMatrix()
+
+
+@app.route("/search", methods=["POST"])
+def search():
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    searchTerms = request.form.get("searchTerms", "").split()
+
+    files_that_match = {}
+
+    for searchTerm in searchTerms:
+        cur.execute("SELECT code from CodeTags WHERE tag = (?)", (searchTerm,))
+        rows = cur.fetchall()
+        for row in rows:
+            if (row[0] not in files_that_match):
+                files_that_match[row[0]] = 0
+            files_that_match[row[0]] += 1
+
+    files_ordered = sorted(files_that_match.items(), key=lambda kv: kv[1], reverse=True)
+
+    files_ordered = list(map(lambda v: v[0], files_ordered))
+
+    print(files_ordered)
+
+    return jsonify(files=files_ordered)
+
+
+search(["tree", "print"])
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True

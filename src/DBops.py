@@ -14,14 +14,17 @@ con = sqlite3.connect("database.db")
 # print("Table created succesfully")
 #
 # con.execute("DROP TABLE Tags")
-# con.execute("CREATE TABLE Tags( tag TEXT )")
-# print("Table created succesfully")
+# con.execute("CREATE TABLE Tags( tag TEXT, PRIMARY KEY(tag) ) ")
+# print("Table created succesf ully")
+
+con.execute("ALTER TABLE Tags REBUILD WITH (IGNORE_DUP_KEY = ON)")
+
 #
 # con.execute("DROP TABLE CodeTags")
 # con.execute("CREATE TABLE CodeTags( code TEXT references Codes(filename), tag TEXT references Tags(tag))")
 # print("Table created succesfully")
 
-con.execute("CREATE TABLE CodeViews( code TEXT references Codes(filename), user TEXT references Login(email), difficulty NUMERIC)")
-print("Table created succesfully")
+# con.execute("CREATE TABLE CodeViews( code TEXT references Codes(filename), user TEXT references Login(email), difficulty NUMERIC)")
+# print("Table created succesfully")
 
 con.close()
