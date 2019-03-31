@@ -334,6 +334,10 @@
 
             function showTags(response)
             {
+                if(document.getElementById("tag_holder"))
+                {
+                    return;
+                }
                 tags=JSON.parse(response).tags;
                 //alert(tags);
 

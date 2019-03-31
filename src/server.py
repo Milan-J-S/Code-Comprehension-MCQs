@@ -232,7 +232,7 @@ def putCode():
 
     for tag in tags:
         cur = con.cursor()
-        exists = cur.execute("SELECT * from tag where tag = (?)", (tag,)).fetchall()
+        exists = cur.execute("SELECT * from tags where tag = (?)", (tag,)).fetchall()
         if (len(exists) == 0):
             cur.execute("INSERT INTO Tags VALUES (?)", (tag,))
         cur.execute("INSERT INTO CodeTags VALUES (?,?)", (filename, tag))
@@ -240,6 +240,17 @@ def putCode():
     con.close()
 
     print(content)
+
+    global user_codes_matrix
+    global new_codes_dict
+    global new_codes_reverse_map
+
+    for i in range(len(new_users_dict)):
+        user_codes_matrix[i].extend(0)
+
+    new_codes_dict[filename] = len(new_codes_dict)
+    new_codes_reverse_map.append(filename)
+
 
     # global code_tensors
     # tags = generateTags(content)
@@ -496,7 +507,11 @@ def search():
     con = sqlite3.connect("database.db")
     cur = con.cursor()
 
+    global new_codes_dict
+
     searchTerms = request.form.get("searchTerms", "").split()
+
+    print(searchTerms)
 
     files_that_match = {}
 
@@ -510,14 +525,31 @@ def search():
 
     files_ordered = sorted(files_that_match.items(), key=lambda kv: kv[1], reverse=True)
 
-    files_ordered = list(map(lambda v: v[0], files_ordered))
 
     print(files_ordered)
 
-    return jsonify(files=files_ordered)
+    code_desc = {}
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT filename, description FROM Codes")
+    rows = cur.fetchall()
+    # username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
+
+    for row in rows:
+        code_desc[row[0]] = row[1]
+    # rows = recommendCodes(username)
+
+    print(code_desc)
 
 
-search(["tree", "print"])
+    files_ordered = [(x[0], code_desc[x[0]]) for x in files_ordered]
+
+    items = list(map(convertToDict, files_ordered))
+
+    return jsonify(files=items)
+
+
+# search(["tree", "print"])
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
