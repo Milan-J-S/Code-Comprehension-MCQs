@@ -57,6 +57,26 @@
   </div>
 </nav>
 <!--/.Navbar -->
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark black lighten-2 mb-4">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="#">Navbar</a>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+    <!-- Search form -->
+    <form class="form-inline ml-auto">
+      <div class="md-form my-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="search" onkeyup="searchCont()">
+      </div>
+    </form>
+  </div>
+  <!-- Collapsible content -->
+
+</nav>
+<!--/.Navbar-->
 
 
 <div>
@@ -106,6 +126,26 @@
 
 
 
+            }
+
+            function searchCont(event)
+            {
+              inp = document.getElementById("search").value;
+
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/search");
+              xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+              xhr.onreadystatechange = function()
+              {
+                if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            results = JSON.parse(xhr.response).files;
+                            console.log(results);
+                            
+                        }
+
+              xhr.send("searchTerm="+inp)
             }
 
 
