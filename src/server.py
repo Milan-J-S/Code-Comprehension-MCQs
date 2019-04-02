@@ -123,15 +123,37 @@ def generateTags(code):
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
 
-        resss = generateComments(curfunc)
-        print("comment:   ")
-        print(resss)
-
-
         for item in KNN(curfunc):
             tags.add(item)
 
     return list(tags)
+
+def generateFunctionComment(code):
+    code = re.sub(r"#include.*<.+>", '', code)
+
+    # print(code)
+    f = open("cleaned.txt", 'w+')
+    f.write(str(code))
+    f.close()
+
+    os.system("pcpp cleaned.txt --line-directive > test.txt")
+    os.system("python parseToJson.py test.txt > test1.txt")
+
+    f = open("test1.txt", "r")
+    AST = json.loads(f.read())
+    # print(AST)
+
+    funComment = []
+
+    for item in AST['ext']:
+        curfunc = str(item)
+        curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
+        curfunc = curfunc.replace("\'", "")
+
+        resss = generateComments(curfunc)
+        funComment.append(resss)
+
+    return funComment
 
 
 @app.route("/upload")
@@ -318,6 +340,13 @@ def getTags():
     print("tags generated = ", tags)
 
     return jsonify(tags=tags)
+
+@app.route("/getFuncComments", methods=["POST"])
+def getFuncComments():
+    content = request.form['content']
+    funCom = generateFunctionComment(content)
+
+    return jsonify(funCom=funCom)
 
 
 @app.route("/userExists", methods=["POST"])
