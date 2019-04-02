@@ -98,7 +98,7 @@ def generateComments(code):
         if(np.argmax(item)-3>0):
             res.append(comments_reverse_map_p[np.argmax(item)-3])
 
-    return res
+    return ' '.join(res)
 
 
 def generateTags(code):
@@ -118,6 +118,8 @@ def generateTags(code):
 
     tags = set()
 
+    comments = []
+
     for item in AST['ext']:
         curfunc = str(item)
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
@@ -126,34 +128,9 @@ def generateTags(code):
         for item in KNN(curfunc):
             tags.add(item)
 
-    return list(tags)
+        comments.append((generateComments(curfunc)))
 
-def generateFunctionComment(code):
-    code = re.sub(r"#include.*<.+>", '', code)
-
-    # print(code)
-    f = open("cleaned.txt", 'w+')
-    f.write(str(code))
-    f.close()
-
-    os.system("pcpp cleaned.txt --line-directive > test.txt")
-    os.system("python parseToJson.py test.txt > test1.txt")
-
-    f = open("test1.txt", "r")
-    AST = json.loads(f.read())
-    # print(AST)
-
-    funComment = []
-
-    for item in AST['ext']:
-        curfunc = str(item)
-        curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
-        curfunc = curfunc.replace("\'", "")
-
-        resss = generateComments(curfunc)
-        funComment.append(resss)
-
-    return funComment
+    return (list(tags), comments)
 
 
 @app.route("/upload")
@@ -335,18 +312,14 @@ def putCode():
 @app.route("/getTags", methods=["POST"])
 def getTags():
     content = request.form['content']
-    tags = generateTags(content)
+    (tags,comments) = generateTags(content)
 
     print("tags generated = ", tags)
+    print("comments_generated = ", comments)
 
-    return jsonify(tags=tags)
+    return jsonify(tags=tags, comments = comments)
 
-@app.route("/getFuncComments", methods=["POST"])
-def getFuncComments():
-    content = request.form['content']
-    funCom = generateFunctionComment(content)
 
-    return jsonify(funCom=funCom)
 
 
 @app.route("/userExists", methods=["POST"])
