@@ -24,7 +24,13 @@ from nltk.corpus import stopwords
 
 stop = set(stopwords.words('english'))
 
+import legacy
+from legacy import AttentionDecoder
+
 import os
+
+import pickle
+from keras.models import load_model
 
 app = Flask(__name__)
 
@@ -54,6 +60,46 @@ def generateRandomFilename():
         filename += (chr(random.randrange(97, 123)))
     return filename
 
+automodel = load_model("encoder (1).h5")
+
+attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
+
+code_dict_p = pickle.load(open("code_dict (3).pickle", "rb+"))
+print(code_dict_p)
+
+
+comments_reverse_map_p = pickle.load(open("comments_reverse_map (3).pickle", "rb+"))
+
+def generateComments(code):
+    global automodel
+    global attnmodel
+    global code_dict_p
+    global comments_reverse_map_p
+    code_tensors = []
+
+    code = re.sub("\"[^\"]*\"", "0", code)
+    code = re.sub("name: [^,}]+", "name", code)
+    code = re.sub("value: [^,}]+", "value", code)
+
+    code_tensor = np.zeros(751)
+    item = word_tokenize(code)
+    for i in range(min(len(item), 751)):
+        code_tensor[i] = code_dict_p[item[i]] / 107
+    code_tensors.append(code_tensor)
+
+    result = automodel.predict(np.asarray(code_tensors))
+
+    comment = attnmodel.predict(result.reshape(1,20,1))
+
+    res = []
+
+    for item in comment[0]:
+        #print(np.argmax(item))
+        if(np.argmax(item)-3>0):
+            res.append(comments_reverse_map_p[np.argmax(item)-3])
+
+    return res
+
 
 def generateTags(code):
     code = re.sub(r"#include.*<.+>", '', code)
@@ -76,6 +122,12 @@ def generateTags(code):
         curfunc = str(item)
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
+
+        resss = generateComments(curfunc)
+        print("comment:   ")
+        print(resss)
+
+
         for item in KNN(curfunc):
             tags.add(item)
 
@@ -550,6 +602,10 @@ def search():
 
 
 # search(["tree", "print"])
+resullt = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
+)
+
+print(resullt)
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True

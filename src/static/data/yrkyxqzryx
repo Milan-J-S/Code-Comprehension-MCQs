@@ -1,0 +1,104 @@
+#include<stdio.h>
+#include<conio.h>
+#define SIZE 100
+
+int t[SIZE];
+
+void Arrayinit()
+{
+	int i;
+	for(i=0;i<SIZE;i++)
+	{
+		t[i]=0;
+	}
+}
+
+void BTSarrayins(int key)
+{
+	int i=0;
+	while(t[i]!=0 && i<SIZE)
+	{
+		if(key<t[i])
+			i=2*i+1;
+		else
+			i=2*i+2;
+	}
+	if(i<SIZE)
+	t[i]=key;
+	else
+	printf("\nArray idex out of bounds\n");
+}
+
+void inorder(int i)
+{
+	if(t[i]!=0)
+	{
+		inorder(2*i+1);
+		printf("%d\t",t[i]);
+		inorder(2*i+2);
+	}
+}
+
+void preorder(int i)
+{
+	if(t[i]!=0)
+	{
+		
+		printf("%d\t",t[i]);
+		preorder(2*i+1);
+		preorder(2*i+2);
+	}
+}
+
+void postorder(int i)
+{
+	if(t[i]!=0)
+	{
+		postorder(2*i+1);
+		postorder(2*i+2);
+		printf("%d\t",t[i]);
+	}
+}
+
+/*void delete(int key)
+{
+	int i=0;temp=t[i];
+	int parent=0;
+	while(temp!=0 && temp!=key)
+	{
+		parent=temp;
+		if(key<temp)
+			{
+				i=2*i+1;
+				temp=t[i];
+			}
+		else
+		{
+			i=2*i+2;
+			temp=t[i];
+		}
+	}
+	if(temp==0) printf("\nElement not found\n");
+	else if(t[2*i+1]==0)
+}*/
+
+int main()
+{
+	int opn=99,inp;
+	while(opn!=5)
+	{
+	printf("\nEnter 1. To insert 2. Preorder 3. Postorder 4. Inorder 5. Exit\n");
+	scanf("%d",&opn);
+	switch(opn)
+	{
+		case 1:printf("\nEnter Input\n");
+		scanf("%d",&inp);
+		BTSarrayins(inp);
+		break;
+		case 2:preorder(0);break;
+		case 3:postorder(0);break;
+		case 4:inorder(0);break;
+		
+	}
+}
+}
