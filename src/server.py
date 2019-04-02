@@ -77,6 +77,8 @@ def generateComments(code):
     global comments_reverse_map_p
     code_tensors = []
 
+
+
     code = re.sub("\"[^\"]*\"", "0", code)
     code = re.sub("name: [^,}]+", "name", code)
     code = re.sub("value: [^,}]+", "value", code)
@@ -121,6 +123,7 @@ def generateTags(code):
     comments = []
 
     for item in AST['ext']:
+
         curfunc = str(item)
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
@@ -128,7 +131,7 @@ def generateTags(code):
         for item in KNN(curfunc):
             tags.add(item)
 
-        comments.append((generateComments(curfunc)))
+        comments.append((generateComments(curfunc), item['coord'].split(":")[1]))
 
     return (list(tags), comments)
 
@@ -456,7 +459,7 @@ def KNN(code):
                 words[word] += 1000 / (distances[0][j] + 1)
 
     words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
-    tags = [x[0] for x in words_ordered[:10]]
+    tags = [x[0] for x in words_ordered[:5]]
     # print(tags, "\n\n\n")
     return tags
 
