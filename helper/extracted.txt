@@ -1,0 +1,324 @@
+{
+    "_nodetype": "FileAST",
+    "coord": null,
+    "ext": [
+        {
+            "_nodetype": "FuncDef",
+            "body": {
+                "_nodetype": "Compound",
+                "block_items": [
+                    {
+                        "_nodetype": "Decl",
+                        "bitsize": null,
+                        "coord": "preprocessed.txt:5:8",
+                        "funcspec": [],
+                        "init": null,
+                        "name": "res",
+                        "quals": [],
+                        "storage": [],
+                        "type": {
+                            "_nodetype": "TypeDecl",
+                            "coord": "preprocessed.txt:5:8",
+                            "declname": "res",
+                            "quals": [],
+                            "type": {
+                                "_nodetype": "IdentifierType",
+                                "coord": "preprocessed.txt:5:3",
+                                "names": [
+                                    "char"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "_nodetype": "Decl",
+                        "bitsize": null,
+                        "coord": "preprocessed.txt:7:16",
+                        "funcspec": [],
+                        "init": null,
+                        "name": "top",
+                        "quals": [],
+                        "storage": [],
+                        "type": {
+                            "_nodetype": "PtrDecl",
+                            "coord": "preprocessed.txt:7:16",
+                            "quals": [],
+                            "type": {
+                                "_nodetype": "TypeDecl",
+                                "coord": "preprocessed.txt:7:17",
+                                "declname": "top",
+                                "quals": [],
+                                "type": {
+                                    "_nodetype": "Struct",
+                                    "coord": "preprocessed.txt:7:10",
+                                    "decls": null,
+                                    "name": "sNode"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "_nodetype": "If",
+                        "cond": {
+                            "_nodetype": "BinaryOp",
+                            "coord": "preprocessed.txt:13:8",
+                            "left": {
+                                "_nodetype": "UnaryOp",
+                                "coord": "preprocessed.txt:13:8",
+                                "expr": {
+                                    "_nodetype": "ID",
+                                    "coord": "preprocessed.txt:13:8",
+                                    "name": "top_ref"
+                                },
+                                "op": "*"
+                            },
+                            "op": "==",
+                            "right": {
+                                "_nodetype": "ID",
+                                "coord": "preprocessed.txt:13:19",
+                                "name": "NULL"
+                            }
+                        },
+                        "coord": "preprocessed.txt:13:3",
+                        "iffalse": {
+                            "_nodetype": "Compound",
+                            "block_items": [
+                                {
+                                    "_nodetype": "Assignment",
+                                    "coord": "preprocessed.txt:29:6",
+                                    "lvalue": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:29:6",
+                                        "name": "top"
+                                    },
+                                    "op": "=",
+                                    "rvalue": {
+                                        "_nodetype": "UnaryOp",
+                                        "coord": "preprocessed.txt:29:13",
+                                        "expr": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:29:13",
+                                            "name": "top_ref"
+                                        },
+                                        "op": "*"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "Assignment",
+                                    "coord": "preprocessed.txt:31:6",
+                                    "lvalue": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:31:6",
+                                        "name": "res"
+                                    },
+                                    "op": "=",
+                                    "rvalue": {
+                                        "_nodetype": "StructRef",
+                                        "coord": "preprocessed.txt:31:12",
+                                        "field": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:31:17",
+                                            "name": "data"
+                                        },
+                                        "name": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:31:12",
+                                            "name": "top"
+                                        },
+                                        "type": "->"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "Assignment",
+                                    "coord": "preprocessed.txt:33:7",
+                                    "lvalue": {
+                                        "_nodetype": "UnaryOp",
+                                        "coord": "preprocessed.txt:33:7",
+                                        "expr": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:33:7",
+                                            "name": "top_ref"
+                                        },
+                                        "op": "*"
+                                    },
+                                    "op": "=",
+                                    "rvalue": {
+                                        "_nodetype": "StructRef",
+                                        "coord": "preprocessed.txt:33:17",
+                                        "field": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:33:22",
+                                            "name": "next"
+                                        },
+                                        "name": {
+                                            "_nodetype": "ID",
+                                            "coord": "preprocessed.txt:33:17",
+                                            "name": "top"
+                                        },
+                                        "type": "->"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "FuncCall",
+                                    "args": {
+                                        "_nodetype": "ExprList",
+                                        "coord": "preprocessed.txt:35:11",
+                                        "exprs": [
+                                            {
+                                                "_nodetype": "ID",
+                                                "coord": "preprocessed.txt:35:11",
+                                                "name": "top"
+                                            }
+                                        ]
+                                    },
+                                    "coord": "preprocessed.txt:35:6",
+                                    "name": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:35:6",
+                                        "name": "free"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "Return",
+                                    "coord": "preprocessed.txt:37:6",
+                                    "expr": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:37:13",
+                                        "name": "res"
+                                    }
+                                }
+                            ],
+                            "coord": "preprocessed.txt:27:1"
+                        },
+                        "iftrue": {
+                            "_nodetype": "Compound",
+                            "block_items": [
+                                {
+                                    "_nodetype": "FuncCall",
+                                    "args": {
+                                        "_nodetype": "ExprList",
+                                        "coord": "preprocessed.txt:17:13",
+                                        "exprs": [
+                                            {
+                                                "_nodetype": "Constant",
+                                                "coord": "preprocessed.txt:17:13",
+                                                "type": "string",
+                                                "value": "\"Stack overflow n\""
+                                            }
+                                        ]
+                                    },
+                                    "coord": "preprocessed.txt:17:6",
+                                    "name": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:17:6",
+                                        "name": "printf"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "FuncCall",
+                                    "args": null,
+                                    "coord": "preprocessed.txt:19:6",
+                                    "name": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:19:6",
+                                        "name": "getchar"
+                                    }
+                                },
+                                {
+                                    "_nodetype": "FuncCall",
+                                    "args": {
+                                        "_nodetype": "ExprList",
+                                        "coord": "preprocessed.txt:21:11",
+                                        "exprs": [
+                                            {
+                                                "_nodetype": "Constant",
+                                                "coord": "preprocessed.txt:21:11",
+                                                "type": "int",
+                                                "value": "0"
+                                            }
+                                        ]
+                                    },
+                                    "coord": "preprocessed.txt:21:6",
+                                    "name": {
+                                        "_nodetype": "ID",
+                                        "coord": "preprocessed.txt:21:6",
+                                        "name": "exit"
+                                    }
+                                }
+                            ],
+                            "coord": "preprocessed.txt:15:1"
+                        }
+                    }
+                ],
+                "coord": "preprocessed.txt:3:1"
+            },
+            "coord": "preprocessed.txt:1:5",
+            "decl": {
+                "_nodetype": "Decl",
+                "bitsize": null,
+                "coord": "preprocessed.txt:1:5",
+                "funcspec": [],
+                "init": null,
+                "name": "pop",
+                "quals": [],
+                "storage": [],
+                "type": {
+                    "_nodetype": "FuncDecl",
+                    "args": {
+                        "_nodetype": "ParamList",
+                        "coord": "preprocessed.txt:1:22",
+                        "params": [
+                            {
+                                "_nodetype": "Decl",
+                                "bitsize": null,
+                                "coord": "preprocessed.txt:1:22",
+                                "funcspec": [],
+                                "init": null,
+                                "name": "top_ref",
+                                "quals": [],
+                                "storage": [],
+                                "type": {
+                                    "_nodetype": "PtrDecl",
+                                    "coord": "preprocessed.txt:1:22",
+                                    "quals": [],
+                                    "type": {
+                                        "_nodetype": "PtrDecl",
+                                        "coord": "preprocessed.txt:1:21",
+                                        "quals": [],
+                                        "type": {
+                                            "_nodetype": "TypeDecl",
+                                            "coord": "preprocessed.txt:1:24",
+                                            "declname": "top_ref",
+                                            "quals": [],
+                                            "type": {
+                                                "_nodetype": "Struct",
+                                                "coord": "preprocessed.txt:1:16",
+                                                "decls": null,
+                                                "name": "sNode"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "coord": "preprocessed.txt:1:5",
+                    "type": {
+                        "_nodetype": "TypeDecl",
+                        "coord": "preprocessed.txt:1:5",
+                        "declname": "pop",
+                        "quals": [],
+                        "type": {
+                            "_nodetype": "IdentifierType",
+                            "coord": "preprocessed.txt:1:1",
+                            "names": [
+                                "int"
+                            ]
+                        }
+                    }
+                }
+            },
+            "param_decls": null
+        }
+    ]
+}

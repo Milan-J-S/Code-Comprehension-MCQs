@@ -1,0 +1,156 @@
+#define FUSE_USE_VERSION 30
+
+#include <fuse.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <time.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+
+
+int file_ct = 3;
+int dir_ct = 2;
+int cont_ct = 2;
+
+//inode structures
+char files[1024][100] = {"trail.txt\0","flowers.txt\0"}; //file names
+int fil_cont[1024][1000] = {{0},{1}};		//file mapping
+int fil_cont_ct[1024] = {1,1};	//file block count
+char content[1024][4096] = {"Hello World Trial.txt","Flowers Flowers Flowers"};				//file contents
+int dir_files[100][100];			//2D array to map files to directories
+int dir_fil_ct[100] = {1,1};						//counter for number of files in each directory
+char dirs[100][100] = {"","new"};					//directory names array
+int dir_dirs[100][63] = {{1}};					//2D array to handle nesting of directories
+int dir_dir_ct[100] = {1,0};						//array to give nesting level of directory
+
+//function to return file attributes for various file operations
+static int do_getattr( const char *path, struct stat *st )
+{
+	printf("getattr-> path = %s\n",path);
+	st->st_uid = getuid();				//user id
+	st->st_gid = getgid();				//group id
+	//st->st_atime = time( NULL );		//last access time
+	//st->st_mtime = time( NULL );		//last modified time
+
+	
+	char *filename = malloc(sizeof(char)*100);
+	char *dirname = malloc(sizeof(char)*100);
+	memcpy(filename,path,100);			//copy path of file to memory
+	
+	int i;
+	for(i=strlen(filename)-1;i>=0;i--)
+		if(filename[i] == 47)
+			break;
+	strncpy(dirname,filename,i 1);		//split to directory, filename
+	dirname[i 1] = '\0';
+	dirname  ;
+	filename = filename i 1;			
+
+	printf("getattr dirname = %s , filename = %s\n",dirname, filename);		//print attributes for status in terminal
+	char first[100] = "";
+	char second[100];
+	
+	//loop to check for nested files and directories
+	i=0;
+	int j=0,l;
+	while(strlen(dirname)>0)
+	{
+
+	
+		for(i=0;i<strlen(dirname);i  )
+		{
+			if(dirname[i] == 47 || dirname[i 1] == '\0')
+				{
+					strncpy(second,dirname,i);
+					second[i] = '\0';
+					
+					dirname  = i 1;
+
+					
+					for(l=0;l<dir_dir_ct[j];l  )
+						if(strcmp(second,dirs[dir_dirs[j][l]])==0)
+							break;
+					j = dir_dirs[j][l];
+					strcpy(first,second);
+					break;
+					
+				
+				}
+
+		}
+		
+	}
+	/*if(strcmp(filename,"")==0)
+	{
+
+			st->st_mode = S_IFDIR | 0755;			//set permissions and file type constant as directory
+			st->st_nlink = 2;						//symbolic link
+			return 0;
+	}*/
+		
+
+	//check if directory exists
+	for(int i=0;i<dir_ct;i  )
+	{
+		if(strcmp(filename ,dirs[dir_dirs[j][i]])==0)
+			{
+			
+			st->st_mode = S_IFDIR | 0755;			//set permissions and file type constant as directory
+			st->st_nlink = 2;						//symbolic link
+			return 0;
+			}
+	}
+
+	
+	//check if file exists
+	for(int i=0;i<dir_fil_ct[j];i  )
+	{
+		if(strcmp(filename,files[dir_files[j][i]])==0)
+			{
+			
+			st->st_mode = S_IFREG | 0777;			//set file permissions
+			st->st_nlink = 1;
+			st->st_size = 4096*fil_cont_ct[dir_files[j][i]];
+			st->st_blocks=fil_cont_ct[dir_files[j][i]];						//set file size
+			
+			return 0;
+			}
+	}
+	
+	
+	return -ENOENT;						//error flag returned if all cases fail, denotes no such file or directory
+}
+
+
+//function to read attributes of a directory
+static int do_readdir( const char *path, void *buffer, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi )
+{
+	printf( "ls --> Getting The List of Files of %s\n", path );
+	printf("************************************************************\n");
+		
+	char *filename = malloc(sizeof(char)*100);
+	char *dirname = malloc(sizeof(char)*100);
+	strcpy(filename,path);
+	int i;
+	for(i=strlen(filename)-1;i>=0;i--)				
+		if(filename[i] == 47)
+			break;
+	strcpy(dirname,filename);			//splits to directory,filename  -> filename here is empty
+	//dirname[i 1] = '\0';
+	dirname  ;
+	filename = filename i 1;
+
+	printf("dirname = %s , filename = %s\n",dirname, filename); 
+	
+	
+	filler( buffer, ".", NULL, 0 );			// Current Directory
+	filler( buffer, "..", NULL, 0 );		// Parent Directory
+
+	char first[100] = "";
+	char second[100];
+	
+	//loop to traverse nested directories
+	int j=0,l;
+	while(strlen(dirname)>0 

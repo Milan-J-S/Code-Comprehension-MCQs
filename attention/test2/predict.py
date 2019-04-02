@@ -370,99 +370,48 @@ import nltk
 nltk.download('punkt')
 
 import pickle
-
-
-
 from keras.models import load_model
 
 
+def generateComments(code):
+    automodel = load_model("encoder (1).h5")
 
-def convert_to_onehot(c):
-    tensor = np.zeros(128)
-    tensor[ord(c)] = 1
-    return tensor
+    attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
 
-
-code_tensors = []
-codes = []
-comments = []
-comments_reverse_map = []
-vocab = set()
-code_vocab = set()
-comments_dict = {}
-code_dict = {}
-
-file_path = 'code'
-for root, dirs, files in os.walk(file_path):
-    for fl in files:
-        code = open('code/' + fl).read()
-        code = re.sub("\"[^\"]*\"", "0", code)
-        code = re.sub("name: [^,}]+", "name", code)
-        code = re.sub("value: [^,}]+", "value", code)
-        print(code)
-
-        codes.append(word_tokenize(code))
-        for word in (word_tokenize(code)):
-            code_vocab.add(word)
+    code_dict_p = pickle.load(open("code_dict (3).pickle", "rb+"))
+    print(code_dict_p)
 
 
-i = 0
+    comments_reverse_map_p = pickle.load(open("comments_reverse_map (3).pickle", "rb+"))
 
-for item in code_vocab:
-    code_dict[item] = i
-    i = i + 1
+    code_tensors = []
 
-print(len(code_vocab))
+    code = re.sub("\"[^\"]*\"", "0", code)
+    code = re.sub("name: [^,}]+", "name", code)
+    code = re.sub("value: [^,}]+", "value", code)
 
-
-
-for item in codes:
     code_tensor = np.zeros(751)
+    item = word_tokenize(code)
     for i in range(min(len(item), 751)):
-        code_tensor[i] = code_dict[item[i]] / 107
+        code_tensor[i] = code_dict_p[item[i]] / 107
     code_tensors.append(code_tensor)
 
-# print(code_tensors[3])
+    result = automodel.predict(np.asarray(code_tensors))
 
-print(np.asarray(code_tensors).shape)
+    comment = attnmodel.predict(result.reshape(1,20,1))
 
-automodel = load_model("encoder (1).h5")
+    res = []
 
-attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
+    for item in comment[0]:
+        #print(np.argmax(item))
+        if(np.argmax(item)-3>0):
+            res.append(comments_reverse_map_p[np.argmax(item)-3])
 
-code_dict_p = pickle.load(open("code_dict (3).pickle", "rb+"))
-print(code_dict_p)
+    return res
 
+resullt = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
+)
 
-comments_reverse_map_p = pickle.load(open("comments_reverse_map (3).pickle", "rb+"))
-
-code_tensors = []
-
-code = '{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
-code = re.sub("\"[^\"]*\"", "0", code)
-code = re.sub("name: [^,}]+", "name", code)
-code = re.sub("value: [^,}]+", "value", code)
-
-code_tensor = np.zeros(751)
-item = word_tokenize(code)
-for i in range(min(len(item), 751)):
-    code_tensor[i] = code_dict_p[item[i]] / 107
-code_tensors.append(code_tensor)
-
-result = automodel.predict(np.asarray(code_tensors))
-
-print(result)
-print(result.shape)
-
-comment = attnmodel.predict(result.reshape(1,20,1))
-
-print(comment)
-print(comment.shape)
-
-for item in comment[0]:
-  #print(np.argmax(item))
-  if(np.argmax(item)-3>0):
-    print(comments_reverse_map_p[np.argmax(item)-3])
-
+print(resullt)
 
 

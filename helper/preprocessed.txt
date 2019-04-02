@@ -1,0 +1,41 @@
+int pop(struct sNode** top_ref)
+
+{
+
+  char res;
+
+  struct sNode *top;
+
+
+
+
+
+  if (*top_ref == NULL)
+
+  {
+
+     printf("Stack overflow n");
+
+     getchar();
+
+     exit(0);
+
+  }
+
+  else
+
+  {
+
+     top = *top_ref;
+
+     res = top->data;
+
+     *top_ref = top->next;
+
+     free(top);
+
+     return res;
+
+  }
+
+}
