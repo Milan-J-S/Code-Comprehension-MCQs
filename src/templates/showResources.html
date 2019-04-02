@@ -86,16 +86,18 @@
 <!--/.Navbar-->
 
 
-<div>
+<div id='resources'>
     {% for item in items %}
-    <form id="form">
-        <a href="/showCode?filename={{item.filename}}">{{item.title}}</a>
-        <br>
-        <br>
-    </form>
+    <a href="/showCode?filename={{item.filename}}">
+
+        <div class='card px-3 m-2 py-1'>
+            <h6>{{item.title}}</h6>
+
+        </div>
+    </a>
     {% endfor %}
 </div>
-<script>
+<script type="text/javascript">
             var operation = "signup";
 
             function loginRequest()
@@ -148,6 +150,29 @@
                 if(xhr.readyState == 4 && xhr.status == 200 )
                         {
                             results = JSON.parse(xhr.response).files;
+
+                            document.body.removeChild(document.getElementById('resources'));
+
+                            resources = document.createElement("div");
+                            resources.setAttribute("id","resources");
+
+                            for( var i=0; i<results.length ; i++)
+                            {
+                                a = document.createElement("a");
+                                a.setAttribute("href","/showCode?filename="+results[i].filename);
+                                card = document.createElement("div");
+                                card.setAttribute("class","card px-3 m-2 py-1");
+                                h6 = document.createElement("h6");
+                                h6.innerHTML = results[i].title;
+
+                                card.appendChild(h6);
+                                a.appendChild(card);
+                                resources.appendChild(a);
+                            }
+
+                            document.body.appendChild(resources);
+
+
                             console.log(results);
                             
                         }
@@ -190,6 +215,7 @@
 
 
             }
+
 
 
 </script>
