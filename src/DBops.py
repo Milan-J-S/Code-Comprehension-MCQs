@@ -15,7 +15,7 @@ print("Table created succesfully")
 
 con.execute("DROP TABLE Tags")
 con.execute("CREATE TABLE Tags( tag TEXT, PRIMARY KEY(tag) ) ")
-print("Table created succesf ully")
+print("Table created succesfully")
 
 con.execute("DROP TABLE CodeTags")
 con.execute("CREATE TABLE CodeTags( code TEXT references Codes(filename), tag TEXT references Tags(tag))")
