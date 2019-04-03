@@ -128,8 +128,8 @@ def generateTags(code):
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
 
-        for item in KNN(curfunc):
-            tags.add(item)
+        for tagset in KNN(curfunc):
+            tags.add(tagset)
 
         comments.append((generateComments(curfunc), item['coord'].split(":")[1]))
 
@@ -217,7 +217,7 @@ def showAll():
         code_desc[new_codes_dict[row[0]]] = row[1]
     rows = recommendCodes(username)
 
-    rows = [(x[0], code_desc[x[0]]) for x in rows]
+    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]]) for x in rows]
 
     items = map(convertToDict, rows)
 
@@ -299,8 +299,14 @@ def putCode():
     global new_codes_dict
     global new_codes_reverse_map
 
-    for i in range(len(new_users_dict)):
-        user_codes_matrix[i].extend(0)
+    print(user_codes_matrix.shape)
+
+    user_codes_matrix = np.insert(user_codes_matrix, len(new_users_dict), 0, axis=1)
+
+    print(user_codes_matrix.shape)
+
+    # for i in range(len(new_users_dict)):
+    #     np.concatenate(np.array(user_codes_matrix)[i],np.zeros(1))
 
     new_codes_dict[filename] = len(new_codes_dict)
     new_codes_reverse_map.append(filename)
