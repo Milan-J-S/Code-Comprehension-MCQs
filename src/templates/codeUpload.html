@@ -270,6 +270,9 @@
                 // tags_send.append(extra_tags);
                 // alert(tags_send);
 
+                comments_to_use = Array.from(document.getElementsByClassName("custom-control-input"));
+                alert(comments_to_use);s
+
                 var xhr = new XMLHttpRequest();
 
                 description = document.getElementById("description").value ;
@@ -339,7 +342,13 @@
                     return;
                 }
                 tags=JSON.parse(response).tags;
+                comments = JSON.parse(response).comments;
+                //alert(comments);
                 //alert(tags);
+                
+                divC = document.createElement("div");
+                divC.setAttribute("id","main_comment_holder");
+                
 
                 div = document.createElement("div");
                 div.setAttribute("id","tag_holder");
@@ -362,9 +371,33 @@
                     div.append(button);
 
                 }
+
+                for(var i=0;i<comments.length;i++)
+                {
+                    div2 = document.createElement("div");
+                    div2.setAttribute("id","comment_holder"+i);
+                    addC = document.createElement("div");
+                    addC.setAttribute("id","addC");
+                    addC.setAttribute("class","custom-control custom-checkbox");
+                    commD = document.createElement("input");
+                    commD.setAttribute("type","checkbox");
+                    commD.setAttribute("class","custom-control-input");
+                    var idC = "option"+i;
+                    commD.setAttribute("id",idC);
+                    labC = document.createElement("label");
+                    labC.setAttribute("class","custom-control-label");
+                    labC.setAttribute("for",idC);
+                    labC.innerHTML = comments[i];
+                    addC.append(commD);
+                    addC.append(labC);
+                    div2.append(addC);
+                    divC.append(div2);
+
+                }
+
                 submit_button = document.getElementById("submitbtn");
-                
                 document.body.insertBefore(div,submit_button);
+                document.body.insertBefore(divC,submit_button);
             }
 
             function pullTags()
