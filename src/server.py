@@ -8,36 +8,23 @@ import numpy as np
 import re
 
 user_codes_matrix = []
-
 from sklearn.neighbors import NearestNeighbors
-
 from os import listdir
 import json
-
 from nltk.tokenize import word_tokenize
-
 import nltk
-
 nltk.download('corpus')
-
 from nltk.corpus import stopwords
-
 stop = set(stopwords.words('english'))
-
 import legacy
 from legacy import AttentionDecoder
-
 import os
-
+import distance
 import pickle
 from keras.models import load_model
-
 app = Flask(__name__)
 
-
 # print("connection recieved")
-
-
 # CORS(app)
 
 def convertToDict(x):
@@ -49,6 +36,8 @@ def convertToDict(x):
 
 new_users_dict = {}
 new_codes_dict = {}
+
+difficulty_matrix = []
 
 new_users_reverse_map = []
 new_codes_reverse_map = []
@@ -118,7 +107,7 @@ def generateTags(code):
     AST = json.loads(f.read())
     # print(AST)
 
-    tags = set()
+    tags = dict()
 
     comments = []
 
@@ -128,11 +117,15 @@ def generateTags(code):
         curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
         curfunc = curfunc.replace("\'", "")
 
-        for tagset in KNN(curfunc):
-            tags.add(tagset)
+        for tag in KNN(curfunc):
+            if(tag not in tags):
+                tags[tag] = 0
+            tags[tag]+=1
+
 
         comments.append((generateComments(curfunc), item['coord'].split(":")[1]))
 
+    tags = map(lambda kv: kv[0], sorted(tags.items(), key=lambda kv: kv[1], reverse=True))
     return (list(tags), comments)
 
 
@@ -158,12 +151,18 @@ def showCode():
     cur.execute("INSERT into CodeViews values (?,?,?) ", (filename, username, 0))
     con.commit()
 
+    global difficulty_matrix
+
+    print(difficulty_matrix[new_users_dict[username]].shape)
+
+    indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    print(indices[0][1:10])
+
     # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
 
     # user_codes_matrix[use]
 
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username
-                           )
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username)
 
 
 def recommendCodes(user):
@@ -368,8 +367,12 @@ def login():
 
         resp = jsonify(auth=True)
 
+    global user_codes_matrix
+    global new_users_dict
+
+
     resp.set_cookie("user", email.split("@")[0])
-    np.append(user_codes_matrix, np.zeros(len(new_codes_dict)))
+    user_codes_matrix = np.append(user_codes_matrix, np.zeros(len(new_codes_dict)))
     new_users_dict[email.split("@")[0]] = len(new_users_dict)
     return (resp)
 
@@ -419,11 +422,21 @@ def prepareUserMatrix():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT code,user FROM CodeViews")
+    cur.execute("SELECT code,user, difficulty FROM CodeViews")
     rows = cur.fetchall()
+
+    global difficulty_matrix
+    global difficulty_nbrs
+
+    difficulty_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
 
     for row in rows:
         user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] += 1
+        difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
+
+
+    difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
+
 
     print(user_codes_matrix)
 
@@ -462,7 +475,7 @@ def KNN(code):
                 if (word not in words):
                     words[word] = 0
                 # if(distances[i][j] != 0):
-                words[word] += 1000 / (distances[0][j] + 1)
+                words[word] += 1000 / ((distances[0][j] + 1)*(distances[0][j] + 1))
 
     words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
     tags = [x[0] for x in words_ordered[:5]]
@@ -474,6 +487,7 @@ code_tensors = []
 comments = []
 code_dict = dict()
 nbrs = None
+difficulty_nbrs = None
 indices = []
 
 codes_reverse_map = []
@@ -548,6 +562,16 @@ def clusterCodes():
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
 
+
+    # levenshtein_distances_matrix = np.zeros((len(codes), len(codes)))
+    #
+    # for i in range(len(code_tensors)):
+    #     for j in range(i+1, len(code_tensors)):
+    #         levenshtein_distances_matrix[i][j] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
+    #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
+
+
+
     nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
 
     distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
@@ -612,12 +636,13 @@ def search():
     return jsonify(files=items)
 
 
-# search(["tree", "print"])
-resullt = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
+# you will at some point think this is useless and delete. Bad idea
+result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
 )
 
-print(resullt)
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(host='0.0.0.0', threaded=True)
+
+
