@@ -87,6 +87,13 @@
             <div class="force-overflow row">
                 <div class="col-sm-8 px-0">
                         <textarea  id="codeTextArea">{{data}}</textarea>
+                    {% for option_list in options %}
+                    <div id="MCQ">
+                        {% for option in option_list %}
+                            <button class='btn btn-outline-primary waves-effect'>{{option}}</button>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
                 </div>
                 <div class="col-sm-4 float-right sticky px-0 " >
                     <div class="card card-comments mb-3 wow fadeIn w-100 ">
@@ -128,6 +135,8 @@
                 </div>
             </div>
         </div>
+
+
 
 
 
