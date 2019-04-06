@@ -270,22 +270,15 @@
                 // tags_send.append(extra_tags);
                 // alert(tags_send);
 
-                comments_to_use = Array.from(document.getElementsByClassName("custom-control-input"));
-                alert(comments_to_use);
+                comments_to_use = Array.from(document.getElementsByClassName("form-control form-control-sm"));
                 var iter;
                 var comment_send = [];
                 for(iter=0;iter<comments_to_use.length;iter++)
                 {
-                    if(comments_to_use[iter].checked==true)
-                    {
-                        com = document.getElementById("labeloption"+iter);
-                        comment_send.append(com.value);
-                    }
+                        com = comments_to_use[iter];
+                        comment_send.push(com.value);
                 }
-                // if(comment_send.length==0)
-                // {
-                //     comment_send.append("No Comments");
-                // }
+                alert(comment_send);
 
                 var xhr = new XMLHttpRequest();
 
@@ -389,26 +382,37 @@
 
                 for(var i=0;i<comments.length;i++)
                 {
+                    // div2 = document.createElement("div");
+                    // div2.setAttribute("id","comment_holder"+i);
+                    // addC = document.createElement("div");
+                    // addC.setAttribute("id","addC");
+                    // addC.setAttribute("class","custom-control custom-checkbox");
+                    // commD = document.createElement("input");
+                    // commD.setAttribute("type","checkbox");
+                    // commD.setAttribute("class","custom-control-input");
+                    // var idC = "option"+i;
+                    // commD.setAttribute("id",idC);
+                    // labC = document.createElement("label");
+                    // labC.setAttribute("class","custom-control-label");
+                    // labC.setAttribute("for",idC);
+                    // labC.setAttribute("id","label"+idC);
+                    // labC.innerHTML = comments[i];
+                    // addC.append(commD);
+                    // addC.append(labC);
+                    // div2.append(addC);
+                    // divC.append(div2);
                     div2 = document.createElement("div");
                     div2.setAttribute("id","comment_holder"+i);
                     addC = document.createElement("div");
-                    addC.setAttribute("id","addC");
-                    addC.setAttribute("class","custom-control custom-checkbox");
+                    addC.setAttribute("id","addC"+i);
+                    addC.setAttribute("class","md-form form-sm");
                     commD = document.createElement("input");
-                    commD.setAttribute("type","checkbox");
-                    commD.setAttribute("class","custom-control-input");
-                    var idC = "option"+i;
-                    commD.setAttribute("id",idC);
-                    labC = document.createElement("label");
-                    labC.setAttribute("class","custom-control-label");
-                    labC.setAttribute("for",idC);
-                    labC.setAttribute("id","label"+idC);
-                    labC.innerHTML = comments[i];
+                    commD.setAttribute("class","form-control form-control-sm");
+                    commD.setAttribute("id","commD"+i);
+                    commD.value = comments[i];
                     addC.append(commD);
-                    addC.append(labC);
                     div2.append(addC);
                     divC.append(div2);
-
                 }
 
                 submit_button = document.getElementById("submitbtn");
