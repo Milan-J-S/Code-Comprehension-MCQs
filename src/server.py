@@ -21,6 +21,8 @@ from legacy import AttentionDecoder
 import os
 import distance
 import pickle
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+
 from keras.models import load_model
 app = Flask(__name__)
 
@@ -41,6 +43,8 @@ difficulty_matrix = []
 
 new_users_reverse_map = []
 new_codes_reverse_map = []
+
+doc2vec_model = None
 
 
 def generateRandomFilename():
@@ -155,14 +159,38 @@ def showCode():
 
     print(difficulty_matrix[new_users_dict[username]].shape)
 
-    indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    # indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
     print(indices[0][1:10])
 
     # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
 
     # user_codes_matrix[use]
 
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username)
+    correct = random.randrange(0,len(comments))
+    similar_docs = doc2vec_model.docvecs.most_similar(str(correct), topn=len(doc2vec_model.docvecs))
+
+    options_per_func =[]
+
+    options = []
+    print(comments[correct])
+    options.append(comments[correct])
+    i = 1
+    while(comments[int(similar_docs[i][0])] == comments[correct]):
+        i+=1
+    print(comments[int(similar_docs[i][0])])
+    options.append(comments[int(similar_docs[i][0])])
+    print(comments[int(similar_docs[4][0])])
+    options.append(comments[int(similar_docs[4][0])])
+    print(comments[int(similar_docs[50][0])])
+    options.append(comments[int(similar_docs[50][0])])
+
+    options_per_func.append(options)
+
+
+
+
+
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func)
 
 
 def recommendCodes(user):
@@ -264,6 +292,8 @@ def putCode():
 
     tags = list(payload.get('tags', ''))
 
+    print(tags)
+
     user = request.cookies.get("user")
 
     # print(request.cookies)
@@ -300,7 +330,9 @@ def putCode():
 
     print(user_codes_matrix.shape)
 
-    user_codes_matrix = np.insert(user_codes_matrix, len(new_users_dict), 0, axis=1)
+    print(len(new_users_dict))
+
+    user_codes_matrix = np.insert(user_codes_matrix, len(new_codes_dict), 0, axis=1)
 
     print(user_codes_matrix.shape)
 
@@ -435,7 +467,7 @@ def prepareUserMatrix():
         difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
 
 
-    difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
+    # difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
 
 
     print(user_codes_matrix)
@@ -562,6 +594,7 @@ def clusterCodes():
             code_tensor[i] = code_dict[code[i]]
         code_tensors.append(code_tensor)
 
+    tagged_data = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[str(i)]) for i, _d in enumerate(comments)]
 
     # levenshtein_distances_matrix = np.zeros((len(codes), len(codes)))
     #
@@ -571,18 +604,39 @@ def clusterCodes():
     #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
 
 
+    max_epochs = 100
+    vec_size = 20
+    alpha = 0.025
+
+    global doc2vec_model
+
+    doc2vec_model = Doc2Vec(size=vec_size,
+                    alpha=alpha,
+                    min_alpha=0.00025,
+                    min_count=1,
+                    dm=1)
+
+    doc2vec_model.build_vocab(tagged_data)
+
+    for epoch in range(max_epochs):
+        doc2vec_model.train(tagged_data,
+                    total_examples=doc2vec_model.corpus_count,
+                    epochs=doc2vec_model.iter)
+        # decrease the learning rate
+        doc2vec_model.alpha -= 0.0002
+        # fix the learning rate, no decay
+        doc2vec_model.min_alpha = doc2vec_model.alpha
+
+    doc2vec_model.save("d2v.model")
+    print("Model Saved")
 
     nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
-
     distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
 
     print(indices)
     print(nbrs)
-
     # recommendForUser('milan.j.srinivas')
-
     # print(code_ten sors)
-
 
 clusterCodes()
 

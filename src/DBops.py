@@ -25,4 +25,12 @@ con.execute("DROP TABLE CodeViews")
 con.execute("CREATE TABLE CodeViews( code TEXT references Codes(filename), user TEXT references Login(email), difficulty NUMERIC)")
 print("Table created succesfully")
 
+con.execute("DROP TABLE FunctionComments")
+con.execute("CREATE TABLE FunctionComments( code TEXT references Codes(filename), comment TEXT references Comments(comment), line NUMERIC)")
+print("Table created succesfully")
+
+con.execute("DROP TABLE Comments")
+con.execute("CREATE TABLE Comments( comment TEXT references Codes(filename))")
+print("Table created succesfully")
+
 con.close()
