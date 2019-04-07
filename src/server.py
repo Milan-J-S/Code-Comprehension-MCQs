@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, session, g, redirect, url_for, abort,
 import sqlite3
 import numpy as np
 import re
+from random import shuffle
 
 user_codes_matrix = []
 from sklearn.neighbors import NearestNeighbors
@@ -173,18 +174,20 @@ def showCode():
 
     options = []
     print(comments[correct])
-    options.append(comments[correct])
+    options.append((comments[correct],1))
     i = 1
     while(comments[int(similar_docs[i][0])] == comments[correct]):
         i+=1
     print(comments[int(similar_docs[i][0])])
-    options.append(comments[int(similar_docs[i][0])])
+    options.append((comments[int(similar_docs[i][0])],0))
     print(comments[int(similar_docs[4][0])])
-    options.append(comments[int(similar_docs[4][0])])
+    options.append((comments[int(similar_docs[4][0])],0))
     print(comments[int(similar_docs[50][0])])
-    options.append(comments[int(similar_docs[50][0])])
+    options.append((comments[int(similar_docs[50][0])],0))
+    shuffle(options)
 
     options_per_func.append(options)
+    
 
 
 
