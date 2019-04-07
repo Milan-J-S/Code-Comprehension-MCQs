@@ -153,7 +153,12 @@ def showCode():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT into CodeViews values (?,?,?) ", (filename, username, 0))
+    cur.execute("SELECT Views FROM CodeViews WHERE user=(?) AND code=(?)", (username, filename))
+    rows = cur.fetchall()
+    if(len(rows) > 0):
+        cur.execute("UPDATE CodeViews SET views=(?) WHERE user=(?) AND code=(?)", (rows[0][0], username, filename))
+    else:
+        cur.execute("INSERT into CodeViews values (?,?,?,?) ", (filename, username, 0 ,1))
     con.commit()
 
     global difficulty_matrix
@@ -164,34 +169,38 @@ def showCode():
     print(indices[0][1:10])
 
     # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
-
     # user_codes_matrix[use]
 
-    correct = random.randrange(0,len(comments))
-    similar_docs = doc2vec_model.docvecs.most_similar(str(correct), topn=len(doc2vec_model.docvecs))
+
 
     options_per_func =[]
 
-    options = []
-    print(comments[correct])
-    options.append((comments[correct],1))
-    i = 1
-    while(comments[int(similar_docs[i][0])] == comments[correct]):
-        i+=1
-    print(comments[int(similar_docs[i][0])])
-    options.append((comments[int(similar_docs[i][0])],0))
-    print(comments[int(similar_docs[4][0])])
-    options.append((comments[int(similar_docs[4][0])],0))
-    print(comments[int(similar_docs[50][0])])
-    options.append((comments[int(similar_docs[50][0])],0))
-    shuffle(options)
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT comment FROM CodeComments WHERE code = (?)",(filename,))
+    comments_options = cur.fetchall()
 
-    options_per_func.append(options)
-    
+    for row in comments_options:
 
+        v1 = doc2vec_model.infer_vector(row[0], steps=1000)
 
+        similar_docs = doc2vec_model.docvecs.most_similar([v1], topn=len(doc2vec_model.docvecs))
 
+        options = []
+        print(row[0])
+        options.append((row[0],1))
+        i = 1
+        while(comments[int(similar_docs[i][0])] == row[0]):
+            i+=1
+        print(comments[int(similar_docs[i][0])])
+        options.append((comments[int(similar_docs[i][0])],0))
+        print(comments[int(similar_docs[4][0])])
+        options.append((comments[int(similar_docs[4][0])],0))
+        print(comments[int(similar_docs[50][0])])
+        options.append((comments[int(similar_docs[50][0])],0))
+        shuffle(options)
 
+        options_per_func.append(options)
 
     return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func)
 
@@ -294,8 +303,10 @@ def putCode():
     description = payload.get('description', '')
 
     tags = list(payload.get('tags', ''))
+    comments = list(payload.get('comments', ''))
 
     print(tags)
+    print(comments)
 
     user = request.cookies.get("user")
 
@@ -319,9 +330,17 @@ def putCode():
     for tag in tags:
         cur = con.cursor()
         exists = cur.execute("SELECT * from tags where tag = (?)", (tag,)).fetchall()
-        if (len(exists) == 0):
+        if len(exists) == 0:
             cur.execute("INSERT INTO Tags VALUES (?)", (tag,))
         cur.execute("INSERT INTO CodeTags VALUES (?,?)", (filename, tag))
+    con.commit()
+
+    for comment in comments:
+        cur = con.cursor()
+        exists = cur.execute("SELECT * from comments where comment = (?)", (comment,)).fetchall()
+        if len(exists) == 0:
+            cur.execute("INSERT INTO Comments VALUES (?)", (comment,))
+        cur.execute("INSERT INTO CodeComments VALUES (?,?,?)", (filename, comment, 0))
     con.commit()
     con.close()
 
@@ -684,16 +703,28 @@ def search():
     # rows = recommendCodes(username)
 
     print(code_desc)
-
-
     files_ordered = [(x[0], code_desc[x[0]]) for x in files_ordered]
 
     items = list(map(convertToDict, files_ordered))
 
     return jsonify(files=items)
 
+@app.route("/difficulty", methods = ["GET","POST"])
+def setDifficulty():
+    user = request.cookies.get('user','').split("@")[0]
+    filename = request.form.get('filename')
+    difficulty = request.form.get('difficulty')
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("UPDATE CodeViews SET difficulty=(?) WHERE user=(?) AND code=(?)", (difficulty, user, filename))
+    con.commit()
+    con.close()
 
-# you will at some point think this is useless and delete. Bad idea
+    return jsonify(success="success")
+
+
+
+#you will at some point think this is useless and delete. Bad idea
 result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
 )
 

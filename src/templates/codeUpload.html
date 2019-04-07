@@ -270,15 +270,8 @@
                 // tags_send.append(extra_tags);
                 // alert(tags_send);
 
-                comments_to_use = Array.from(document.getElementsByClassName("form-control"));
-                var iter;
-                var comment_send = [];
-                for(iter=0;iter<comments_to_use.length;iter++)
-                {
-                        com = comments_to_use[iter];
-                        comment_send.push(com.value);
-                }
-                alert(comment_send);
+                comments_to_use = Array.from(document.getElementsByClassName("comment"));
+                comments = comments_to_use.map( (x) => x.value )
 
                 var xhr = new XMLHttpRequest();
 
@@ -301,7 +294,7 @@
                     description : description,
                     lang : lang_op.value,
                     tags : tags_send,
-                    comment_send : comment_send
+                    comments : comments
                 }
                 console.log(data_send)
                 xhr.send(JSON.stringify(data_send));
@@ -407,7 +400,7 @@
                     addC.setAttribute("id","addC"+i);
                     //addC.setAttribute("class","md-form");
                     commD = document.createElement("input");
-                    commD.setAttribute("class","form-control");
+                    commD.setAttribute("class","form-control comment");
                     commD.setAttribute("id","commD"+i);
                     comment = comments[i];
                     commD.value = comment[0];
