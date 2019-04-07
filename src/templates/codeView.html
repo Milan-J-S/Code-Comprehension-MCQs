@@ -89,17 +89,11 @@
                         <textarea  id="codeTextArea">{{data}}</textarea>
                     {% for option_list in options %}
                     <div id="MCQ">
-                        <h4 class="h4-responsive">What does this code do?[Choose One Answer]</h4>
+                        <h4 class="h4-responsive">What does this code do?</h4>
                         {% for option in option_list %}
-                        {%if option[1] == 0%}
-                            <button class='btn btn-outline-primary waves-effect' onclick="changeState()">{{option[0]}}</button>
-                        {% endif %}
-                        {%if option[1] == 1%}
-                            <button class='btn btn-outline-primary waves-effect' onclick="changeState()" id="answer1">{{option[0]}}</button>
-                        {%endif%}
+                            <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
                         {% endfor %}
                         <br>
-                        <button type="button" class="btn btn-elegant" onclick="sendAnswer()">SUBMIT</button>
                         <br>
                         <h3 class="h3-responsive" id="showRes"></h3>
                     </div>
@@ -141,6 +135,11 @@
                                     {% endfor %}
                                 </div> -->
                         </div>
+                    </div>
+                    <h6 for="customRange2">How difficult do you rate this code?</h6>
+                    <div class = "row">
+                        <input type="range" id = 'difficulty' class="custom-range px-5" min="1" max="5" id="customRange2">
+                        <button class="btn btn-primary pull-right" onclick = "rate(event)">RATE</button>
                     </div>
                 </div>
             </div>
@@ -195,12 +194,24 @@
                 }
             }
 
-            function changeState()
+            function changeState(event)
             {
-                if(event.target.getAttribute("class") === "btn btn-outline-primary waves-effect")
-                    event.target.setAttribute("class","btn btn-outline-danger waves-effect");
+                parent = event.target.parentElement;
+
+                siblings = parent.childNodes
+                for(var i=0;i<siblings.length;i++)
+                    siblings[i].onclick = function() {
+                                             return false;
+                                           }
+
+                if(event.target.id == 1)
+                {
+                    event.target.setAttribute( "class", "btn btn-success waves-effect");
+                }
                 else
-                    event.target.setAttribute("class","btn btn-outline-primary waves-effect");
+                {
+                    event.target.setAttribute( "class", "btn btn-outline-danger waves-effect");
+                }
             }
 
             function postIt()
@@ -321,6 +332,23 @@
                         }
                 }
                 postvars = "email="+email;
+
+                xhr.send(postvars);
+
+
+            }
+
+            function rate(event)
+            {
+                xhr = new XMLHttpRequest();
+                xhr.open("POST","/difficulty");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                    if(xhr.readyState==4 && xhr.status == 200)
+                        event.target.innerHTML = "Thanks! Click to change the rating";
+                }
+                postvars = "difficulty="+document.getElementById('difficulty').value,"&filename={{filename}}";
 
                 xhr.send(postvars);
 
