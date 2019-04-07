@@ -720,6 +720,8 @@ def setDifficulty():
     con.commit()
     con.close()
 
+    return jsonify(success="success")
+
 
 
 #you will at some point think this is useless and delete. Bad idea
