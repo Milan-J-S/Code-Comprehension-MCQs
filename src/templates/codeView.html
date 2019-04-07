@@ -89,9 +89,19 @@
                         <textarea  id="codeTextArea">{{data}}</textarea>
                     {% for option_list in options %}
                     <div id="MCQ">
+                        <h4 class="h4-responsive">What does this code do?[Choose One Answer]</h4>
                         {% for option in option_list %}
-                            <button class='btn btn-outline-primary waves-effect'>{{option}}</button>
+                        {%if option[1] == 0%}
+                            <button class='btn btn-outline-primary waves-effect' onclick="changeState()">{{option[0]}}</button>
+                        {% endif %}
+                        {%if option[1] == 1%}
+                            <button class='btn btn-outline-primary waves-effect' onclick="changeState()" id="answer1">{{option[0]}}</button>
+                        {%endif%}
                         {% endfor %}
+                        <br>
+                        <button type="button" class="btn btn-elegant" onclick="sendAnswer()">SUBMIT</button>
+                        <br>
+                        <h3 class="h3-responsive" id="showRes"></h3>
                     </div>
                     {% endfor %}
                 </div>
@@ -155,6 +165,43 @@
             });
 
             myCodeMirror.setSize("100%","100%")
+
+            function sendAnswer(event)
+            {
+                document.getElementById("showRes").innerHTML = "";
+                ans = document.getElementsByClassName("btn btn-outline-danger waves-effect");
+                if(ans.length==0)
+                {
+                    alert("Please pick an answer!");
+                    return;
+                }
+                else if(ans.length>1)
+                {
+                    alert("Please pick ONE answer");
+                    return;
+                }
+                else
+                {
+                    if(ans[0].id=='answer1')
+                    {
+                        document.getElementById("showRes").innerHTML = "You are CORRECT!";
+                        return;
+                    }
+                    else
+                    {
+                        document.getElementById("showRes").innerHTML = "Oops! Wrong Answer. Try again!";
+                        return;
+                    }
+                }
+            }
+
+            function changeState()
+            {
+                if(event.target.getAttribute("class") === "btn btn-outline-primary waves-effect")
+                    event.target.setAttribute("class","btn btn-outline-danger waves-effect");
+                else
+                    event.target.setAttribute("class","btn btn-outline-primary waves-effect");
+            }
 
             function postIt()
             {
