@@ -154,22 +154,36 @@ def showCode():
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT Views FROM CodeViews WHERE user=(?) AND code=(?)", (username, filename))
-    rows = cur.fetchall()
-    if(len(rows) > 0):
-        cur.execute("UPDATE CodeViews SET views=(?) WHERE user=(?) AND code=(?)", (rows[0][0], username, filename))
+    codeviews = cur.fetchall()
+    if (len(codeviews) > 0):
+        cur.execute("UPDATE CodeViews SET views=(?) WHERE user=(?) AND code=(?)",
+                    (codeviews[0][0] + 1, username, filename))
     else:
-        cur.execute("INSERT into CodeViews values (?,?,?,?) ", (filename, username, 0 ,1))
+        cur.execute("INSERT into CodeViews values (?,?,?,?) ", (filename, username, 0, 1))
     con.commit()
 
     global difficulty_matrix
 
     print(difficulty_matrix[new_users_dict[username]].shape)
 
-    # indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
-    # print(indices[0][1:10])
-    #
-    # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
-    # user_codes_matrix[use]
+    distances, indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    print(indices)
+    print(indices[0][1:10])
+
+    req = new_codes_dict[filename]
+
+    adaptive_score = 0
+    count = 0
+
+    for index in indices[0][1:10]:
+        if (difficulty_matrix[index][req] > 0):
+            count += 1
+        adaptive_score += difficulty_matrix[index][req]
+
+    if (count > 0):
+        adaptive_score /= count
+
+    print(adaptive_score)
 
     options_per_func =[]
 
@@ -481,7 +495,7 @@ def prepareUserMatrix():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT code,user, difficulty FROM CodeViews")
+    cur.execute("SELECT code,user, difficulty, views FROM CodeViews")
     rows = cur.fetchall()
 
     global difficulty_matrix
@@ -490,11 +504,11 @@ def prepareUserMatrix():
     difficulty_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
 
     for row in rows:
-        user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] += 1
+        user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[3]
         difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
 
 
-    # difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
+    difficulty_nbrs = NearestNeighbors(n_neighbors=1, algorithm='ball_tree').fit(difficulty_matrix)
 
 
     print(user_codes_matrix)
