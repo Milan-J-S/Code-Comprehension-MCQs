@@ -166,8 +166,8 @@ def showCode():
     print(difficulty_matrix[new_users_dict[username]].shape)
 
     # indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
-    print(indices[0][1:10])
-
+    # print(indices[0][1:10])
+    #
     # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
     # user_codes_matrix[use]
 
@@ -384,7 +384,7 @@ def getTags():
     print("tags generated = ", tags)
     print("comments_generated = ", comments)
 
-    return jsonify(tags=tags, comments = comments)
+    return jsonify(tags = tags, comments = comments)
 
 
 
@@ -511,22 +511,31 @@ def KNN(code):
     code = re.sub("value: [^,}]+", "value", code)
     code = word_tokenize(code)
 
-    code_tensor = np.zeros(750)
-    for i in range(min(750, len(code))):
-        if code[i] in code_dict:
-            code_tensor[i] = code_dict[code[i]]
+    # code_tensor = np.zeros(750)
+    # for i in range(min(750, len(code))):
+    #     if code[i] in code_dict:
+    #         code_tensor[i] = code_dict[code[i]]
+    #
+    code_vector = code2vec_model.infer_vector(code, steps=1000)
 
-    distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
+    similar_docs = code2vec_model.docvecs.most_similar([code_vector], topn=10)
 
-    print("distances and indices")
-    print(distances)
-    print(indices[0][0])
+    print(similar_docs)
+
+    indices = list(map(lambda x: int(x[0]), similar_docs))
+    distances = list(map(lambda x: 1/x[1], similar_docs))
+
+    # distances, indices = nbrs.kneighbors(np.asarray([code_tensor]))
+
+    # print("distances and indices")
+    # print(distances)
+    # print(indices[0][0])
 
     words = dict()
-    print(comments[indices[0][0]], "\n\n")
-    for j in range(1, len(indices[0])):
+    print(comments[indices[0]], "\n\n")
+    for j in range(1, len(indices)):
 
-        index = indices[0][j]
+        index = indices[j]
         print(comments[index])
 
         for word in comments[index].split():
@@ -534,7 +543,7 @@ def KNN(code):
                 if (word not in words):
                     words[word] = 0
                 # if(distances[i][j] != 0):
-                words[word] += 1000 / ((distances[0][j] + 1)*(distances[0][j] + 1))
+                words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
 
     words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
     tags = [x[0] for x in words_ordered[:5]]
@@ -596,7 +605,7 @@ def clusterCodes():
             code = re.sub("\"[^\"]*\"", "0", code)
             code = re.sub("name: [^,}]+", "name", code)
             code = re.sub("value: [^,}]+", "value", code)
-            codes.append(word_tokenize(code))
+            codes.append(code)
             codes_reverse_map.append(f)
             codes_dict[f] = i
             i += 1
@@ -615,13 +624,16 @@ def clusterCodes():
         i += 1
 
     j = 0
-    for code in codes:
-        code_tensor = np.zeros(750)
-        for i in range(min(750, len(code))):
-            code_tensor[i] = code_dict[code[i]]
-        code_tensors.append(code_tensor)
+    # for code in codes:
+    #     code_tensor = np.zeros(750)
+    #     for i in range(min(750, len(code))):
+    #         code_tensor[i] = code_dict[code[i]]
+    #     code_tensors.append(code_tensor)
 
     tagged_data = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[str(i)]) for i, _d in enumerate(comments)]
+
+    tagged_code = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[str(i)]) for i, _d in enumerate(codes)]
+
 
     # levenshtein_distances_matrix = np.zeros((len(codes), len(codes)))
     #
@@ -657,13 +669,36 @@ def clusterCodes():
     doc2vec_model.save("d2v.model")
     print("Model Saved")
 
-    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
-    distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
 
-    print(indices)
-    print(nbrs)
-    # recommendForUser('milan.j.srinivas')
-    # print(code_ten sors)
+    global code2vec_model
+
+    code2vec_model = Doc2Vec(size=vec_size,
+                    alpha=alpha,
+                    min_alpha=0.00025,
+                    min_count=1,
+                    dm=1)
+
+    code2vec_model.build_vocab(tagged_code)
+
+    for epoch in range(max_epochs):
+        code2vec_model.train(tagged_code,
+                    total_examples=code2vec_model.corpus_count,
+                    epochs=code2vec_model.iter)
+        # decrease the learning rate
+        code2vec_model.alpha -= 0.0002
+        # fix the learning rate, no decay
+        code2vec_model.min_alpha = code2vec_model.alpha
+
+    code2vec_model.save("c2v.model")
+    print("Model Saved")
+
+    # nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
+    # distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
+    #
+    # print(indices)
+    # print(nbrs)
+    # # recommendForUser('milan.j.srinivas')
+    # # print(code_ten sors)
 
 clusterCodes()
 
