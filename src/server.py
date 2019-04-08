@@ -725,29 +725,26 @@ def setDifficulty():
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
     user = request.cookies.get('user','')
-    point = request.form.get('addscore')
+    point = int(request.form.get('addscore'))
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT score FROM Points WHERE user=(?)")
+    cur.execute("SELECT score FROM Points WHERE user=(?)",(user,))
     rows = cur.fetchall()
     if len(rows) == 0:
-        print("CURRENT SCORE IS: "+point)
+        print("CURRENT SCORE IS: ",point)
         cur.execute("INSERT INTO Points VALUES (?,?)", (user, point))
     else:
-        score = rows[0]
-        print("CURRENT SCORE IS: "+score)
+        score = int(rows[0][0])
+        print("EXISTING SCORE IS: ",score)
         score = score + point
-        cur.execute("UPDATE Points SET score=(?) WHERE user=(?)",(user,score))
+        cur.execute("UPDATE Points SET score=(?) WHERE user=(?)",(score,user))
     con.commit()
     con.close()
     return jsonify(success="success") 
 
-
-
 #you will at some point think this is useless and delete. Bad idea
 result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
 )
-
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True

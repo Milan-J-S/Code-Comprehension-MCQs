@@ -206,17 +206,29 @@
 
                 siblings = parent.childNodes
                 for(var i=0;i<siblings.length;i++)
+                {
                     siblings[i].onclick = function() {
                                              return false;
                                            }
+                    if(siblings[i].id == 1)
+                        siblings[i].setAttribute( "class", "btn btn-outline-default waves-effect");
+
+                }
 
                 if(event.target.id == 1)
                 {
                     event.target.setAttribute( "class", "btn btn-success waves-effect");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST","/addPoints");
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    var score_answer = 1;
+                    postvars = "addscore="+score_answer;
+                    xhr.send(postvars);
                 }
                 else
                 {
                     event.target.setAttribute( "class", "btn btn-outline-danger waves-effect");
+
                 }
             }
 
@@ -354,7 +366,7 @@
                     if(xhr.readyState==4 && xhr.status == 200)
                         event.target.innerHTML = "Thanks! Click to change the rating";
                 }
-                postvars = "difficulty="+document.getElementById('difficulty').value,"&filename={{filename}}";
+                postvars = "difficulty="+document.getElementById('difficulty').value+"&filename={{filename}}";
 
                 xhr.send(postvars);
 
