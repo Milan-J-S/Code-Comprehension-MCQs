@@ -184,6 +184,12 @@
                     if(ans[0].id=='answer1')
                     {
                         document.getElementById("showRes").innerHTML = "You are CORRECT!";
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST","/addPoints");
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        var score_answer = 1;
+                        postvars = "addscore="+score_answer;
+                        xhr.send(postvars);
                         return;
                     }
                     else
