@@ -722,6 +722,25 @@ def setDifficulty():
 
     return jsonify(success="success")
 
+@app.route("/addPoints", methods = ["GET","POST"])
+def addPoints():
+    user = request.cookies.get('user','')
+    point = response.form.get('addscore')
+    con = sqlite3.connect("database.db")
+    cur.execute("SELECT user, score FROM Points")
+    rows = cur.fetchall()
+    if len(rows)==0:
+        print("CURRENT SCORE IS: "+point)
+        cur.execute("INSERT INTO Points VALUES (?,?)", (user, point))
+    else:
+        score = rows[1]
+        print("CURRENT SCORE IS: "+score)
+        score = score + point
+        cur.execute("UPDATE Points SET score=(?) WHERE user=(?)",(user,score))
+    con.commit()
+    con.close()
+    return jsonify(success="success") 
+
 
 
 #you will at some point think this is useless and delete. Bad idea

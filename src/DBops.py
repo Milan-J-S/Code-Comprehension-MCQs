@@ -33,4 +33,8 @@ print("Table created succesfully")
 # con.execute("CREATE TABLE Comments( comment TEXT, PRIMARY KEY(comment))")
 # print("Table created succesfully")
 
+#con.execute("DROP TABLE Points")
+con.execute("CREATE TABLE Points( user TEXT references Login(email), score NUMBER)")
+print("Table created successfully")
+
 con.close()
