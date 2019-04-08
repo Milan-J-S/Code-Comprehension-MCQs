@@ -171,14 +171,14 @@ def showCode():
     # user_codes_matrix[new_users_dict[username][new_codes_dict[filename]]] += 1
     # user_codes_matrix[use]
 
-
-
     options_per_func =[]
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT comment FROM CodeComments WHERE code = (?)",(filename,))
     comments_options = cur.fetchall()
+
+    print(comments_options)
 
     for row in comments_options:
 
@@ -725,15 +725,16 @@ def setDifficulty():
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
     user = request.cookies.get('user','')
-    point = response.form.get('addscore')
+    point = request.form.get('addscore')
     con = sqlite3.connect("database.db")
-    cur.execute("SELECT user, score FROM Points")
+    cur = con.cursor()
+    cur.execute("SELECT score FROM Points WHERE user=(?)")
     rows = cur.fetchall()
-    if len(rows)==0:
+    if len(rows) == 0:
         print("CURRENT SCORE IS: "+point)
         cur.execute("INSERT INTO Points VALUES (?,?)", (user, point))
     else:
-        score = rows[1]
+        score = rows[0]
         print("CURRENT SCORE IS: "+score)
         score = score + point
         cur.execute("UPDATE Points SET score=(?) WHERE user=(?)",(user,score))
