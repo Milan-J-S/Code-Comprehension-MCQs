@@ -788,11 +788,14 @@ def profile():
         score = 0
     else:
         score = int(rows[0][0])
+    cur.execute("SELECT * FROM Points ORDER BY score")
+    ranked = cur.fetchall()
+    print(ranked)
     con.commit()
     con.close()
     username = username.split("@")[0]
 
-    return render_template('profile.html', username=username, score=score)
+    return render_template('profile.html', username=username, score=score, ranked=ranked)
 
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
