@@ -776,6 +776,24 @@ def setDifficulty():
 
     return jsonify(success="success")
 
+@app.route("/profile", methods=["GET","POST"])
+def profile():
+    username = request.cookies.get("user", "Login/Sign Up")
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT score FROM Points WHERE user=(?)", (username,))
+    rows = cur.fetchall()
+    score=0
+    if len(rows) == 0:
+        score = 0
+    else:
+        score = int(rows[0][0])
+    con.commit()
+    con.close()
+    username = username.split("@")[0]
+
+    return render_template('profile.html', username=username, score=score)
+
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
     user = request.cookies.get('user','')
@@ -808,5 +826,3 @@ result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, bloc
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(host='0.0.0.0', threaded=True)
-
-
