@@ -56,17 +56,18 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="/">Home</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Upload Code
-        <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/">View Codes</a>
-      </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/upload">Upload Code</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">View Codes</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/profile">View Profile</a>
+          </li>
 
     </ul>
     <ul class="navbar-nav ml-auto nav-flex-icons">
@@ -90,15 +91,15 @@
 </nav>
 <!--/.Navbar -->
 <!-- Card -->
-<div>
+<div class="row d-flex justify-content-center">
   <div class="card testimonial-card text-center w-25">
 
     <!-- Background color -->
-    <div class="card-up elegant lighten-1"></div>
+    <div class="card-up stylish-color-dark"></div>
   
     <!-- Avatar -->
     <div class="avatar mx-auto white">
-        <img width = "50px" src="{{ url_for('static',filename = 'user-white.svg')}}" class="rounded-circle z-depth-0" alt="avatar image">
+        <img width = "60px" src="{{ url_for('static',filename = 'user-white.svg')}}" class="rounded-circle z-depth-0" alt="avatar image">
     </div>
   
     <!-- Content -->
@@ -112,8 +113,60 @@
   
   </div>
 </div>
+<br>
 <!-- Card -->
+<div id="scoreboard">
+  <h3 class="card-title">SCORE BOARD</h3>
+      <div class="row">
+              <div class="col-sm-4 card-title">USER</div>
+              <div class="col-sm-4 card-title">SCORE</div>
+      </div>
+      {% for item in ranked %}
+          <div class="row">
+            <div class="col-sm-4">{{item[0]}}</div>
+            <div class="col-sm-4">{{item[1]}}</div>
+          </div>
+      {% endfor %}
+</div>
 <script>
+    function loginRequest()
+            {
+                email = document.getElementById("email").value;
+                passw = document.getElementById("passw").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/login");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            if(JSON.parse(xhr.response).auth==true)
+                            {
+                            //    document.setCookie("username",email);
+                               document.getElementById("passw").style.background = "white";
+                               document.getElementById("passw").value = "";
+                               document.getElementById("confirmpassw").value = "";
+                               document.getElementById("email").value = "";
+                               document.getElementById("codeTextArea").click();
+                               document.getElementById("userName").innerHTML = email.split("@")[0];
+
+                            }
+                            else{
+                            document.getElementById("passw").style.background = "red";
+                            }
+
+                        }
+                }
+                postvars = "email="+email+"&password="+passw+"&operation="+operation;
+
+                xhr.send(postvars);
+
+                
+
+
+            }
+
     function checkUser()
             {
                 email = document.getElementById("email").value;
