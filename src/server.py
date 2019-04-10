@@ -145,6 +145,7 @@ def start():
 def showCode():
     global user_codes_matrix
     filename = request.args['filename']
+    difficulty = request.args['difficulty']
     rows = fetchConvos(filename)
     full_filename = 'static/data/' + filename
     # print(full_filename)
@@ -218,7 +219,7 @@ def showCode():
 
         options_per_func.append(options)
 
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func, difficulty = adaptive_score)
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func, difficulty = difficulty)
 
 
 def recommendCodes(user):
@@ -270,6 +271,7 @@ def showAll():
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT filename, description FROM Codes")
+
     rows = cur.fetchall()
     username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
 
@@ -279,29 +281,57 @@ def showAll():
 
     global difficulty_matrix
 
-    distances, indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    users_to_match = dict()
+
+    for i in range(len(difficulty_matrix[new_users_dict[username]])):
+        if(difficulty_matrix[new_users_dict[username]][i] > 0):
+            for j in range(len(new_users_dict)):
+                if(difficulty_matrix[j][i] > 0):
+                    if(j not in users_to_match):
+                        users_to_match[j] = 0
+                    users_to_match[j] += abs(difficulty_matrix[j][i] - difficulty_matrix[new_users_dict[username]][i] )
+
+    print(users_to_match)
+    sorted_users = sorted(users_to_match.items(), key=lambda kv: kv[1])[1:]
+
+    indices = list(map(lambda x:x[0], sorted_users ))
     print(indices)
-    print(indices[0][1:10])
 
     code_difficulties = []
 
+    print(difficulty_matrix)
+
     for i in range(len(new_codes_dict)):
-        adaptive_score = 0
-        count = 0
+        if(difficulty_matrix[new_users_dict[username]][i] == 0):
+            adaptive_score = 0
+            count = 0
 
-        for index in indices[0][1:10]:
-            if (difficulty_matrix[index][i] > 0):
-                count += 1
-            adaptive_score += difficulty_matrix[index][i]
+            for index in indices:
+                if (difficulty_matrix[index][i] > 0):
+                    count += 1
+                adaptive_score += difficulty_matrix[index][i]
 
-        if(count > 0):
-            code_difficulties.append(adaptive_score/count)
+            if(count > 0):
+                code_difficulties.append(adaptive_score/count)
+            else:
+                code_difficulties.append(0)
+
         else:
-            code_difficulties.append(0)
+            code_difficulties.append(difficulty_matrix[new_users_dict[username]][i])
+
 
     print(code_difficulties)
 
     rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]], code_difficulties[x[0]]) for x in rows]
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT filename, description FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",(username,))
+    seen = cur.fetchall()
+
+    rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]]) for x in seen])
+
+
 
     items = map(convertToDict, rows)
 
@@ -697,7 +727,7 @@ def clusterCodes():
     #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
 
 
-    max_epochs = 100
+    max_epochs = 1
     vec_size = 20
     alpha = 0.025
 
@@ -805,9 +835,14 @@ def search():
 
 @app.route("/difficulty", methods = ["GET","POST"])
 def setDifficulty():
+    global difficulty_matrix
+
     user = request.cookies.get('user','').split("@")[0]
     filename = request.form.get('filename')
     difficulty = request.form.get('difficulty')
+
+    difficulty_matrix[new_users_dict[user]][new_codes_dict[filename]] = difficulty
+
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("UPDATE CodeViews SET difficulty=(?) WHERE user=(?) AND code=(?)", (difficulty, user, filename))
