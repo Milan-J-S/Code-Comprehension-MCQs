@@ -91,12 +91,15 @@
 
 <div id='resources'>
     {% for item in items %}
-    <a href="/showCode?filename={{item.filename}}">
+    <a href="/showCode?filename={{item.filename}}&difficulty={{item.difficulty}}">
 
-        <div class='card px-3 m-2 py-1'>
-            <h6>{{item.title}}</h6>
+        <div class = 'px-3 m-2 py-1 card' >
+        <div class='row'>
+            <div class="col-sm-11"><h5 >{{item.title}}</h5></div>
+            <div class="col-sm-1"><h4>{{item.difficulty}}</h4></div>
 
         </div>
+            </div>
     </a>
     {% endfor %}
 </div>
@@ -162,13 +165,33 @@
                             for( var i=0; i<results.length ; i++)
                             {
                                 a = document.createElement("a");
-                                a.setAttribute("href","/showCode?filename="+results[i].filename);
+                                a.setAttribute("href","/showCode?filename="+results[i].filename+"&difficulty="+results[i].difficulty);
                                 card = document.createElement("div");
                                 card.setAttribute("class","card px-3 m-2 py-1");
-                                h6 = document.createElement("h6");
-                                h6.innerHTML = results[i].title;
 
-                                card.appendChild(h6);
+                                divcol11 = document.createElement("div")
+                                divcol11.setAttribute("class","col-sm-11")
+
+                                 divcol1 = document.createElement("div")
+                                divcol1.setAttribute("class","col-sm-1")
+
+                                h5 = document.createElement("h5");
+                                h5.innerHTML = results[i].title;
+
+                                h5d = document.createElement("h5");
+                                h5d.innerHTML = results[i].difficulty;
+
+                                divcol11.appendChild(h5);
+                                divcol1.appendChild(h5d);
+
+                                row = document.createElement("div");
+                                row.setAttribute("class","row");
+
+                                row.appendChild(divcol11)
+                                row.appendChild(divcol1)
+
+                                card.appendChild(row);
+
                                 a.appendChild(card);
                                 resources.appendChild(a);
                             }
