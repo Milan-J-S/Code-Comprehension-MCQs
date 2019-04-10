@@ -830,7 +830,7 @@ def setDifficulty():
 
     user = request.cookies.get('user','').split("@")[0]
     filename = request.form.get('filename')
-    difficulty = request.form.get('difficulty')
+    difficulty = request.form.get('difficulty', 0)
 
     difficulty_matrix[new_users_dict[user]][new_codes_dict[filename]] = difficulty
 
