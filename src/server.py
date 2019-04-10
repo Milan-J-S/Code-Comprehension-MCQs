@@ -34,6 +34,8 @@ def convertToDict(x):
     obj = {}
     obj['filename'] = x[0]
     obj['title'] = x[1]
+    if len(x)>2:
+        obj['difficulty'] = x[2]
     return obj
 
 
@@ -216,7 +218,7 @@ def showCode():
 
         options_per_func.append(options)
 
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func)
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func, difficulty = adaptive_score)
 
 
 def recommendCodes(user):
@@ -224,7 +226,12 @@ def recommendCodes(user):
 
     user_has_viewed = set()
 
+    global user_codes_matrix
+
+    print(user_codes_matrix)
     for i in range(len(new_codes_dict)):
+        print(i)
+        print(user_codes_matrix[user_index])
         if user_codes_matrix[user_index][i] > 0:
             user_has_viewed.add(i)
 
@@ -270,7 +277,31 @@ def showAll():
         code_desc[new_codes_dict[row[0]]] = row[1]
     rows = recommendCodes(username)
 
-    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]]) for x in rows]
+    global difficulty_matrix
+
+    distances, indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    print(indices)
+    print(indices[0][1:10])
+
+    code_difficulties = []
+
+    for i in range(len(new_codes_dict)):
+        adaptive_score = 0
+        count = 0
+
+        for index in indices[0][1:10]:
+            if (difficulty_matrix[index][i] > 0):
+                count += 1
+            adaptive_score += difficulty_matrix[index][i]
+
+        if(count > 0):
+            code_difficulties.append(adaptive_score/count)
+        else:
+            code_difficulties.append(0)
+
+    print(code_difficulties)
+
+    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]], code_difficulties[x[0]]) for x in rows]
 
     items = map(convertToDict, rows)
 
@@ -366,6 +397,7 @@ def putCode():
     print(content)
 
     global user_codes_matrix
+    global difficulty_matrix
     global new_codes_dict
     global new_codes_reverse_map
 
@@ -374,6 +406,7 @@ def putCode():
     print(len(new_users_dict))
 
     user_codes_matrix = np.insert(user_codes_matrix, len(new_codes_dict), 0, axis=1)
+    difficulty_matrix = np.insert(difficulty_matrix, len(new_codes_dict), 0, axis=1)
 
     print(user_codes_matrix.shape)
 
@@ -416,6 +449,9 @@ def userExists():
 
 @app.route("/login", methods=["POST"])
 def login():
+    global user_codes_matrix
+    global difficulty_matrix
+    global new_users_dict
     email = request.form['email']
     pw = request.form['password']
     operation = request.form['operation']
@@ -438,15 +474,19 @@ def login():
         cur.execute("INSERT INTO Login values (?,?)", (email, pw))
         con.commit()
 
+        user_codes_matrix = np.append(user_codes_matrix, [np.zeros(len(new_codes_dict))], axis = 0)
+        print(user_codes_matrix)
+
+        difficulty_matrix = np.append(difficulty_matrix, [np.zeros(len(new_codes_dict))], axis = 0)
+        new_users_dict[email.split("@")[0]] = len(new_users_dict)
+
         resp = jsonify(auth=True)
 
-    global user_codes_matrix
-    global new_users_dict
+
 
 
     resp.set_cookie("user", email.split("@")[0])
-    user_codes_matrix = np.append(user_codes_matrix, np.zeros(len(new_codes_dict)))
-    new_users_dict[email.split("@")[0]] = len(new_users_dict)
+
     return (resp)
 
 
@@ -508,7 +548,7 @@ def prepareUserMatrix():
         difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
 
 
-    difficulty_nbrs = NearestNeighbors(n_neighbors=1, algorithm='ball_tree').fit(difficulty_matrix)
+    difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
 
 
     print(user_codes_matrix)
@@ -788,7 +828,7 @@ def profile():
         score = 0
     else:
         score = int(rows[0][0])
-    cur.execute("SELECT * FROM Points ORDER BY score")
+    cur.execute("SELECT * FROM Points ORDER BY score DESC")
     ranked = cur.fetchall()
     print(ranked)
     con.commit()
