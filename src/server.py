@@ -34,6 +34,8 @@ def convertToDict(x):
     obj = {}
     obj['filename'] = x[0]
     obj['title'] = x[1]
+    if len(x)>2:
+        obj['difficulty'] = x[2]
     return obj
 
 
@@ -216,7 +218,7 @@ def showCode():
 
         options_per_func.append(options)
 
-    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func)
+    return render_template('codeView.html', data=str(f.read()), rows=rows, filename=filename, username=username, options = options_per_func, difficulty = adaptive_score)
 
 
 def recommendCodes(user):
@@ -275,7 +277,31 @@ def showAll():
         code_desc[new_codes_dict[row[0]]] = row[1]
     rows = recommendCodes(username)
 
-    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]]) for x in rows]
+    global difficulty_matrix
+
+    distances, indices = difficulty_nbrs.kneighbors([difficulty_matrix[new_users_dict[username]]])
+    print(indices)
+    print(indices[0][1:10])
+
+    code_difficulties = []
+
+    for i in range(len(new_codes_dict)):
+        adaptive_score = 0
+        count = 0
+
+        for index in indices[0][1:10]:
+            if (difficulty_matrix[index][i] > 0):
+                count += 1
+            adaptive_score += difficulty_matrix[index][i]
+
+        if(count > 0):
+            code_difficulties.append(adaptive_score/count)
+        else:
+            code_difficulties.append(0)
+
+    print(code_difficulties)
+
+    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]], code_difficulties[x[0]]) for x in rows]
 
     items = map(convertToDict, rows)
 
@@ -522,7 +548,7 @@ def prepareUserMatrix():
         difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
 
 
-    difficulty_nbrs = NearestNeighbors(n_neighbors=1, algorithm='ball_tree').fit(difficulty_matrix)
+    difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
 
 
     print(user_codes_matrix)
