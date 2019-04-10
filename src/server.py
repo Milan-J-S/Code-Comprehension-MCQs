@@ -224,7 +224,12 @@ def recommendCodes(user):
 
     user_has_viewed = set()
 
+    global user_codes_matrix
+
+    print(user_codes_matrix)
     for i in range(len(new_codes_dict)):
+        print(i)
+        print(user_codes_matrix[user_index])
         if user_codes_matrix[user_index][i] > 0:
             user_has_viewed.add(i)
 
@@ -366,6 +371,7 @@ def putCode():
     print(content)
 
     global user_codes_matrix
+    global difficulty_matrix
     global new_codes_dict
     global new_codes_reverse_map
 
@@ -374,6 +380,7 @@ def putCode():
     print(len(new_users_dict))
 
     user_codes_matrix = np.insert(user_codes_matrix, len(new_codes_dict), 0, axis=1)
+    difficulty_matrix = np.insert(difficulty_matrix, len(new_codes_dict), 0, axis=1)
 
     print(user_codes_matrix.shape)
 
@@ -416,6 +423,9 @@ def userExists():
 
 @app.route("/login", methods=["POST"])
 def login():
+    global user_codes_matrix
+    global difficulty_matrix
+    global new_users_dict
     email = request.form['email']
     pw = request.form['password']
     operation = request.form['operation']
@@ -438,15 +448,19 @@ def login():
         cur.execute("INSERT INTO Login values (?,?)", (email, pw))
         con.commit()
 
+        user_codes_matrix = np.append(user_codes_matrix, [np.zeros(len(new_codes_dict))], axis = 0)
+        print(user_codes_matrix)
+
+        difficulty_matrix = np.append(difficulty_matrix, [np.zeros(len(new_codes_dict))], axis = 0)
+        new_users_dict[email.split("@")[0]] = len(new_users_dict)
+
         resp = jsonify(auth=True)
 
-    global user_codes_matrix
-    global new_users_dict
+
 
 
     resp.set_cookie("user", email.split("@")[0])
-    user_codes_matrix = np.append(user_codes_matrix, np.zeros(len(new_codes_dict)))
-    new_users_dict[email.split("@")[0]] = len(new_users_dict)
+
     return (resp)
 
 
@@ -788,7 +802,7 @@ def profile():
         score = 0
     else:
         score = int(rows[0][0])
-    cur.execute("SELECT * FROM Points ORDER BY score")
+    cur.execute("SELECT * FROM Points ORDER BY score DESC")
     ranked = cur.fetchall()
     print(ranked)
     con.commit()
