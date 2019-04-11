@@ -120,17 +120,25 @@ def generateTags(code):
 
     for item in AST['ext']:
 
-        curfunc = str(item)
-        curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
-        curfunc = curfunc.replace("\'", "")
+        if(item['_nodetype'] == 'FuncDef'):
+            print(item['decl']['name'])
 
-        for tag in KNN(curfunc):
-            if(tag not in tags):
-                tags[tag] = 0
-            tags[tag]+=1
+            curfunc = str(item)
 
 
-        comments.append((generateComments(curfunc), item['coord'].split(":")[1]))
+            print(curfunc)
+
+            curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
+            curfunc = curfunc.replace("\'", "")
+
+            for tag in KNN(curfunc):
+                if(tag not in tags):
+                    tags[tag] = 0
+                tags[tag]+=1
+
+
+
+            comments.append((generateComments(curfunc),item['decl']['name'] ))
 
     tags = map(lambda kv: kv[0], sorted(tags.items(), key=lambda kv: kv[1], reverse=True))
     return (list(tags), comments)
@@ -306,7 +314,6 @@ def showAll():
     items = map(convertToDict, rows)
 
     resp = make_response(render_template('showResources.html', items=items, username=username))
-    resp.set_cookie("test", "test")
 
     return (resp)
 
@@ -870,6 +877,8 @@ def updatePoints(user,point):
 #you will at some point think this is useless and delete. Bad idea
 result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, block_items: [{_nodetype: For, cond: {_nodetype: BinaryOp,  left: {_nodetype: ID,  name: i}, op: <, right: {_nodetype: ID,  name: n}},  init: {_nodetype: DeclList,  decls: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: {_nodetype: Constant,  type: int, value: 0}, name: i, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: i, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}]}, next: {_nodetype: UnaryOp,  expr: {_nodetype: ID,  name: i}, op: p++}, stmt: {_nodetype: FuncCall, args: {_nodetype: ExprList,  exprs: [{_nodetype: Constant,  type: string, value: "%d"}, {_nodetype: ArrayRef,  name: {_nodetype: ID,  name: a}, subscript: {_nodetype: ID,  name: i}}]},  name: {_nodetype: ID,  name: printf}}}],   decl: {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: printAll, quals: [], storage: [], type: {_nodetype: FuncDecl, args: {_nodetype: ParamList,  params: [{_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: n, quals: [], storage: [], type: {_nodetype: TypeDecl,  declname: n, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}, {_nodetype: Decl, bitsize: None,  funcspec: [], init: None, name: a, quals: [], storage: [], type: {_nodetype: ArrayDecl,  dim: {_nodetype: ID,  name: n}, dim_quals: [], type: {_nodetype: TypeDecl,  declname: a, quals: [], type: {_nodetype: IdentifierType,  names: [int]}}}}]},  type: {_nodetype: TypeDecl,  declname: printAll, quals: [], type: {_nodetype: IdentifierType,  names: [void]}}}}, param_decls: None}'
 )
+
+
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True

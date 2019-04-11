@@ -62,10 +62,13 @@
 
     </ul>
     <ul class="navbar-nav ml-auto nav-flex-icons">
-
+        <li class="nav-item" onclick="download()">
+            <img height="30px" width = "30px" src="{{ url_for('static',filename = 'download.png')}}"  alt="avatar image">
+        </li>
       <li class="nav-item avatar dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
+
             <span id="userName" style="color:white">{{username}}</span>
           <img height="30px" width = "30px" src="{{ url_for('static',filename = 'user-white.svg')}}" class="rounded-circle z-depth-1" alt="avatar image">
         </a>
@@ -377,6 +380,11 @@
 
                 xhr.send(postvars);
 
+
+            }
+
+            function download()
+            {
 
             }
 
