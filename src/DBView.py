@@ -2,7 +2,7 @@ import sqlite3
 
 con = sqlite3.connect("database.db")
 cur = con.cursor()
-cur.execute("SELECT * from CodeViews")
+cur.execute("SELECT * from Codes")
 rows = cur.fetchall()
 
 print(rows)

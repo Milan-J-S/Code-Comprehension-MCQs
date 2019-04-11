@@ -27,6 +27,25 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from keras.models import load_model
 app = Flask(__name__)
 
+code_to_mode = {
+'text/x-csrc': "C",
+'python' : "Python",
+    'text/x-c++src' : "C++",
+'text/html' : 'HTML',
+    'text/x-java': "Java",
+    'javascript' : "Javascript"
+
+}
+
+code_to_ext = {
+'text/x-csrc': "c",
+'python' : "py",
+    'text/x-c++src' : "cpp",
+'text/html' : 'html',
+    'text/x-java': "java",
+    'javascript' : "js"
+
+}
 # print("connection recieved")
 # CORS(app)
 
@@ -202,12 +221,12 @@ def showCode():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT description FROM Codes WHERE filename=(?)", (filename,))
+    cur.execute("SELECT description, lang FROM Codes WHERE filename=(?)", (filename,))
 
     description = cur.fetchall()
     new_description = 'no_desc'
     if (description != []):
-        new_description = '_'.join(description[0][0].split())
+        new_description = '_'.join(description[0][0].split())+"."+code_to_ext[description[0][1]]
 
     print(description)
     return render_template('codeView.html',
@@ -217,7 +236,8 @@ def showCode():
                            username=username,
                            options = options_per_func,
                            difficulty = difficulty,
-                           description = new_description)
+                           description = new_description,
+                            )
 
 
 def recommendCodes(user):
