@@ -62,9 +62,11 @@
 
     </ul>
     <ul class="navbar-nav ml-auto nav-flex-icons">
-        <li class="nav-item" onclick="download()">
+        <a download="{{description}}.txt" href="/download?filename={{filename}}">
+        <li class="nav-item" >
             <img height="30px" width = "30px" src="{{ url_for('static',filename = 'download.png')}}"  alt="avatar image">
         </li>
+            </a>
       <li class="nav-item avatar dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
@@ -379,14 +381,8 @@
                 postvars = "difficulty="+document.getElementById('difficulty').value+"&filename={{filename}}";
 
                 xhr.send(postvars);
-
-
             }
 
-            function download()
-            {
-
-            }
 
         </script>
 
