@@ -352,6 +352,8 @@
                 
                 divC = document.createElement("div");
                 divC.setAttribute("id","main_comment_holder");
+                divtitle = document.createElement("h5");
+                divtitle.innerHTML = "Add Tags: ";
                 
 
                 div = document.createElement("div");
@@ -363,6 +365,7 @@
                 add_inp.setAttribute("id","add_inp");
                 add_inp.addEventListener("keyup",checkTags,false);
                 add_ons.append(add_inp);
+                div.append(divtitle);
                 div.append(add_ons);
                 for(var i=0;i<tags.length;i++)
                 {
@@ -416,6 +419,26 @@
                     div2.append(addC);
                     divC.append(div2);
                 }
+                if(comments.length==0)
+                {
+                    i=0
+                    div2 = document.createElement("div");
+                    div2.setAttribute("id","comment_holder"+i);
+                    addC = document.createElement("div");
+                    addC.setAttribute("id","addC"+i);
+                    //addC.setAttribute("class","md-form");
+                    commD = document.createElement("input");
+                    commD.setAttribute("class","form-control comment");
+                    commD.setAttribute("id","commD"+i);
+                    lab = document.createElement("h5");
+                    lab.setAttribute("for","commD"+i);
+                    
+                    lab.innerHTML = "Add Comment For This Code: ";
+                    addC.append(lab);
+                    addC.append(commD);
+                    div2.append(addC);
+                    divC.append(div2);
+                }
 
                 submit_button = document.getElementById("submitbtn");
                 document.body.insertBefore(div,submit_button);
@@ -427,6 +450,7 @@
 
 
                 code_cont = myCodeMirror.getDoc().getValue();
+                code_type = lang_op.value;
                 if(code_cont!=null)
                 {
                     var xhr = new XMLHttpRequest();
@@ -443,8 +467,7 @@
                     }
 
                     code_fin = encodeURIComponent(code_cont)
-
-                    postvars = "content="+code_fin;
+                    postvars = "content="+code_fin+"&ctype="+code_type;
                     xhr.send(postvars); 
                 }
 
