@@ -264,7 +264,7 @@
 
                 h5 = document.createElement("h5");
                 h5.setAttribute("class","mt-0 font-weight-bold");
-                h5.innerHTML="{{username}}";
+                h5.innerHTML=document.getElementById("userName").innerHTML;
                 mediabody.appendChild(h5);
                 
                 p = document.createElement("p");
@@ -309,13 +309,14 @@
                             // alert(JSON.parse(xhr.response));
                             if(JSON.parse(xhr.response).auth==true)
                             {
-                            //    document.setCookie("username",email);
                                document.getElementById("passw").style.background = "white";
                                document.getElementById("passw").value = "";
                                document.getElementById("confirmpassw").value = "";
                                document.getElementById("email").value = "";
                                document.getElementById("codeTextArea").click();
                                document.getElementById("userName").innerHTML = email.split("@")[0];
+                               document.location.reload();
+
 
                             }
                             else{
