@@ -170,7 +170,7 @@ def start():
 def showCode():
     global user_codes_matrix
     filename = request.args['filename']
-    difficulty = request.args['difficulty']
+    difficulty = request.args.get('difficulty',0)
     rows = fetchConvos(filename)
     full_filename = 'static/data/' + filename
     # print(full_filename)
