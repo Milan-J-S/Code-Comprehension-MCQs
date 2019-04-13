@@ -57,6 +57,14 @@ def convertToDict(x):
         obj['difficulty'] = x[2]
     return obj
 
+def convertToFilesDict(x):
+    obj = {}
+    obj['description'] = x[0]
+    obj['type'] = code_to_mode[x[1]]
+    obj['filename'] = x[2]
+    return obj
+
+
 
 new_users_dict = {}
 new_codes_dict = {}
@@ -911,7 +919,9 @@ def profile():
     con.close()
     username = username.split("@")[0]
 
-    return render_template('profile.html', username=username, score=score, ranked=ranked)
+    viewed = getViewed(username)
+
+    return render_template('profile.html', username=username, score=score, ranked=ranked, viewed = viewed)
 
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
@@ -945,6 +955,22 @@ result = generateComments('{_nodetype: FuncDef, body: {_nodetype: Compound, bloc
 @app.route("/download", methods=["GET"])
 def download():
     return app.send_static_file('data/'+request.args.get("filename",""))
+
+def getViewed(user):
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT DISTINCT description, lang, filename FROM CodeViews v INNER JOIN Codes c WHERE user=(?)", (user,))
+    rows = cur.fetchall()
+
+
+
+    rows = list(map(convertToFilesDict, rows))
+
+    print("rows = ", rows)
+
+    return rows
+
+getViewed('milan.j.srinivas')
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
