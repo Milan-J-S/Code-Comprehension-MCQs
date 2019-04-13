@@ -120,6 +120,9 @@ def generateComments(code):
 
 
 def generateTags(code):
+
+    print("reached here")
+
     code = re.sub(r"#include.*<.+>", '', code)
 
     # print(code)
@@ -132,7 +135,7 @@ def generateTags(code):
 
     f = open("test1.txt", "r")
     AST = json.loads(f.read())
-    # print(AST)
+    print(AST)
 
     tags = dict()
 
@@ -140,7 +143,7 @@ def generateTags(code):
 
     for item in AST['ext']:
 
-        if(item['_nodetype'] == "FuncDecl"):
+        if item['_nodetype'] == "FuncDef":
 
             curfunc = str(item)
             curfunc = re.sub(r"\'coord\': [^,]+,", "", curfunc)
@@ -167,7 +170,7 @@ def start():
 def showCode():
     global user_codes_matrix
     filename = request.args['filename']
-    difficulty = request.args['difficulty']
+    difficulty = request.args.get('difficulty',0)
     rows = fetchConvos(filename)
     full_filename = 'static/data/' + filename
     # print(full_filename)
@@ -481,6 +484,9 @@ def putCode():
 def getTags():
     content = request.form['content']
     ctype = request.form['ctype']
+
+    print(ctype)
+
     if(ctype=="text/x-csrc"):
         (tags,comments) = generateTags(content)
     else:
