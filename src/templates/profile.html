@@ -126,6 +126,20 @@
           </div>
       {% endfor %}
 </div>
+<div id='resources'>
+  {% for item in viewed %}
+  <a href="/showCode?filename={{item.filename}}">
+
+      <div class = 'px-3 m-2 py-1 card' >
+      <div class='row'>
+          <div class="col-sm-11"><h5 >{{item.title}}</h5></div>
+          <div class="col-sm-1"><h4>{{item.type}}</h4></div>
+
+      </div>
+          </div>
+  </a>
+  {% endfor %}
+  </div>
 <script>
     function loginRequest()
             {
