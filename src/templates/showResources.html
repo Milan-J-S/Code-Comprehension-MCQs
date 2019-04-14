@@ -176,10 +176,13 @@
                                 card.setAttribute("class","card px-3 m-2 py-1");
 
                                 divcol11 = document.createElement("div")
-                                divcol11.setAttribute("class","col-sm-11")
+                                divcol11.setAttribute("class","col-sm-10")
 
-                                 divcol1 = document.createElement("div")
+                                divcol1 = document.createElement("div")
                                 divcol1.setAttribute("class","col-sm-1")
+
+                                 divcol2 = document.createElement("div")
+                                divcol2.setAttribute("class","col-sm-1")
 
                                 h5 = document.createElement("h5");
                                 h5.innerHTML = results[i].title;
@@ -187,14 +190,19 @@
                                 h5d = document.createElement("h5");
                                 h5d.innerHTML = results[i].difficulty;
 
+                                h5l = document.createElement("h6");
+                                h5l.innerHTML = results[i].lang;
+
                                 divcol11.appendChild(h5);
-                                divcol1.appendChild(h5d);
+                                divcol1.appendChild(h5l);
+                                divcol2.appendChild(h5d);
 
                                 row = document.createElement("div");
                                 row.setAttribute("class","row");
 
                                 row.appendChild(divcol11)
                                 row.appendChild(divcol1)
+                                row.appendChild(divcol2)
 
                                 card.appendChild(row);
 
