@@ -433,6 +433,8 @@ def putCode():
     cur.execute("INSERT INTO Codes VALUES (?,?,?,?)", (user, filename, description, lang))
     con.commit()
 
+    print("tags for this code are :", tags)
+
     for tag in tags:
         cur = con.cursor()
         exists = cur.execute("SELECT * from tags where tag = (?)", (tag,)).fetchall()
@@ -470,8 +472,6 @@ def putCode():
     user_codes_matrix = np.insert(user_codes_matrix, len(new_codes_dict), 0, axis=1)
     difficulty_matrix = np.insert(difficulty_matrix, len(new_codes_dict), 0, axis=1)
     adaptive_difficulty_matrix = np.insert(adaptive_difficulty_matrix, len(new_codes_dict), 0, axis=1)
-
-
 
     print(user_codes_matrix.shape)
 
@@ -540,8 +540,6 @@ def login():
 
         resp = jsonify(auth=(rows[0][0] == pw))
 
-
-
     else:
         con = sqlite3.connect("database.db")
         cur = con.cursor()
@@ -556,9 +554,6 @@ def login():
         new_users_dict[email.split("@")[0]] = len(new_users_dict)
 
         resp = jsonify(auth=True)
-
-
-
 
     resp.set_cookie("user", email.split("@")[0])
 
@@ -776,7 +771,7 @@ def clusterCodes():
 
 
     max_epochs = 1
-    vec_size = 20
+    vec_size = 100
     alpha = 0.025
 
     global doc2vec_model
@@ -852,7 +847,7 @@ def search():
     files_that_match = {}
 
     for searchTerm in searchTerms:
-        cur.execute("SELECT code from CodeTags WHERE tag = (?)", (searchTerm,))
+        cur.execute("SELECT code from CodeTags WHERE tag like (?)", (searchTerm+'%',))
         rows = cur.fetchall()
         for row in rows:
             if (row[0] not in files_that_match):
@@ -962,15 +957,10 @@ def getViewed(user):
     cur.execute("SELECT DISTINCT description, lang, filename FROM CodeViews v INNER JOIN Codes c WHERE user=(?)", (user,))
     rows = cur.fetchall()
 
-
-
     rows = list(map(convertToFilesDict, rows))
-
     print("rows = ", rows)
 
     return rows
-
-getViewed('milan.j.srinivas')
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
