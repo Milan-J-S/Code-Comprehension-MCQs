@@ -143,7 +143,12 @@
 
             function searchCont(event)
             {
-              inp = document.getElementById("search").value;
+              inp = event.target.value;
+
+              if(inp == '')
+                document.getElementById('resources').style.display = 'block'
+              else
+                document.getElementById('resources').style.display = 'none'
 
               var xhr = new XMLHttpRequest();
               xhr.open("POST", "http://localhost:5000/search");
@@ -155,10 +160,12 @@
                         {
                             results = JSON.parse(xhr.response).files;
 
-                            document.body.removeChild(document.getElementById('resources'));
+                            if(document.getElementById('searchresources'))
+                                document.body.removeChild(document.getElementById('searchresources'));
+
 
                             resources = document.createElement("div");
-                            resources.setAttribute("id","resources");
+                            resources.setAttribute("id","searchresources");
 
                             for( var i=0; i<results.length ; i++)
                             {
