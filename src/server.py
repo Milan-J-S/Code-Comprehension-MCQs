@@ -842,13 +842,22 @@ def search():
     global adaptive_difficulty_matrix
 
     searchTerms = request.form.get("searchTerms", "").split()
+    lang = request.form.get("lang", "")
+
+    print("lang = ", lang)
+
 
     print(searchTerms)
 
     files_that_match = {}
 
     for searchTerm in searchTerms:
-        cur.execute("SELECT code from CodeTags WHERE tag like (?)", (searchTerm+'%',))
+        if not lang == '':
+            print("lang is not empty")
+            cur.execute("SELECT code, lang from CodeTags JOIN Codes WHERE tag like (?) AND lang = (?) and code=filename", (searchTerm+'%',lang))
+        else:
+            print("searching all")
+            cur.execute("SELECT code from CodeTags WHERE tag like (?)", (searchTerm+'%',))
         rows = cur.fetchall()
         for row in rows:
             if (row[0] not in files_that_match):

@@ -66,15 +66,27 @@
 <!--Navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark black lighten-2 mb-4">
     <!-- Collapsible content -->
-    <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-
+    <div class="collapse navbar-collapse  w-100" id="navbarSupportedContent">
         <!-- Search form -->
-        <form class="form-inline w-100">
+        <form class="form-inline w-100 navbar-nav row">
+            <div class="nav-inline-text col-sm-10">
             <div class="md-form my-0 w-100">
 
-                <input class="form-control mr-sm-2 w-100" type="text"  aria-label="Search" id="search" placeholder="Search"
-                       onkeyup="searchCont(event)"/>
+                <input class="form-control w-100" type="text"  aria-label="Search" id="search" placeholder="Search"
+                       onkeyup="searchCont()"/>
             </div>
+            </div>
+            <div class="nav-item dropdown col-sm-2">
+        <select class="browser-default custom-select" id="lang_op" onchange="searchCont()">
+        <option selected value="">All Languages</option>
+        <option value="text/x-csrc">C</option>
+        <option value="text/x-c++src">C++</option>
+        <option value="python">Python</option>
+        <option value="text/x-java">Java</option>
+        <option value="text/html">HTML</option>
+        <option value="javascript">JavaScript</option>
+    </select>
+                </div>
         </form>
     </div>
     <!-- Collapsible content -->
@@ -139,14 +151,16 @@
 
             }
 
-            function searchCont(event)
+            function searchCont()
             {
-              inp = event.target.value;
+              inp = document.getElementById('search').value;
+              lang = document.getElementById('lang_op').value;
+              console.log(lang);
 
-              if(inp == '')
-                document.getElementById('resources').style.display = 'block'
-              else
-                document.getElementById('resources').style.display = 'none'
+              //if(inp == '')
+                //document.getElementById('resources').style.display = 'block'
+              //else
+                document.getElementById('resources').style.display = 'none';
 
               var xhr = new XMLHttpRequest();
               xhr.open("POST", "http://localhost:5000/search");
@@ -215,7 +229,7 @@
                         }
               }
 
-              xhr.send("searchTerms="+inp);
+              xhr.send("searchTerms="+inp+"&lang="+lang);
             }
 
 
