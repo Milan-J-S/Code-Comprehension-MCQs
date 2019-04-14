@@ -20,7 +20,6 @@ stop = set(stopwords.words('english'))
 import legacy
 from legacy import AttentionDecoder
 import os
-import distance
 import pickle
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
@@ -55,6 +54,8 @@ def convertToDict(x):
     obj['title'] = x[1]
     if len(x)>2:
         obj['difficulty'] = x[2]
+        if len(x)>3:
+            obj['lang'] = code_to_mode[x[3]]
     return obj
 
 def convertToFilesDict(x):
@@ -198,6 +199,8 @@ def showCode():
         cur.execute("INSERT into CodeViews values (?,?,?,?) ", (filename, username, 0, 1))
     con.commit()
 
+    user_codes_matrix[new_users_dict[username]][new_codes_dict[filename]] += 1
+
 
     options_per_func =[]
 
@@ -295,17 +298,16 @@ def recommendCodes(user):
 
 @app.route("/")
 def showAll():
-    items = []
     code_desc = {}
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT filename, description FROM Codes")
+    cur.execute("SELECT filename, description,lang  FROM Codes")
 
     rows = cur.fetchall()
     username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
 
     for row in rows:
-        code_desc[new_codes_dict[row[0]]] = row[1]
+        code_desc[new_codes_dict[row[0]]] = (row[1], row[2])
     rows = recommendCodes(username)
 
     global difficulty_matrix
@@ -353,15 +355,14 @@ def showAll():
 
     print(code_difficulties)
 
-    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]], code_difficulties[x[0]]) for x in rows]
+    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]][0], code_difficulties[x[0]], code_desc[x[0]][1]) for x in rows]
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT filename, description FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",(username,))
+    cur.execute("SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",(username,))
     seen = cur.fetchall()
 
-    rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]]) for x in seen])
-
+    rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
 
 
     items = map(convertToDict, rows)
