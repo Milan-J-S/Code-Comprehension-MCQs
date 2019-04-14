@@ -1,0 +1,100 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// functions for a priority queue 
+//represented as a heap
+
+struct heap
+{
+  int data;
+  int pty;
+ };
+
+//function to insert an element with a given priority 
+//into a priority queue represented as a heap
+
+ void insert( int x, int p, struct heap *h, int *count)
+ {
+  struct heap temp;
+  temp.data=x;
+  temp.pty=p;
+
+  h[*count]=temp;//initial position of the element
+  (*count)++;
+
+  i=*count-1;
+  j=(i-1)/2;
+  //as long as the pty of the element being inserted
+  //is lower than the pty of the parent
+  //move the parent down
+  while((i>0) &&(temp.pty < h[j].pty))
+  {
+    h[i]=h[j];
+    i=j;
+     j=(i-1)/2;
+  }
+  h[i]=temp;
+}
+
+
+ // function to delete an element
+//from a priority queue represented as a heap
+ 
+ struct heap pqdelete(struct heap *h, int *count)
+ {
+    struct heap temp;
+    temp=h[0];
+    h[0]=h[*count-1];
+    (*count)--;
+    adjust(h,*count);
+    return temp;
+ }
+
+   
+ //function to re create a heap after deleting the element
+ //from a priority queue represented as a heap
+
+   void adjust(struct heap *h, int count)
+   {
+     int i,j;
+     struct heap key;
+
+     key=h[0];
+     j=0;
+     i=j*2+1;// get the left child
+      
+     while(i<=count-1)//as long as a left child exists
+     {
+      if((i+1)<=count-1)//right child exists
+      {
+        if(h[i+1]<h[i])
+           i++;//get the index of the smallest child
+      }
+       if(key.pty > h[i].pty)
+       {
+         h[j]=h[i]; //move the child up
+         j=i;
+         i=2*j+1;
+       }
+       else
+          break;
+      }
+      h[j]=key; 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+     
+  

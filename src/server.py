@@ -855,8 +855,6 @@ def search():
             files_that_match[row[0]] += 1
 
     files_ordered = sorted(files_that_match.items(), key=lambda kv: kv[1], reverse=True)
-
-
     print(files_ordered)
 
     code_desc = {}

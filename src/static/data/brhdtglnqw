@@ -1,0 +1,83 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct tree
+{
+struct tree *left, *right;
+int data;
+};
+
+struct tree *root;
+
+void insert(int key)
+{struct tree *new;
+new =(struct tree *) malloc(sizeof(struct tree));
+new->data=key;
+new->left=new->right=NULL;
+
+    if(root==NULL)
+        root=new;
+
+    else
+    {struct tree *temp; 
+    temp=root;
+        while(1)
+        {
+            if(temp->data>key)
+               {if(temp->left!=NULL)
+                    temp=temp->left;
+                else
+                    {
+                        temp->left=new;
+                        return;
+                    }
+               }
+
+               else
+               {
+                   if(temp->right!=NULL)
+                    temp=temp->right;
+                    else
+                    {
+                        temp->right=new;
+                        return;
+                    }
+               }
+        }
+    }
+
+
+}
+
+void preorder(struct tree * root)
+{
+    if(root!=NULL)
+    {
+        printf("%d  ",root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void inorder(struct tree *root)
+{
+     if(root!=NULL)
+    {
+        
+        inorder(root->left);
+        printf("%d  ",root->data);
+        inorder(root->right);
+    }
+}
+
+void delete(int key)
+{
+    if(root==NULL)
+        printf("deletion not possible\n");
+    else
+    {
+        struct tree *temp, *parent, *q, *suc;
+        
+        temp=root;
+        parent=NULL;
+        while(temp->data!=key 

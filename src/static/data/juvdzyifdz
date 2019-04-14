@@ -1,0 +1,91 @@
+#include<stdio.h>
+
+ int check();
+
+ int main()
+{
+ int t;
+scanf("%d",&t);
+for( int l=0;l<t;l++)
+{
+     int n,k;
+scanf("%d %d",&n,&k);
+ static int min[100000000];
+static int  max[100000000];
+for( int i=1;i<n+1;i++)
+    {min[i]=0;
+     max[i]=0;
+    }
+min[0]=-1;
+min[n+1]=-1;
+max[0]=-1;
+max[n+1]=-1;
+
+for( int j=0;j<k-1;j++)
+{
+ int mark = check(min,max,n+2);
+min[mark]=-1;
+max[mark]=-1;
+}
+
+ int occ = check(min,max,n+2);
+
+printf("Case #%d: %d %d\n",l+1,max[occ]-1,min[occ]-1);
+}
+    return 0;
+}
+
+ int check(  int *min,  int *max,  int n)
+{
+/*
+ int occ[n+2];
+for( int i=0;i<n+2;i++)
+    occ[i]=0;
+for( int i=0;i<n+2;i++)
+{
+    if(min[i]==-1)
+        {occ[j]=0;
+        j++;
+        }
+}
+*/
+
+for( int i=1;i<n-1;i++)
+{
+    if(min[i]!=-1)
+    {
+     int l=i-1,u=i+1;
+    while(min[l]!=-1)
+        l--;
+    while(min[u]!=-1)
+        u++;
+    if((i-l) < (u-i))
+    {
+        min[i]=i-l;
+        max[i]=u-i;
+    }
+    else
+     {
+        max[i]=i-l;
+        min[i]=u-i;
+    }
+
+    }
+
+
+}
+ int next =0;
+for( int i=1;i<n-1;i++)
+{
+if(min[i]> min[next])
+    next=i;
+if(min[next]==min[i] && max[i]>max[next])
+    next=i;
+
+}
+
+return next;
+
+
+
+}

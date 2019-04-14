@@ -1,0 +1,92 @@
+#NLP Assignment 2
+import os
+import re
+from nltk import tokenize
+import nltk
+text = []
+lines = []
+words = {}
+n=0
+
+for _,_,files in os.walk('sport'):
+    for f in files:
+        fil = open('sport/'+f,'r')
+        t = fil.readlines()
+        
+        for x in t:
+            if(x!=[]):
+                for y in x.split('.'):
+                    text.append('<s>')
+                    text.append('<s>')
+                    text.extend(y.split())
+                    text.append('</s>')
+                    text.append('</s>')
+            #print(nltk.word_tokenize(x))
+        
+
+#print(text)
+for i in range(2,len(text)):
+    il = text[i-2].lower()
+    jl = text[i-1].lower()
+    kl = text[i].lower()
+    #if((re.match('[a-z0-9]|<s>',jl) or re.match('</?s>',jl)) and (re.match('[a-z0-9]',kl) or re.match('</?s>',kl)) and not (jl=='<s>' and kl == '</s>')):
+    if(re.match('[a-z0-9]|</?s>',il) and re.match('[a-z0-9]|</?s>',jl) and re.match('[a-z0-9]|</?s>',kl)):
+        if(il not in words):
+            words[il] = {jl:{kl:1}}
+        elif(jl not in words[il]):
+            words[il][jl] = {kl:1}
+        else:
+            if(kl not in words[il][jl]):
+                words[il][jl][kl]=1
+            else:
+                words[il][jl][kl]+=1
+
+
+
+#print(words['<s>']['but'])
+#print(type(words))
+
+prev = '<s>'
+pre = '<s>'
+starts = sorted(words[prev][pre],key=words[prev][pre].get,reverse=True)
+#print(starts)
+cur = set()
+cur.add('</s>')
+num = 0
+
+for x in starts[2:]:
+    prev = '<s>'
+    pre = '<s>'
+    cur = set()
+    if(num == 10):
+        break;
+    pre = x
+    #if(pre not in words[prev]):
+    #        continue;
+    print('\n')
+
+    cur.add(pre)
+    print(pre, end=' ')
+    for i in range(10):
+        if(pre not in words[prev]):
+            break;
+        #print(prev,pre)
+        nxt  = (max(words[prev][pre],key=(words[prev][pre].get)))
+        if nxt == '</s>' or nxt in cur:
+             nxt = sorted(words[prev][pre],key=words[prev][pre].get,reverse= True)
+             i=1
+             if(len(nxt)==1):
+                 break;
+             while (nxt[i] in cur or nxt[i] == '</s>') and i+1<len(nxt):
+                 i+=1
+             nxt = nxt[i]
+            
+        print(nxt,end = ' ')
+        cur.add(nxt)
+        prev = pre
+        pre = nxt
+    num+=1
+
+
+
+

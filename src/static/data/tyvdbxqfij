@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+int arr[100],i,r,p;
+
+void insertas(int n)
+{
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        
+            while (arr[i])
+                i  ;
+        r=i;
+        
+        for(i=r;i>0;i--)
+            arr[i]=arr[i-1];
+        
+        arr[0]=n;
+            
+    }
+}
+
+void insertae(int n)
+{
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        while(arr[i])
+            i  ;
+        
+        arr[i]=n;
+    }
+}
+
+void insertap(int n)
+{
+    int pos;
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        printf("enter position");
+        scanf("%d",

@@ -1,0 +1,26 @@
+t = int(input())
+for l in range(t):
+    nums = input().split()
+    n = int(nums[0])
+    p = int(nums[1])
+
+    prefs = []
+    for i in range(p):
+        prefs.append(input())
+
+    for i in range(p):
+        for j in range(p):
+            if(j!=i and prefs[j].startswith(prefs[i])):
+                prefs[j] = 'Remove'
+
+    # print(prefs)
+
+    ct = 2**n
+
+    for i in range(p):
+        if(prefs[i]!='Remove'):
+            strlen = len(prefs[i])
+            ct = ct - 2**(n - strlen)
+    
+    print("Case #",l+1,": ",ct, sep='')
+            

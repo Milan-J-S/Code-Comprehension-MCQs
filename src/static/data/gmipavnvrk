@@ -1,0 +1,14 @@
+
+
+#include <stdio.h>
+
+
+int a[3][5]={1,2};
+int main()
+{
+    char *s = "PESU";
+  
+    printf("%s\n",s);
+    printf("%d",a[2][1]);
+    return 0;
+}

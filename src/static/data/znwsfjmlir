@@ -1,0 +1,75 @@
+#import modules
+from keras.models import Sequential
+from keras.layers import Input, LSTM, Dense
+import os
+from legacy import AttentionDecoder
+
+import numpy as np 
+
+def convert_to_onehot( c ):
+    tensor = np.zeros(128)
+    tensor[ord(c)] = 1
+    return tensor
+
+code_tensors = []
+vocab = set()
+comments_dict = {}
+comments = []
+
+
+file_path = 'code'
+for root,dirs,files in os.walk(file_path):
+    for fl in files:
+        code = open('code/' fl).read()
+        code_tensor = [x for x in code][:100]
+        for i in range(100 - len(code_tensor)):
+            code_tensor.append(' ')
+        code_tensor = list(map(convert_to_onehot ,code_tensor))
+        code_tensors.append(code_tensor)
+        comment = open('comments/' fl).read()
+        for com in comment.split():
+            vocab.add(com)
+        comments.append(comment)
+
+i=0
+for item in vocab:
+    comments_dict[item]=i
+    i=i 1
+
+comment_tensors_input = []
+comment_tensors_target = []
+
+for item in comments:
+    comment_tensors = []
+    comment = item.split()
+    for i in range(100):
+        comment_tensor = np.zeros(len(vocab))
+        if(i < len(comment)):
+            comment_tensor[comments_dict[comment[i]]] = 1
+        comment_tensors.append(comment_tensor)
+    comment_tensors_input.append(comment_tensors)
+   
+
+
+        
+        
+
+
+print(np.asarray(code_tensors).shape)
+print(np.asarray(comment_tensors_input).shape)
+print(np.asarray(comment_tensors_target).shape)
+
+
+model = Sequential()
+model.add(LSTM(150, input_shape=(100, 128), return_sequences=True))
+model.add(AttentionDecoder(150, len(vocab)))
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
+
+model.fit(code_tensors, comment_tensors_input, epochs = 10)
+
+
+# from keras.models import load_model
+
+# model = load_model("encdec.h5")
+# prediction = model.predict([np.asarray(code_tensors)[0]])
+# print(prediction)

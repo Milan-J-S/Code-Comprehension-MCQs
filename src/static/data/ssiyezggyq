@@ -1,0 +1,18 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+
+int swap();
+int bubblesort();
+int binarySearch();
+
+struct timespec BubbleStart,BubbleEnd,BinaryStart,BinaryEnd;
+
+int *A;
+
+int main()
+{
+int n;
+int key;
+
+scanf("%d",

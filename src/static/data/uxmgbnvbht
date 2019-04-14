@@ -1,0 +1,41 @@
+#include <assert.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* readline();
+char** split_string(char*);
+
+
+// Complete the maxSubsetSum function below.
+int maxSubsetSum(int arr_count, int* arr) {
+    
+  int dyn[arr_count];
+  dyn[0] = arr[0];
+  dyn[1] = arr[1];
+    
+  for(int i=2;i<arr_count;i  )
+  {
+      dyn[i] = dyn[i-2] arr[i];
+      if(dyn[i-1] > dyn[i])
+          dyn[i] = dyn[i-1];
+  }
+    
+    printf("%d",dyn[arr_count-1]);
+    return dyn[arr_count-1];
+}
+
+
+
+int main()
+{
+    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+
+    char* n_endptr;
+    char* n_str = readline();
+    int n = strtol(n_str, 

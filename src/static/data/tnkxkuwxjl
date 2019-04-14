@@ -1,0 +1,74 @@
+#include <stdio.h>
+
+int i,f=0,r=-1;
+
+struct prio{
+    int ele;
+    int pr;
+};
+
+struct prio PQ[100],ent;
+
+void insert()
+{
+    int data;
+    
+    if (r==99)
+        printf("overflow");
+    else{
+        printf("enter priority and element");
+        scanf("%d%d",&ent.pr,&ent.ele);
+        
+        i=r;
+        ++r;
+        
+        while (PQ[i].pr < ent.pr && i>=0)
+        {
+            PQ[i+1]=PQ[i];
+            i--;
+        }
+        
+        PQ[i+1]=ent;
+    }
+    
+}
+
+void delete()
+{
+    if (f>r)
+        printf("deletion is not possible");
+    else{
+        printf("%d is deleted",PQ[r].ele);
+        r--;
+    }
+}
+
+void display()
+{
+    for (i=f;i<=r;i++)
+        printf("|%d %d|",PQ[i].pr,PQ[i].ele);
+}
+
+
+void main()
+{
+    int ch;
+    do{
+    printf("enter 1-insert, 2-delete, 3-display, 4-exit");
+    scanf("%d",&ch);
+        switch(ch)
+        {
+            case 1 : insert();
+                break;
+                
+            case 2 : delete();
+                break;
+                
+            case 3 : display();
+                break;
+                
+        }
+        
+    }
+    while (ch!=4);
+}
