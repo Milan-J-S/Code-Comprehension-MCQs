@@ -913,9 +913,14 @@ def profile():
     con.close()
     username = username.split("@")[0]
 
-    viewed = getViewed(username)
+    viewed,stats = getViewed(username)
 
-    return render_template('profile.html', username=username, score=score, ranked=ranked, viewed = viewed)
+    return render_template('profile.html',
+                           username=username,
+                           score=score,
+                           ranked=ranked,
+                           viewed = viewed,
+                           stats = stats)
 
 @app.route("/addPoints", methods = ["GET","POST"])
 def addPoints():
@@ -957,9 +962,22 @@ def getViewed(user):
     rows = cur.fetchall()
 
     rows = list(map(convertToFilesDict, rows))
-    print("rows = ", rows)
 
-    return rows
+    stats = {}
+
+    for row in rows:
+        if(row['type'] not in stats):
+            stats[row['type']] = 0
+        stats[row['type']] += 1
+
+
+
+
+
+    print("rows = ", rows)
+    print("stats = " , stats )
+
+    return (rows, stats)
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
