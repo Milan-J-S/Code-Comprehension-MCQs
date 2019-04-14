@@ -861,16 +861,19 @@ def search():
     code_desc = {}
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT filename, description FROM Codes")
+    cur.execute("SELECT filename, description, lang FROM Codes")
     rows = cur.fetchall()
     username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
 
     for row in rows:
-        code_desc[row[0]] = row[1]
+        code_desc[row[0]] = (row[1], row[2])
     # rows = recommendCodes(username)
 
     print(code_desc)
-    files_ordered = [(x[0], code_desc[x[0]], adaptive_difficulty_matrix[new_users_dict[username]][new_codes_dict[x[0]]]) for x in files_ordered]
+    files_ordered = [(x[0],
+                      code_desc[x[0]][0],
+                      adaptive_difficulty_matrix[new_users_dict[username]][new_codes_dict[x[0]]],
+                      code_desc[x[0]][1]) for x in files_ordered]
 
     items = list(map(convertToDict, files_ordered))
 
