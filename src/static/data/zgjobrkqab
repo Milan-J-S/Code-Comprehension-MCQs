@@ -1,0 +1,21 @@
+void insertas()
+{
+struct node *p;
+p=malloc(sizeof(struct node*));
+int n;
+printf("enter the data");
+scanf("%d",&n);
+p->data=n;
+if(first==NULL)
+{
+first=p;
+last=p;}
+
+
+else {
+p->next=first;
+first->prev=p;
+first=p;
+
+}
+}

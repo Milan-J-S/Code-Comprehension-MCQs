@@ -1,0 +1,72 @@
+import copy
+
+t = int(input())
+for l in range (t):
+    params = input().split()
+    n = int(params[0])
+    m = int(params[1])
+    p = int(params[2])
+
+    prefs = []
+    forbidden = set()
+    for i in range(n):
+        prefs.append(input())
+    
+    for i in range(m):
+        forbidden.add(int(input(),2))
+
+    cts = []
+    mp = list(range(0,p))
+
+    #print(mp)
+
+   
+    for j in range(p):
+        ct = 0
+        for i in range(n):
+            if(prefs[i][j] == '1'):
+                ct+=1
+        cts.append(ct)
+
+    
+    st = ''
+    for i in range(p):
+        if(cts[i] < n-cts[i]):
+            st += '0'
+        else:
+            st += '1'
+            cts[i] = n-cts[i]
+
+    cts, mp = (list(a) for a in zip(*sorted(zip(cts, mp),reverse=True)))
+
+    #print(cts, mp)
+
+    intRep = int(st, 2)
+    #print(st, intRep)
+    if(intRep not in forbidden):
+        print("Case #",l+1,": ",sum(cts), sep = '')
+
+    else:
+
+        flag = 0
+
+        for i in range(p):
+            if(st[mp[i]] == 1):
+                num = intRep - 2**i
+            else:
+                num = intRep + 2**i
+
+            if(num not in forbidden):
+                flag = 1
+                print("Case #",l+1,": ",sum(cts) - cts[i] + (n-cts[i]), sep = '')
+                break
+
+        if(flag == 0 and len(cts)>=2):
+            print("Case #",l+1,": ",sum(cts) - cts[0] - cts[1] + (n-cts[0]) + (n-cts[1]), sep = '')
+
+
+
+
+
+            
+

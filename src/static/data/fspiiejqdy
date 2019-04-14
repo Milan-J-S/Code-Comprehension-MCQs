@@ -1,0 +1,24 @@
+#include<stdio.h>
+
+int max=0;
+int arr[20]={2,4,1,7,3,88,6,3,96,6,32,44,3,4,6};
+
+int print(int *a)
+{
+   
+if(*a==0)
+    return max;
+
+else
+{ if(*a>max)
+max=*a;
+a++;
+print(a);
+}
+}
+
+void main()
+{
+    printf("%d",print(arr));
+}
+

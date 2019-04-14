@@ -1,0 +1,192 @@
+#include <stdio.h>
+
+int arr[100],i,r,p;
+
+void insertas(int n)
+{
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        
+            while (arr[i])
+                i++;
+        r=i;
+        
+        for(i=r;i>0;i--)
+            arr[i]=arr[i-1];
+        
+        arr[0]=n;
+            
+    }
+}
+
+void insertae(int n)
+{
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        while(arr[i])
+            i++;
+        
+        arr[i]=n;
+    }
+}
+
+void insertap(int n)
+{
+    int pos;
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+        printf("enter position");
+        scanf("%d",&pos);
+        
+        while (arr[i])
+            i++;
+        r=i;
+        
+        for(i=r;i>=pos;i--)
+            arr[i]=arr[i-1];
+        
+        arr[pos-1]=n;
+        
+    }
+}
+
+void deleteas()
+{
+    if(arr[0]==0)
+        printf("deletion not possible\n");
+    
+    else{
+    while(arr[i])
+        i++;
+    r=i;
+    
+    for(i=0;i<=r;i++)
+        arr[i]=arr[i+1];
+    }
+}
+
+void deleteae()
+{   i=0;
+    if(arr[0]==0)
+        printf("deletion is not possible\n");
+    
+    else{
+        while(arr[i])
+            i++;
+        arr[i-1]=0;
+        
+    }
+    
+}
+
+void deleteap()
+{
+    if(arr[0]==0)
+        printf("deletion not possible\n");
+   
+    
+    
+    else{
+        printf("enter position");
+        int pos;
+        scanf("%d",&pos);
+        
+        while(arr[i])
+            i++;
+        r=i;
+        
+        for(i=pos-1;i<=r;i++)
+            arr[i]=arr[i+1];
+    }
+}
+
+void display()
+{
+    
+    
+    int i=0;
+    printf("\n");
+    
+    if(arr[0]==0)
+        printf("empty list");
+    while (arr[i])
+    {printf("%d  ",arr[i]);
+    i++;
+    }
+    printf("\n\n");
+}
+
+void insertws(int n)
+{   int pos;
+    if (arr[99])
+        printf("overflow");
+    
+    else{
+     
+        
+        while (arr[i]>=n)
+            i++;
+        pos=i;
+
+        while(arr[i])
+            i++;
+        r=i;
+        
+        for(i=r;i>pos;i--)
+            arr[i]=arr[i-1];
+        
+        arr[pos]=n;
+        
+    }
+    
+}
+
+
+void main()
+{
+    int ch,m;
+    
+    do{
+        printf("1-Insert at start,2-Insert at end,3-Insert at pos, 4-Delete start,5-Delete end,6-Delete at pos,7-Insertion sort,8-Display");
+        scanf("%d",&ch);
+        
+        switch(ch){
+            
+            case 1 :scanf("%d",&m);
+                insertas(m);
+                break;
+                
+            case 2 :scanf("%d",&m);
+                insertae(m);
+                break;
+                
+            case 3 :scanf("%d",&m);
+                insertap(m);
+                break;
+
+            case 4 : deleteas();
+                break;
+                
+            case 5 : deleteae();
+                break;
+                
+            case 6 : deleteap();
+                break;
+                
+           case 7 :scanf("%d",&m);
+            insertws(m);
+           break;
+           
+            case 8 : display();
+                break;
+                
+        }
+    }
+    while(ch!=9);
+}

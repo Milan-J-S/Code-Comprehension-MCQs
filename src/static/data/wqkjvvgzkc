@@ -1,0 +1,11 @@
+
+#include <stdio.h>
+
+void main()
+{
+    int a[100];
+    a={3,4,,6,7,8};
+    printf("%d",*a);
+    a++;
+    printf("d",*a);
+}

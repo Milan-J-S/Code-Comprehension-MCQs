@@ -1,0 +1,185 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct tree 
+{
+struct tree *left,*right;
+int data;
+};
+
+struct tree *root;
+
+
+
+
+void insert(int key)
+{
+struct tree *new;
+new=(struct tree*)malloc(sizeof(struct tree));
+new->data=key;
+new->left=new->right=NULL;
+
+if(root==NULL)
+{
+root=new;
+root->left=root->right=NULL;
+}
+
+else
+{
+    struct tree *temp;
+    temp=root;
+    while(temp!=NULL)
+    {
+        if(temp->data>=new->data)
+        {
+            if(temp->left!=NULL)
+            temp=temp->left;
+            else
+            {
+            temp->left=new;
+            temp=NULL;
+            }
+        }
+
+        else
+        {
+            if(temp->right!=NULL)
+            temp=temp->right;
+            else
+            {
+            temp->right=new;
+            temp=NULL;
+            }
+        }
+    }
+
+}
+
+}
+
+void preorder(struct tree *root)
+{
+if(root!=NULL)
+{
+    printf("%d ",root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+}
+
+void inorder(struct tree *root)
+{
+if(root!=NULL)
+{
+    
+    inorder(root->left);
+    printf("%d ",root->data);
+    inorder(root->right);
+}
+}
+
+void postorder(struct tree *root)
+{
+if(root!=NULL)
+{
+   
+    postorder(root->left);
+    postorder(root->right);
+     printf("%d ",root->data);
+}
+}
+
+int delete(int key)
+{
+    if(root==NULL)
+        printf("deletion not possible\n");
+    else
+    {
+        struct tree *temp,*parent,*q,*suc;
+        temp=root;
+        parent=NULL;
+        while(temp!=NULL && temp->data!=key )
+        {
+            parent=temp;
+            if(key<=temp->data)
+            {
+            if(temp->left!=NULL)
+                temp=temp->left;
+            else
+            {
+                printf("element doesn't exist\n");
+                return;
+            }
+            }
+
+            else
+            {
+                if(temp->right!=NULL)
+                    temp=temp->right;
+                else
+                {
+                    printf("element doesnt exist\n");
+                    return;
+                }
+            }
+
+        }
+
+        if(temp->left==NULL)
+            q=temp->right;
+        else if(temp->right==NULL)
+            q=temp->left;
+        else
+        {
+            suc=temp->right;
+            while(suc->left!=NULL)
+                suc=suc->left;
+            q=temp->right;
+
+            suc->left=temp->left;
+        }
+
+        if(parent==NULL)
+            root=q;
+        else if(temp==parent->left)
+            parent->left=q;
+        else
+            parent->right=q;
+
+
+        free(temp);
+        
+
+        return(temp->data);
+    }
+}
+
+void main()
+{
+    int ch,n;
+    do
+    {
+        printf("1-Insert, 2-Preorder , 3-Inorder, 4-Postorder, 5-Delete");
+        scanf("%d",&ch);
+        switch(ch)
+        {
+            case 1: printf("enter element  ");
+            scanf("%d",&n); 
+                insert(n);
+                break;
+
+                case 2 : preorder(root);
+                    break;
+                case 3 : inorder(root);
+                    break;
+                case 4 : postorder(root);
+                    break;
+
+                case 5: printf("enter element  ");
+            scanf("%d",&n);
+                printf("%d deleted",delete(n)) ;
+                break;
+        }
+    }while(ch!=6);
+}

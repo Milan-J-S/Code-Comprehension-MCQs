@@ -1,0 +1,13 @@
+void main()
+{
+	printf("This is a demo code\n")
+}
+
+
+//this is a comment provided for the function by the uploader
+void print()
+{
+	printf("This user interface has been designed to be minimalistic to keep the focus on the code\n");
+	printf("This fully featured editor can be used with a selection of languages to provide highlighting\n");
+	printf("A file with snippets of code can be uploaded. The langauge of the code is selected automatically based on the filename, and can manually be changed\n")
+}

@@ -1,0 +1,148 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+    struct node *prev, *next;
+    int data;
+};
+ struct node *first, *last;
+void insertas()
+{
+    struct node *p;
+    p=(struct node*)malloc(sizeof(struct node));
+    int n;
+    printf("enter element ");
+    scanf("%d",&n);
+    p->data=n;
+
+    if(first==NULL)
+        {first=p;
+        first->next=NULL;
+        last=p;
+        last->next=NULL;}
+
+    else{
+        p->next=first;
+        first->prev=p;
+        first=p;
+    }
+
+}
+
+void insertae()
+{
+    struct node *p;
+    p=(struct node*)malloc(sizeof(struct node));
+    int n;
+    printf("enter element ");
+    scanf("%d",&n);
+    p->data=n;
+    p->next=NULL;
+
+    if(first==NULL)
+        {first=p;
+        first->next=NULL;
+        last=p;
+        last->next=NULL;}
+
+    else{
+        last->next=p;
+        p->prev=last;
+        last=p;
+    }
+}
+
+void deleteas()
+{
+    struct node *temp;
+
+    if(first==NULL)
+        printf("deletion not possible");
+
+    else if(first->next==NULL)
+    {
+        temp=first;
+        first=NULL;
+        free(temp);
+    }
+    
+    else{
+        temp=first;
+        first=first->next;
+        first->prev=NULL;
+        free(temp);
+    }
+}
+
+void insertpos()
+{
+    
+
+}
+
+void deletepos()
+{
+
+}
+
+void deleteae()
+{
+    struct node *temp;
+
+    if(first==NULL)
+        printf("deletion not possible");
+
+    else if(first->next==NULL)
+    {
+        temp=first;
+        first=NULL;
+        free(temp);
+    }
+
+    else{
+        temp=last;
+        last=last->prev;
+        last->next=NULL;
+        free(temp);
+    }
+}
+
+void display()
+{
+    struct node *temp;
+
+    if(first==NULL)
+        printf("empty list");
+    else{
+        temp=first;
+        while(temp!=NULL)
+        {
+            printf("%d  ",temp->data);
+            temp=temp->next;
+        }
+        printf("\n");
+    }
+}
+
+void main()
+{
+    int ch;
+    do{
+        printf("Press 1-Ins fr, 2 - end ins,3-front del,4-End del, 5-Display");
+        scanf("%d",&ch);
+        switch(ch)
+        {
+            case 1 : insertas();
+                break;
+            case 2 : insertae();
+                break;
+            case 3 : deleteas();
+                break;
+            case 4 : deleteae();
+                break;
+            case 5 : display();
+                break;
+        }
+    }
+    while(ch!=6);
+}

@@ -1,0 +1,336 @@
+//Implementation of BST
+#include<stdio.h>
+#include<stdlib.h>
+
+
+struct tree{
+int data;
+struct tree *left,*right;
+};
+
+struct tree *root;
+
+
+
+
+void insert(int key)
+{
+struct tree *new;
+new=(struct tree *)malloc(sizeof(struct tree));
+new->data=key;
+new->left=new->right=NULL;
+
+if (root==NULL)
+	root=new;
+	
+else{
+int flag=0;
+struct tree *temp;
+temp=root;
+while(!flag)
+{if(key<=temp->data)
+	if(temp->left!=NULL)
+		temp=temp->left;
+	else
+		 {temp->left=new;
+		 flag=1;
+		 }
+		 
+else
+	if(temp->right!=NULL)
+		temp=temp->right;
+	else{
+		temp->right=new;
+		flag=1;
+	}
+}
+}
+}
+
+void preorder(struct tree *root)
+{
+if(root!=NULL)
+{
+printf("%d  ",root->data);
+preorder(root->left);
+preorder(root->right);
+}
+}
+
+
+void inorder(struct tree *root)
+{
+if(root!=NULL)
+{
+inorder(root->left);
+printf("%d  ",root->data);
+inorder(root->right);
+}
+}
+
+
+
+int internalRec(struct tree *root)
+{
+	if((root->left==NULL && root->right==NULL) || root==NULL)
+		return 0;
+
+	else
+	{
+		if(root->left!=NULL && root->right!=NULL)
+		return(1+internalRec(root->left)+internalRec(root->right));
+
+		else if(root->left==NULL)
+		return(1+internalRec(root->right));
+
+		else 
+		return(1+internalRec(root->left));
+
+	}
+	
+}
+
+
+
+void postorder(struct tree *root)
+{
+if(root!=NULL)
+{
+postorder(root->left);
+postorder(root->right);
+printf("%d  ",root->data);
+}
+}
+
+
+int height(struct tree *root)
+{
+	if(root==0)
+		return -1;
+	else
+	{
+		int lh=height(root->left);
+		int rh=height(root->right);
+
+		if(lh>rh)
+			return(1+lh);
+		else
+			return (1+rh);
+			}
+}
+
+void delete(int key)
+{
+struct tree *temp,*suc,*parent,*q;
+if(root==NULL)
+	printf("deletion not possible");
+
+else
+{
+temp=root;
+parent=NULL;
+while(temp!=NULL && temp->data!=key)
+{
+	parent=temp;
+	if(key<temp->data)
+		if(temp->left!=NULL)
+			temp=temp->left;
+		else
+		{
+			printf("element not found ");
+			return ;
+		}
+	else
+		if(temp->right!=NULL)
+			temp=temp->right;
+		else{
+			printf("element not found");
+			return;
+		}
+}
+
+if(temp->left==NULL)
+	q=temp->right;
+else if (temp->right==NULL)
+	q=temp->left;
+else{
+	suc=temp->right;
+	while(suc->left!=NULL)
+		suc=suc->left;
+	suc->left=temp->left;
+	q=temp->right;
+	
+}
+
+if(parent==NULL)
+	{printf("parent");
+	root=q;
+	}
+else if (temp==parent->right)
+	parent->right=q;
+else if(temp==parent->left)
+	parent->left=q;
+
+free(temp);
+
+}
+}
+
+void search(int key)
+{
+if(root==NULL)
+	printf("empty tree");
+else{
+struct tree *temp,*parent,*suc,*q;
+temp=root;
+parent=NULL;
+
+
+while(temp->data!=key && temp!=NULL)
+{parent=temp;
+if(key<temp->data)
+	{if(temp->left!=NULL)
+		temp=temp->left;
+	else
+	{
+	printf("element does not exist\n");
+	return ;
+	}
+	}
+	
+else if(key>temp->data)
+	{if(temp->right!=NULL)
+		temp=temp->right;
+	else
+	{
+	printf("element does not exist\n");
+	return ;
+	}
+	}
+}
+
+printf("Element Exists\n");
+
+}
+}
+
+
+int searchRec(struct tree *root,int key)
+{
+
+if(root!=NULL)
+{
+	if(root->data==key)
+		return 1;
+	else 
+		searchRec(root->left,key);
+		searchRec(root->right,key);
+}
+}
+
+void min()
+{
+struct tree *temp;
+if(root==NULL)
+	printf("empty tree\n");
+
+else{
+temp=root;
+while(temp->left!=NULL)
+temp=temp->left;
+}
+
+printf("%d\n",temp->data);
+
+
+}
+
+void max()
+{
+struct tree *temp;
+if(root==NULL)
+	printf("empty tree\n");
+
+else{
+temp=root; 
+while(temp->right!=NULL)
+temp=temp->right;
+}
+
+printf("%d\n",temp->data);
+
+
+}
+
+
+
+int sum(struct tree *root)
+{
+	if(root==NULL)
+		return 0;
+
+	else
+	{
+		return(root->data+sum(root->left)+sum(root->right));
+	}
+
+}
+
+int main()
+{
+int ch,n;
+do{
+printf("1-Insert,2-Preorder,3-Inorder,4-Postorder,5-Delete,6-Search,7-Min,8-Max,9-Height,10-Sum  ");
+scanf("%d",&ch);
+switch(ch)
+{
+	case 1 :
+			printf("enter element  ");
+			scanf("%d",&n);
+			insert(n);
+			break;
+			
+	case 2 : preorder(root);
+			printf("\n");
+			break;
+	
+	case 3 :
+
+	printf("%d\n",internalRec(root));
+
+
+			break;
+	
+	case 4: postorder(root);
+		    printf("\n");
+			break;
+			
+	case 5: printf("enter element");
+			scanf("%d",&n);
+			delete(n);
+			break;
+			
+	case 6: printf("enter element");
+			scanf("%d",&n);
+			if(searchRec(root,n))
+				printf("Element Exists\n");
+			else
+				printf("element does not exist\n");
+			break;
+			
+	case 7:min();
+			break;
+			
+	
+	case 8:max();
+			break;
+		
+	case 9: printf("%d\n",height(root));
+		break;
+
+	case 10 : printf("%d\n",sum(root));
+}
+}
+while(ch!=11);
+return 0;
+}

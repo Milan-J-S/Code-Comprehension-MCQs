@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+struct timespec start , end;
+
+double time_elapsed(struct timespec *start, struct timespec *end) {
+	double t = 0.0;
+	t = (end->tv_sec - start->tv_sec) * 1000;
+	t += (end->tv_nsec - start->tv_nsec) * 0.000001;
+	return t;
+}
+void war(int n , int a[n][n])
+{
+	for (int k = 0; k<n ; k++)
+	{
+		for(int i = 0; i<n;  i++)
+		{
+			for (int j = 0 ; j<n; j++)
+			{
+				int val = 0;
+				if(a[i][j]==1)
+				{
+					val = 1;
+				}
+				else
+				{
+					if(a[i][k]==1 && a[k][j]==1)
+					{
+						val =1;
+					}
+				}
+
+				a[i][j] = val;
+			
+
+			}
+			
+		}
+
+				
+	}
+}
+int main()
+{
+	int n ;
+	printf("Enter n:\n");
+	scanf("%d",&n);
+	int a[n][n];
+	for(int i = 0; i<n;i++)
+	{
+		for(int j = 0; j<n; j++)
+		{
+			scanf("%d", &a[i][j]);
+		}
+	}
+	clock_gettime(CLOCK_REALTIME,&start);
+	war(n,a);
+	clock_gettime(CLOCK_REALTIME,&end);
+	for(int i = 0; i<n;i++)
+	{
+		for(int j = 0; j<n; j++)
+		{
+			printf("%d\t", a[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+	double ans = time_elapsed(&start,&end);
+	printf("execution time : %f ms",ans);
+	printf("\n");
+}
