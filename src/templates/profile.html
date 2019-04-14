@@ -5,7 +5,7 @@
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
 
     <script src = "{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
-    <!--<script src = "{{ url_for('static',filename = 'js/highcharts.js')}}"></script>-->
+    <script src = "{{ url_for('static',filename = 'js/highcharts.js')}}"></script>
 
      <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
      <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/addon/edit/closebrackets.js')}}"></script>
@@ -90,11 +90,14 @@
 </nav>
 <!--/.Navbar -->
 <!-- Card -->
-<div class="row d-flex justify-content-center">
-  <div class="card testimonial-card text-center w-25">
+
+<div class = 'row h-50'>
+
+<div class="col-sm-6">
+  <div class="card testimonial-card text-center w-25 m-5">
 
     <!-- Background color -->
-    <div class="card-up stylish-color-dark"></div>
+    <div class="card-up stylish-color-dark   my-3"></div>
   
     <!-- Avatar -->
     <div class="avatar mx-auto white">
@@ -102,7 +105,7 @@
     </div>
   
     <!-- Content -->
-    <div class="card-body">
+    <div class="card-body my-5">
       <!-- Name -->
       <h4 class="card-title">{{username}}</h4>
       <hr>
@@ -113,6 +116,11 @@
   </div>
 </div>
 <br>
+
+<div class = 'col-sm-6 mt-1' id="container">
+
+</div>
+    </div>
 <!-- Card -->
 <div id="scoreboard">
   <h3 class="card-title">SCORE BOARD</h3>
@@ -143,9 +151,7 @@
   </div>
 
 
-<div id="container">
 
-</div>
 <script>
     function loginRequest()
             {
@@ -227,15 +233,11 @@
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in January, 2018'
+        text: 'Views By Language'
     },
-    tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-    },
+
     plotOptions: {
         pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
@@ -246,38 +248,17 @@
         }
     },
     series: [{
-        name: 'Brands',
-        colorByPoint: true,
-        data: [{
-            name: 'Chrome',
-            y: 61.41,
-            sliced: true,
-            selected: true
-        }, {
-            name: 'Internet Explorer',
-            y: 11.84
-        }, {
-            name: 'Firefox',
-            y: 10.85
-        }, {
-            name: 'Edge',
-            y: 4.67
-        }, {
-            name: 'Safari',
-            y: 4.18
-        }, {
-            name: 'Sogou Explorer',
-            y: 1.64
-        }, {
-            name: 'Opera',
-            y: 1.6
-        }, {
-            name: 'QQ',
-            y: 1.2
-        }, {
-            name: 'Other',
-            y: 2.61
-        }]
+        name: 'Views',
+        data: [
+        {% for key, value in stats.items() %}
+    {
+        name:"{{key}}",
+        y: {{value}}
+
+        },
+
+        {% endfor %}
+        ]
     }]
 });
 </script>
