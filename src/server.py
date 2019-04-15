@@ -412,6 +412,7 @@ def putCode():
 
     tags = list(payload.get('tags', ''))
     comments = list(payload.get('comments', ''))
+    func = list(payload.get('func', ''))
 
     print(tags)
     print(comments)
@@ -447,13 +448,14 @@ def putCode():
 
     point = 10
 
-    for comment in comments:
+    for i in range(len(comments)):
         point += 1
         cur = con.cursor()
+        comment = comments[i]
         exists = cur.execute("SELECT * from comments where comment = (?)", (comment,)).fetchall()
         if len(exists) == 0:
             cur.execute("INSERT INTO Comments VALUES (?)", (comment,))
-        cur.execute("INSERT INTO CodeComments VALUES (?,?,?)", (filename, comment, 0))
+        cur.execute("INSERT INTO CodeComments VALUES (?,?,?)", (filename, comment, func[i]))
     con.commit()
     con.close()
 
