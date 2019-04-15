@@ -314,7 +314,7 @@
                 comments = comments_to_use.map( (x) => x.value )
 
                 function_to_use = Array.from(document.getElementsByClassName("functionName"));
-                func = function_to_use.map( (x) => x.value )
+                func = function_to_use.map( (x) => x.innerHTML )
 
                 var xhr = new XMLHttpRequest();
 
