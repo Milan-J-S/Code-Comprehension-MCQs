@@ -92,9 +92,9 @@
             <div class="force-overflow row">
                 <div class="col-sm-8 px-0">
                         <textarea  id="codeTextArea">{{data}}</textarea>
-                    {% for option_list in options %}
+                    {% for function,option_list in options %}
                     <div id="MCQ">
-                        <h4 class="h4-responsive">What does this code do?</h4>
+                        <h4 class="h4-responsive">What does this code do?: {{function}}</h4>
                         {% for option in option_list %}
                             <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
                         {% endfor %}

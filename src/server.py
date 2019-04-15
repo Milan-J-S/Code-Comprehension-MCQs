@@ -207,7 +207,7 @@ def showCode():
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT comment FROM CodeComments WHERE code = (?)",(filename,))
+    cur.execute("SELECT comment,line  FROM CodeComments WHERE code = (?)",(filename,))
     comments_options = cur.fetchall()
 
     print(comments_options)
@@ -232,7 +232,7 @@ def showCode():
         options.append((comments[int(similar_docs[50][0])],0))
         shuffle(options)
 
-        options_per_func.append(options)
+        options_per_func.append((row[1], options))
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
