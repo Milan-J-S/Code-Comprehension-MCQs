@@ -297,15 +297,17 @@ def recommendCodes(user):
     return codes_ordered
 
 
-@app.route("/")
-def showAll():
+def prepareAll(username, lang):
     code_desc = {}
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT filename, description,lang  FROM Codes")
+    if(lang == ''):
+        cur.execute("SELECT filename, description,lang  FROM Codes")
+
+    else:
+        cur.execute("SELECT filename, description,lang  FROM Codes where lang=(?)", (lang,))
 
     rows = cur.fetchall()
-    username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
 
     for row in rows:
         code_desc[new_codes_dict[row[0]]] = (row[1], row[2])
@@ -316,17 +318,17 @@ def showAll():
     users_to_match = dict()
 
     for i in range(len(difficulty_matrix[new_users_dict[username]])):
-        if(difficulty_matrix[new_users_dict[username]][i] > 0):
+        if (difficulty_matrix[new_users_dict[username]][i] > 0):
             for j in range(len(new_users_dict)):
-                if(difficulty_matrix[j][i] > 0):
-                    if(j not in users_to_match):
+                if (difficulty_matrix[j][i] > 0):
+                    if (j not in users_to_match):
                         users_to_match[j] = 0
-                    users_to_match[j] += abs(difficulty_matrix[j][i] - difficulty_matrix[new_users_dict[username]][i] )
+                    users_to_match[j] += abs(difficulty_matrix[j][i] - difficulty_matrix[new_users_dict[username]][i])
 
     print(users_to_match)
     sorted_users = sorted(users_to_match.items(), key=lambda kv: kv[1])[1:]
 
-    indices = list(map(lambda x:x[0], sorted_users ))
+    indices = list(map(lambda x: x[0], sorted_users))
     print(indices)
 
     code_difficulties = []
@@ -334,7 +336,7 @@ def showAll():
     print(difficulty_matrix)
 
     for i in range(len(new_codes_dict)):
-        if(difficulty_matrix[new_users_dict[username]][i] == 0):
+        if (difficulty_matrix[new_users_dict[username]][i] == 0):
             adaptive_score = 0
             count = 0
 
@@ -343,8 +345,8 @@ def showAll():
                     count += 1
                 adaptive_score += difficulty_matrix[index][i]
 
-            if(count > 0):
-                code_difficulties.append(adaptive_score/count)
+            if (count > 0):
+                code_difficulties.append(adaptive_score / count)
             else:
                 code_difficulties.append(0)
 
@@ -353,23 +355,35 @@ def showAll():
 
         adaptive_difficulty_matrix[new_users_dict[username]][i] = code_difficulties[-1]
 
-
     print(code_difficulties)
 
-    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]][0], code_difficulties[x[0]], code_desc[x[0]][1]) for x in rows]
+    rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]][0], code_difficulties[x[0]], code_desc[x[0]][1]) for x in
+            rows if x[0] in code_desc ]
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",(username,))
+    if(lang == ''):
+        cur.execute(
+        "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",
+        (username,))
+    else:
+        cur.execute(
+            "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code AND lang = (?)",
+            (username,lang))
     seen = cur.fetchall()
 
     rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
 
+    items = list(map(convertToDict, rows))
+    return(items)
 
-    items = map(convertToDict, rows)
+
+@app.route("/")
+def showAll():
+    username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
+    items = prepareAll(username, '')
 
     resp = make_response(render_template('showResources.html', items=items, username=username))
-    resp.set_cookie("test", "test")
 
     return (resp)
 
@@ -693,30 +707,30 @@ codes_reverse_map = []
 codes_dict = {}
 
 
-def recommendForUser(user):
-    con = sqlite3.connect("database.db")
-    cur = con.cursor()
-    cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
-
-    rows = cur.fetchall()
-
-    reco = {}
-
-    print(rows)
-    for item in rows:
-        print(codes_dict[item[0]])
-        for code in indices[codes_dict[item[0]]]:
-            if (code not in reco):
-                reco[code] = 0
-            reco[code] += 1
-
-    print(reco)
-
-    reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
-    reco_ordered = [x[0] for x in reco_ordered[:10]]
-
-    for rec in reco_ordered:
-        print(codes_reverse_map[rec])
+# def recommendForUser(user):
+#     con = sqlite3.connect("database.db")
+#     cur = con.cursor()
+#     cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
+#
+#     rows = cur.fetchall()
+#
+#     reco = {}
+#
+#     print(rows)
+#     for item in rows:
+#         print(codes_dict[item[0]])
+#         for code in indices[codes_dict[item[0]]]:
+#             if (code not in reco):
+#                 reco[code] = 0
+#             reco[code] += 1
+#
+#     print(reco)
+#
+#     reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
+#     reco_ordered = [x[0] for x in reco_ordered[:10]]
+#
+#     for rec in reco_ordered:
+#         print(codes_reverse_map[rec])
 
 
 def clusterCodes():
@@ -849,6 +863,10 @@ def search():
 
     print("lang = ", lang)
 
+    if searchTerms == []:
+        items = prepareAll(request.cookies.get("username","Login/Sign Up").split("@")[0], lang)
+        return jsonify(files=items)
+
 
     print(searchTerms)
 
@@ -856,8 +874,7 @@ def search():
 
     for searchTerm in searchTerms:
         if not lang == '':
-            print("lang is not empty")
-            cur.execute("SELECT code, lang from CodeTags JOIN Codes WHERE tag like (?) AND lang = (?) and code=filename", (searchTerm+'%',lang))
+            cur.execute("SELECT code from CodeTags JOIN Codes WHERE tag like (?) AND lang = (?) and code=filename", (searchTerm+'%',lang))
         else:
             print("searching all")
             cur.execute("SELECT code from CodeTags WHERE tag like (?)", (searchTerm+'%',))
