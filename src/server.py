@@ -214,7 +214,7 @@ def showCode():
 
     for row in comments_options:
 
-        v1 = doc2vec_model.infer_vector(row[0], steps=1000)
+        v1 = doc2vec_model.infer_vector(row[0].split(), steps=1000)
 
         similar_docs = doc2vec_model.docvecs.most_similar([v1], topn=len(doc2vec_model.docvecs))
 

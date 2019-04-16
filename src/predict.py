@@ -374,36 +374,30 @@ import pickle
 
 
 from keras.models import load_model
+from gensim.models.doc2vec import Doc2Vec
 
 
 def generateComments(code):
-    automodel = load_model("encoder (1).h5")
+    d2v = Doc2Vec.load("d2v (1).model")
 
-    attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
-
-    code_dict_p = pickle.load(open("code_dict (3).pickle", "rb+"))
-    print(code_dict_p)
+    attnmodel = load_model("attention (4).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
 
 
-    comments_reverse_map_p = pickle.load(open("comments_reverse_map (3).pickle", "rb+"))
+
+    comments_reverse_map_p = pickle.load(open("comments_reverse_map (5).pickle", "rb+"))
 
     code_tensors = []
 
     code = re.sub("\"[^\"]*\"", "0", code)
     code = re.sub("name: [^,}]+", "name", code)
     code = re.sub("value: [^,}]+", "value", code)
+    code_tensor = d2v.infer_vector(word_tokenize(code.lower()), steps = 1000)
 
-    code_tensor = np.zeros(751)
-    item = word_tokenize(code)
-    for i in range(min(len(item), 751)):
-        code_tensor[i] = code_dict_p[item[i]] / 107
-    code_tensors.append(code_tensor)
+    for i in range(20):
+        code_tensors.append(code_tensor)
 
-    result = automodel.predict(np.asarray(code_tensors))
 
-    print(code)
-
-    comment = attnmodel.predict(result.reshape(1,20,1))
+    comment = attnmodel.predict(np.asarray([code_tensors]))
 
     res = []
 
