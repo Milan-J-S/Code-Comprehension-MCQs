@@ -129,9 +129,9 @@ def generateComments(code):
     return ' '.join(res)
 
 
-def generateTags(code):
 
-    print("reached here")
+
+def generateTags(code):
 
     code = re.sub(r"#include.*<.+>", '', code)
 
@@ -149,6 +149,11 @@ def generateTags(code):
 
     tags = dict()
 
+    comments_Set = re.findall("//.*\n.*", code)
+    print(comments_Set)
+
+
+
     comments = []
 
     for item in AST['ext']:
@@ -164,8 +169,20 @@ def generateTags(code):
                     tags[tag] = 0
                 tags[tag]+=1
 
+            name = item['decl']['name']
 
-            comments.append((generateComments(curfunc), item['decl']['name']))
+            existing = ''
+
+            for comment in comments_Set:
+                if(name in comments_Set):
+                    existing = comment.split("\\n")[0][2:]
+
+
+
+            if(existing  == ''):
+                comments.append((generateComments(curfunc), name ))
+            else:
+                comments.append( (existing, name) )
 
     tags = map(lambda kv: kv[0], sorted(tags.items(), key=lambda kv: kv[1], reverse=True))
     return (list(tags), comments)
@@ -211,10 +228,10 @@ def showCode():
     comments_options = cur.fetchall()
 
     print(comments_options)
-
     for row in comments_options:
 
-        v1 = doc2vec_model.infer_vector(row[0], steps=1000)
+        v1 = doc2vec_model.infer_vector(list(filter(lambda x: x not in stop,word_tokenize(row[0].lower()))), steps=1000)
+
 
         similar_docs = doc2vec_model.docvecs.most_similar([v1], topn=len(doc2vec_model.docvecs))
 
@@ -226,9 +243,9 @@ def showCode():
             i+=1
         print(comments[int(similar_docs[i][0])])
         options.append((comments[int(similar_docs[i][0])],0))
-        print(comments[int(similar_docs[4][0])])
+        print(comments[int(similar_docs[i+1][0])])
         options.append((comments[int(similar_docs[4][0])],0))
-        print(comments[int(similar_docs[50][0])])
+        print(comments[int(similar_docs[i+2][0])])
         options.append((comments[int(similar_docs[50][0])],0))
         shuffle(options)
 
@@ -628,7 +645,7 @@ def prepareUserMatrix():
 
     global difficulty_matrix
     global adaptive_difficulty_matrix
-    global difficulty_nbrs
+    # global difficulty_nbrs
 
     difficulty_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
     adaptive_difficulty_matrix = np.zeros((len(new_users_dict),len(new_codes_dict)))
@@ -639,7 +656,7 @@ def prepareUserMatrix():
         adaptive_difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
 
 
-    difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
+    # difficulty_nbrs = NearestNeighbors(n_neighbors=4, algorithm='ball_tree').fit(difficulty_matrix)
 
 
     print(user_codes_matrix)
@@ -654,14 +671,14 @@ def KNN(code):
     code = re.sub("\"[^\"]*\"", "0", code)
     code = re.sub("name: [^,}]+", "name", code)
     code = re.sub("value: [^,}]+", "value", code)
-    code = word_tokenize(code)
+    # code = word_tokenize(code)
 
     # code_tensor = np.zeros(750)
     # for i in range(min(750, len(code))):
     #     if code[i] in code_dict:
     #         code_tensor[i] = code_dict[code[i]]
     #
-    code_vector = code2vec_model.infer_vector(code, steps=1000)
+    code_vector = code2vec_model.infer_vector([code], steps=1000)
 
     similar_docs = code2vec_model.docvecs.most_similar([code_vector], topn=10)
 
@@ -775,9 +792,9 @@ def clusterCodes():
     #         code_tensor[i] = code_dict[code[i]]
     #     code_tensors.append(code_tensor)
 
-    tagged_data = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[str(i)]) for i, _d in enumerate(comments)]
+    tagged_data = [TaggedDocument(list(filter(lambda x: x not in stop,word_tokenize(d.lower()))), tags=[str(i)]) for i, d in enumerate(comments)]
 
-    tagged_code = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[str(i)]) for i, _d in enumerate(codes)]
+    tagged_code = [TaggedDocument([d.lower()], tags=[str(i)]) for i, d in enumerate(codes)]
 
 
     # levenshtein_distances_matrix = np.zeros((len(codes), len(codes)))
@@ -788,9 +805,9 @@ def clusterCodes():
     #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
 
 
-    max_epochs = 1
+    max_epochs = 3
     vec_size = 100
-    alpha = 0.025
+    alpha = 0.125
 
     global doc2vec_model
 
@@ -817,7 +834,7 @@ def clusterCodes():
 
     global code2vec_model
 
-    code2vec_model = Doc2Vec(size=vec_size,
+    code2vec_model = Doc2Vec(size=100,
                     alpha=alpha,
                     min_alpha=0.00025,
                     min_count=1,
@@ -1002,14 +1019,13 @@ def getViewed(user):
             stats[row['type']] = 0
         stats[row['type']] += 1
 
-
-
-
-
     print("rows = ", rows)
     print("stats = " , stats )
 
     return (rows, stats)
+
+def __init__():
+    return app
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
