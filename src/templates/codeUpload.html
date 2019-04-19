@@ -111,7 +111,7 @@
 
             myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
                lineNumbers: true,
-                mode:  "Java",
+                mode:  "text/x-csrc",
                 styleActiveLine :true,
                 matchBrackets: true,
                 indentUnit: 4,
@@ -314,7 +314,7 @@
                 comments = comments_to_use.map( (x) => x.value )
 
                 function_to_use = Array.from(document.getElementsByClassName("functionName"));
-                if(function_to_use)
+                if(function_to_use != [])
                 {
                     func = function_to_use.map( (x) => x.innerHTML );
                 }
