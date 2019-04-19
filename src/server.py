@@ -152,6 +152,9 @@ def generateTags(code):
     comments_Set = re.findall("//.*\n.*", code)
     print(comments_Set)
 
+    comments_Set.extend(re.findall("/*[^\*]*\*/\n.*", code))
+    print(comments_Set)
+
 
 
     comments = []
@@ -174,8 +177,11 @@ def generateTags(code):
             existing = ''
 
             for comment in comments_Set:
-                if(name in comments_Set):
-                    existing = comment.split("\\n")[0][2:]
+                if(name in comment):
+                    if(comment[1] == '/'):
+                        existing = comment.split("\n")[0][2:]
+                    else:
+                        existing = comment.split("*/")[0]
 
 
 
