@@ -92,17 +92,42 @@
             <div class="force-overflow row">
                 <div class="col-sm-8 px-0">
                         <textarea  id="codeTextArea">{{data}}</textarea>
-                    {% for function,option_list in options %}
-                    <div id="MCQ">
-                        <h4 class="h4-responsive">What does this code do?: {{function}}</h4>
-                        {% for option in option_list %}
-                            <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
-                        {% endfor %}
-                        <br>
-                        <br>
-                        <h3 class="h3-responsive" id="showRes"></h3>
-                    </div>
-                    {% endfor %}
+                        <div id="carouselExampleControls" class="d-inline carousel slide w-100" data-ride="carousel" data-interval="false">
+                                <a href="#carouselExampleControls" role="button" data-slide="prev">
+                                        <h6>Prev</h6>
+                                </a>
+                            <div class="d-inline carousel-inner">
+                              {% for function,option_list in options %}
+                                <div id="MCQ" class="carousel-item {%if loop.first%}active{%endif%} ww-100">    
+                                  <h4 class="h4">What does this code do?: {{function}}</h4>
+                                  <textarea  class="funcDisplay" rows="9" cols="25" id="codeTextArea{{loop.index0}}">
+                                      {{loop.index0}}
+                                  </textarea>
+                                  <br>
+                                  {% for option in option_list %}
+                                      <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
+                                  {% endfor %}
+                                  <br>
+                                  <br>
+                                  <h3 class="h3-responsive" id="showRes"></h3>
+                              </div>
+                              {% endfor %}
+                              <!-- {% for i in options.size %}
+                              <div id="MCQ" class="carousel-item">    
+                                <h4 class="h4-responsive">What does this code do?: {{options[i][0]}}</h4>
+                                {% for option in options[i][1] %}
+                                    <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
+                                {% endfor %}
+                                <br>
+                                <br>
+                                <h3 class="h3-responsive" id="showRes"></h3>
+                            </div>
+                            {% endfor %} -->
+                            </div>
+                            <a href="#carouselExampleControls" role="button" data-slide="next">
+                              <h6>Next</h6>
+                            </a>
+                          </div>
                 </div>
                 <div class="col-sm-4 float-right sticky px-0 " >
                     <div class = card>
@@ -171,6 +196,23 @@
                 autoCloseTags: true,
                 autoCloseBrackets: true,
             });
+
+            listOfFunc = document.getElementsByClassName("funcDisplay");
+            loopCodeMirror = []
+            for(var i=0; i<listOfFunc.length; i++)
+            {
+                loopCodeMirror.push(CodeMirror.fromTextArea(document.getElementById("codeTextArea"+i.toString()), {
+                lineNumbers: true,
+                lineWrapping: true,
+                mode:  "text/x-csrc",
+                styleActiveLine :true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+            }));
+            }
 
             myCodeMirror.setSize("100%","100%")
 
