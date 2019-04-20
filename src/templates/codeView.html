@@ -102,8 +102,8 @@
 
                     {% for function,option_list, func in options %}
                     <div id="MCQ" class=" m-3 p-3 card ww-100">
-                        <h4 class="h4">What does this code do?: {{function}}</h4>
-                        <textarea class="funcDisplay" rows="9" cols="25"
+                        <h4 class="h4">What does this code do?</h4>
+                        <textarea class="funcDisplay" cols="25"
                                   id="codeTextArea{{loop.index0}}">{{func}}</textarea>
                         <br>
                         {% for option in option_list %}
@@ -158,19 +158,20 @@
                         <button type="button" class="btn btn-primary" onclick="postIt()">Post</button>
                     </div>
 
-                    </div> -->
+                    </div>
                 </div>
-            </div>
             <h6 for="customRange2">How difficult do you rate this code?</h6>
             <div class="row">
-                <input type="range" id='difficulty' class="custom-range px-5" min="1" max="5" id="customRange2">
+                <input type="range" id='difficulty' class="custom-range px-5" min="1" max="3" id="customRange2">
                 <button class="btn btn-primary pull-right" onclick="rate(event)">RATE</button>
             </div>
-        </div>
-    <textarea id="codeTextArea">{{data}}</textarea>
+            </div>
 
-    </div>
+        </div>
+
+
 </div>
+<textarea id="codeTextArea">{{data}}</textarea>
 
 
 <script>
