@@ -441,9 +441,20 @@ def prepareAll(username, lang, difficulty):
 
     items = list(map(convertToDict, rows))
 
-    items = list(filter(lambda x: x['difficulty'] == int(difficulty), items ))
+
+    if(difficulty != ''):
+        items = list(filter( lambda x: checkDifficulty(x,difficulty) , items ))
 
     return(items)
+
+def checkDifficulty( item, difficulty ):
+    difficulty = int(difficulty)
+    if(difficulty == 1):
+        return item['difficulty'] <= 1.5
+    elif(difficulty == 3):
+        return item['difficulty'] >= 2.5
+    elif(difficulty == 2):
+        return (item[difficulty] < 2.5 and item[difficulty] > 2.5)
 
 
 @app.route("/")
