@@ -250,14 +250,20 @@ def showCode():
         print(row[0])
         options.append((row[0],1))
         i = 1
-        while(comments[int(similar_docs[i][0])] == row[0]):
+        while(len(options)!=4):
+            if(comments[int(similar_docs[i][0])] not in options):
+                options.append((comments[int(similar_docs[i][0])], 0))
             i+=1
-        print(comments[int(similar_docs[i][0])])
-        options.append((comments[int(similar_docs[i][0])],0))
-        print(comments[int(similar_docs[i+1][0])])
-        options.append((comments[int(similar_docs[4][0])],0))
-        print(comments[int(similar_docs[i+2][0])])
-        options.append((comments[int(similar_docs[i+3][0])],0))
+
+
+        # while(comments[int(similar_docs[i][0])] == row[0]):
+        #     i+=1
+        # print(comments[int(similar_docs[i][0])])
+        # options.append((comments[int(similar_docs[i][0])],0))
+        # print(comments[int(similar_docs[i+1][0])])
+        # options.append((comments[int(similar_docs[4][0])],0))
+        # print(comments[int(similar_docs[i+2][0])])
+        # options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
         options_per_func.append((row[1], options, function ))
@@ -822,6 +828,14 @@ def clusterCodes():
 
     code_tensors = []
 
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT comment from Comments" )
+    new_comments = cur.fetchall()
+    print(new_comments)
+    comments.extend(list(map(lambda x: x[0],new_comments)))
+
+
     i = 0
     for word in code_vocab:
         code_dict[word] = i
@@ -847,7 +861,7 @@ def clusterCodes():
     #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
 
 
-    max_epochs = 3
+    max_epochs = 300
     vec_size = 100
     alpha = 0.125
 
