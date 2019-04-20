@@ -454,7 +454,7 @@ def checkDifficulty( item, difficulty ):
     elif(difficulty == 3):
         return item['difficulty'] >= 2.5
     elif(difficulty == 2):
-        return (item[difficulty] < 2.5 and item[difficulty] > 2.5)
+        return (item['difficulty'] < 2.5 and item['difficulty'] > 2.5)
 
 
 @app.route("/")
@@ -875,7 +875,7 @@ def clusterCodes():
     #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
 
 
-    max_epochs = 300
+    max_epochs = 3
     vec_size = 100
     alpha = 0.125
 
