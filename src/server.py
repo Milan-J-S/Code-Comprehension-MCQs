@@ -266,7 +266,7 @@ def showCode():
         # options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
-        options_per_func.append((row[1], options, function ))
+        options_per_func.append((row[1], options, function.replace(row[1], "foo") ))
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -362,7 +362,7 @@ def recommendCodes(user):
     return codes_ordered
 
 
-def prepareAll(username, lang):
+def prepareAll(username, lang, difficulty):
     code_desc = {}
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -440,13 +440,16 @@ def prepareAll(username, lang):
     rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
 
     items = list(map(convertToDict, rows))
+
+    items = list(filter(lambda x: x['difficulty'] == int(difficulty), items ))
+
     return(items)
 
 
 @app.route("/")
 def showAll():
     username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
-    items = prepareAll(username, '')
+    items = prepareAll(username, '','')
 
     resp = make_response(render_template('showResources.html', items=items, username=username))
 
@@ -933,11 +936,12 @@ def search():
 
     searchTerms = request.form.get("searchTerms", "").split()
     lang = request.form.get("lang", "")
+    difficulty = request.form.get("difficulty", "")
 
     print("lang = ", lang)
 
     if searchTerms == []:
-        items = prepareAll(request.cookies.get("username","Login/Sign Up").split("@")[0], lang)
+        items = prepareAll(request.cookies.get("username","Login/Sign Up").split("@")[0], lang, difficulty)
         return jsonify(files=items)
 
 
