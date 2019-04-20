@@ -183,7 +183,7 @@ def generateTags(code):
                     else:
                         existing = comment.split("*/")[0]
 
-
+            extractFunction(name, code)
 
             if(existing  == ''):
                 comments.append((generateComments(curfunc), name ))
@@ -252,7 +252,7 @@ def showCode():
         print(comments[int(similar_docs[i+1][0])])
         options.append((comments[int(similar_docs[4][0])],0))
         print(comments[int(similar_docs[i+2][0])])
-        options.append((comments[int(similar_docs[50][0])],0))
+        options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
         options_per_func.append((row[1], options))
@@ -276,6 +276,37 @@ def showCode():
                            difficulty = difficulty,
                            description = new_description,
                             )
+
+def extractFunction(name, code):
+
+    str = re.compile(".*"+name+"\(.*\)[^;]", re.MULTILINE)
+
+    matches = re.search(str, code)
+    print(matches.end())
+    print(matches)
+    end = matches.end()
+    while(code[end]!='{'):
+        end+=1
+
+    relevant_code = code[end:]
+    counter = 0
+
+    code_actual = ''
+
+    for char in relevant_code:
+        if(char == '{'):
+            counter+=1
+        elif(char == '}'):
+            counter-=1
+        code_actual+=char
+        if(counter==0):
+            break
+
+    # print(matches.expand())
+    res = matches.group(0)+code_actual
+    print(res)
+    return res
+
 
 
 def recommendCodes(user):
