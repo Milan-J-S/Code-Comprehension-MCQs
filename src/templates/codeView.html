@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Intelligent Teaching Assistant</title>
+<head>
+    <title>Intelligent Teaching Assistant</title>
     <!-- Bootstrap core CSS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-            <script src = "{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
 
 
-        <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}" ></script>
+    <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
 
-    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
-    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/src/line/highlight.js')}}"></script>
-    <script src = "{{ url_for('static',filename = 'codemirror-5.44.0/mode/clike/clike.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/src/line/highlight.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/mode/clike/clike.js')}}"></script>
     <link href="{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.css')}}" rel="stylesheet">
 
-    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet"
-    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
@@ -32,157 +32,148 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
 
-    </head>
-    <body class = "mw-100 ">
+</head>
+<body class="mw-100 ">
 
 
-    <nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
-  <a class="navbar-brand" href="#">Intelligent Teaching Assistant</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
-    aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
-    <ul class="navbar-nav mr-auto">
+<nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
+    <a class="navbar-brand" href="#">Intelligent Teaching Assistant</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
+            aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
+        <ul class="navbar-nav mr-auto">
 
-      <li class="nav-item">
-        <a class="nav-link" href="/upload">Upload Code</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/"><span class="sr-only">(current)</span>View Codes</a>
-      </li>
-      <li class="nav-item">
-              <a class="nav-link" href="/profile">View Profile</a>
-          </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/upload">Upload Code</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/"><span class="sr-only">(current)</span>View Codes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">View Profile</a>
+            </li>
 
-    </ul>
-    <ul class="navbar-nav ml-auto nav-flex-icons">
-        <a download="{{description}}" href="/download?filename={{filename}}">
-        <li class="nav-item" >
-            <img height="30px" width = "30px" src="{{ url_for('static',filename = 'download.png')}}"  alt="avatar image">
-        </li>
+        </ul>
+        <ul class="navbar-nav ml-auto nav-flex-icons">
+            <a download="{{description}}" href="/download?filename={{filename}}">
+                <li class="nav-item">
+                    <img height="30px" width="30px" src="{{ url_for('static',filename = 'download.png')}}"
+                         alt="avatar image">
+                </li>
             </a>
-      <li class="nav-item avatar dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">
+            <li class="nav-item avatar dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown"
+                   aria-haspopup="true"
+                   aria-expanded="false">
 
-            <span id="userName" style="color:white">{{username}}</span>
-          <img height="30px" width = "30px" src="{{ url_for('static',filename = 'user-white.svg')}}" class="rounded-circle z-depth-1" alt="avatar image">
-        </a>
-        <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center" aria-labelledby="navbarDropdownMenuLink-55">
-            <a class="dropdown-item" href="#">Login Or SignUp</a>
-            <input id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
-            <input type="password" id="passw" class = "form-control my-3" placeholder="password"/>
-            <input type="password" id="confirmpassw" style="display:none" class = "form-control my-3" placeholder="confirm password"/>
-            <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto" value="LOGIN" onclick="loginRequest()">
-        </div>
-      </li>
-    </ul>
-  </div>
+                    <span id="userName" style="color:white">{{username}}</span>
+                    <img height="30px" width="30px" src="{{ url_for('static',filename = 'user-white.svg')}}"
+                         class="rounded-circle z-depth-1" alt="avatar image">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center"
+                     aria-labelledby="navbarDropdownMenuLink-55">
+                    <a class="dropdown-item" href="#">Login Or SignUp</a>
+                    <input id="email" class="form-control my-3" placeholder="email" onblur="checkUser()"/>
+                    <input type="password" id="passw" class="form-control my-3" placeholder="password"/>
+                    <input type="password" id="confirmpassw" style="display:none" class="form-control my-3"
+                           placeholder="confirm password"/>
+                    <input type="button" id="loginBtn"
+                           class="dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto"
+                           value="LOGIN" onclick="loginRequest()">
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
 <!--/.Navbar -->
 
-    <div class="scrollbar scrollbar-primary">
-  <div class="force-overflow"></div>
+<div class="scrollbar scrollbar-primary">
+    <div class="force-overflow"></div>
 </div>
 
-        <div class="h-100 container mx-auto mw-100 scrollbar scrollbar-primary">
-            <div class="force-overflow row">
-                <div class="col-sm-8 px-0">
-                        <textarea  id="codeTextArea">{{data}}</textarea>
-                        <div id="carouselExampleControls" class="d-inline carousel slide w-100" data-ride="carousel" data-interval="false">
-                                <a href="#carouselExampleControls" role="button" data-slide="prev">
-                                        <h6>Prev</h6>
-                                </a>
-                            <div class="d-inline carousel-inner">
-                              {% for function,option_list, func in options %}
-                                <div id="MCQ" class="carousel-item {%if loop.first%}active{%endif%} ww-100">    
-                                  <h4 class="h4">What does this code do?: {{function}}</h4>
-                                  <textarea  class="funcDisplay" rows="9" cols="25" id="codeTextArea{{loop.index0}}">{{func}}</textarea>
-                                  <br>
-                                  {% for option in option_list %}
-                                      <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
-                                  {% endfor %}
-                                  <br>
-                                  <br>
-                                  <h3 class="h3-responsive" id="showRes"></h3>
-                              </div>
-                              {% endfor %}
-                              <!-- {% for i in options.size %}
-                              <div id="MCQ" class="carousel-item">    
-                                <h4 class="h4-responsive">What does this code do?: {{options[i][0]}}</h4>
-                                {% for option in options[i][1] %}
-                                    <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
-                                {% endfor %}
-                                <br>
-                                <br>
-                                <h3 class="h3-responsive" id="showRes"></h3>
-                            </div>
-                            {% endfor %} -->
-                            </div>
-                            <a href="#carouselExampleControls" role="button" data-slide="next">
-                              <h6>Next</h6>
-                            </a>
-                          </div>
-                </div>
-                <div class="col-sm-4 float-right sticky px-0 " >
-                    <div class = card>
-                        <h6>Adaptive Difficulty: </h6>
-                        <h6>{{difficulty}}</h6>
-                    </div>
-                    <div class="card card-comments mb-3 wow fadeIn w-100 ">
-                        <div id="postDetails" class="card-header font-weight-bold sticky w-100">{{rows|length}} posts</div>
-                        <div id="comment_body" class="card-body  smooth-scroll">
-                            {% for item in rows %}
-                            <div class="media  d-block d-md-flex mt-4 h-25">
-                                <img height = "50px" width="50px" class="d-flex mb-3 mx-auto " src="{{ url_for('static',filename = 'user-white.svg')}}" alt="Generic placeholder image">
-                                <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75 " style = "overflow:none">
-                                    <h5 class="mt-0 font-weight-bold"> {{item[0]}}
+<div class="h-100 container mx-auto mw-100 scrollbar scrollbar-primary">
+    <div class="force-overflow row">
+        <div class="col-sm-7 px-0">
 
-                                    </h5>
-                                    {{item[1]}}
-                                </div>
-                            </div>
 
-                            {% endfor %}
-                                <div id="new_comment" class="media d-block d-md-flex mt-4 w-100 h-25">
-                                        <!-- Default input -->
-                                        <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>
-
-                                    <button type="button" class="btn btn-primary" onclick="postIt()">Post</button></div>
-                                <!-- <div id="comment_holder">
-                                    <div class="row">
-                                            <div class="col-sm-4">FUNCTION</div>
-                                            <div class="col-sm-4">RECOMMENDED</div>
-                                            <div class="col-sm-4">INPUT</div>
-                                    </div>
-                                    {% for item in prgcomments %}
-                                        <div class="row">
-                                        <div class="col-sm-4">item[0]</div>
-                                        <div class="col-sm-4">item</div>
-                                        <div class="col-sm-4"><input type="text"></div>
-                                        </div>
-                                    {% endfor %}
-                                </div> -->
-                        </div>
+                    {% for function,option_list, func in options %}
+                    <div id="MCQ" class=" m-3 p-3 card ww-100">
+                        <h4 class="h4">What does this code do?: {{function}}</h4>
+                        <textarea class="funcDisplay" rows="9" cols="25"
+                                  id="codeTextArea{{loop.index0}}">{{func}}</textarea>
+                        <br>
+                        {% for option in option_list %}
+                        <button class='btn btn-outline-primary waves-effect ' onclick="changeState(event)"
+                                id="{{option[1]}}">{{option[0]}}
+                        </button>
+                        {% endfor %}
+                        <br>
+                        <br>
+                        <h3 class="h3-responsive" id="showRes"></h3>
                     </div>
-                    <h6 for="customRange2">How difficult do you rate this code?</h6>
-                    <div class = "row">
-                        <input type="range" id = 'difficulty' class="custom-range px-5" min="1" max="5" id="customRange2">
-                        <button class="btn btn-primary pull-right" onclick = "rate(event)">RATE</button>
-                    </div>
-                </div>
-            </div>
+                    {% endfor %}
+                    <!-- {% for i in options.size %}
+                    <div id="MCQ" class="carousel-item">
+                      <h4 class="h4-responsive">What does this code do?: {{options[i][0]}}</h4>
+                      {% for option in options[i][1] %}
+                          <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
+                      {% endfor %}
+                      <br>
+                      <br>
+                      <h3 class="h3-responsive" id="showRes"></h3>
+                  </div>
+                  {% endfor %} -->
         </div>
 
+        <div class="col-sm-5 float-right sticky px-0 ">
+            <div class=card>
+                <h6>Adaptive Difficulty: </h6>
+                <h6>{{difficulty}}</h6>
+            </div>
+            <div class="card card-comments mb-3 wow fadeIn w-100 ">
+                <div id="postDetails" class="card-header font-weight-bold sticky w-100">{{rows|length}} posts</div>
+                <div id="comment_body" class="card-body  smooth-scroll">
+                    {% for item in rows %}
+                    <div class="media  d-block d-md-flex mt-4 h-25">
+                        <img height="50px" width="50px" class="d-flex mb-3 mx-auto "
+                             src="{{ url_for('static',filename = 'user-white.svg')}}" alt="Generic placeholder image">
+                        <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75 "
+                             style="overflow:none">
+                            <h5 class="mt-0 font-weight-bold"> {{item[0]}}
+
+                            </h5>
+                            {{item[1]}}
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                    <div id="new_comment" class="media d-block d-md-flex mt-4 w-100 h-25">
+                        <!-- Default input -->
+                        <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>
+
+                        <button type="button" class="btn btn-primary" onclick="postIt()">Post</button>
+                    </div>
+
+                    </div> -->
+                </div>
+            </div>
+            <h6 for="customRange2">How difficult do you rate this code?</h6>
+            <div class="row">
+                <input type="range" id='difficulty' class="custom-range px-5" min="1" max="5" id="customRange2">
+                <button class="btn btn-primary pull-right" onclick="rate(event)">RATE</button>
+            </div>
+        </div>
+    <textarea id="codeTextArea">{{data}}</textarea>
+
+    </div>
+</div>
 
 
-
-
-
-        <script>
+<script>
             myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
                lineNumbers: true,
                lineWrapping: true,
@@ -194,6 +185,7 @@
                 autoCloseTags: true,
                 autoCloseBrackets: true,
             });
+
 
             listOfFunc = document.getElementsByClassName("funcDisplay");
             loopCodeMirror = []
@@ -213,12 +205,11 @@
                 readOnly: true,
                 autofocus: true
             }));
-            loopCodeMirror[i].getDoc().setValue(document.getElementById("codeTextArea"+i.toString()).innerHTML);
-            // alert(document.getElementById("codeTextArea"+i.toString()).innerHTML);
-            alert(loopCodeMirror[i].getDoc().getValue());
+            loopCodeMirror[i].getDoc().setValue(document.getElementById("codeTextArea"+i.toString()).innerHTML.replace());
             }
 
-            myCodeMirror.setSize("100%","100%")
+
+            myCodeMirror.setSize(auto,"100%")
 
             function sendAnswer(event)
             {
@@ -428,7 +419,8 @@
             }
 
 
-        </script>
 
-    </body>
+</script>
+
+</body>
 </html>
