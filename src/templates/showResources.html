@@ -87,6 +87,15 @@
         <option value="javascript">JavaScript</option>
     </select>
                 </div>
+
+                <div class="nav-item dropdown col-sm-2">
+                    <select class="browser-default custom-select" id="diff_op" onchange="searchCont()">
+                    <option selected value="">All Levels</option>
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                </select>
+                            </div>
         </form>
     </div>
     <!-- Collapsible content -->
@@ -155,6 +164,7 @@
             {
               inp = document.getElementById('search').value;
               lang = document.getElementById('lang_op').value;
+              diff = document.getElementById('diff_op').value;
               console.log(lang);
 
               //if(inp == '')
@@ -229,7 +239,7 @@
                         }
               }
 
-              xhr.send("searchTerms="+inp+"&lang="+lang);
+              xhr.send("searchTerms="+inp+"&lang="+lang+"&difficulty="+diff);
             }
 
 
