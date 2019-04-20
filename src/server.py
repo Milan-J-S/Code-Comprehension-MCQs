@@ -233,9 +233,14 @@ def showCode():
     cur.execute("SELECT comment,line  FROM CodeComments WHERE code = (?)",(filename,))
     comments_options = cur.fetchall()
 
+    data = str(f.read())
+
     print(comments_options)
     for row in comments_options:
 
+        function = extractFunction(row[1], data)
+
+        doc2vec_model = Doc2Vec.load("d2v.model")
         v1 = doc2vec_model.infer_vector(list(filter(lambda x: x not in stop,word_tokenize(row[0].lower()))), steps=1000)
 
 
@@ -255,7 +260,7 @@ def showCode():
         options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
-        options_per_func.append((row[1], options))
+        options_per_func.append((row[1], options, function ))
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -268,7 +273,7 @@ def showCode():
 
     print(description)
     return render_template('codeView.html',
-                           data=str(f.read()),
+                           data=data,
                            rows=rows,
                            filename=filename,
                            username=username,
