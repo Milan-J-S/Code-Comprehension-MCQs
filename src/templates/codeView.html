@@ -97,12 +97,10 @@
                                         <h6>Prev</h6>
                                 </a>
                             <div class="d-inline carousel-inner">
-                              {% for function,option_list in options %}
+                              {% for function,option_list, func in options %}
                                 <div id="MCQ" class="carousel-item {%if loop.first%}active{%endif%} ww-100">    
                                   <h4 class="h4">What does this code do?: {{function}}</h4>
-                                  <textarea  class="funcDisplay" rows="9" cols="25" id="codeTextArea{{loop.index0}}">
-                                      {{loop.index0}}
-                                  </textarea>
+                                  <textarea  class="funcDisplay" rows="9" cols="25" id="codeTextArea{{loop.index0}}">{{func}}</textarea>
                                   <br>
                                   {% for option in option_list %}
                                       <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
@@ -211,7 +209,13 @@
                 indentWithTabs: true,
                 autoCloseTags: true,
                 autoCloseBrackets: true,
+                autoRefresh:true,
+                readOnly: true,
+                autofocus: true
             }));
+            loopCodeMirror[i].getDoc().setValue(document.getElementById("codeTextArea"+i.toString()).innerHTML);
+            // alert(document.getElementById("codeTextArea"+i.toString()).innerHTML);
+            alert(loopCodeMirror[i].getDoc().getValue());
             }
 
             myCodeMirror.setSize("100%","100%")
