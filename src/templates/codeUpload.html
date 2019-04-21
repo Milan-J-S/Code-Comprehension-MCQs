@@ -90,11 +90,12 @@
   </div>
 </nav>
 <!--/.Navbar -->
-    <div style="position:relative;height:80%">
+    <div class="card card-dark m-2">
+    <div style="position:relative;border-style:solid;border-color:black;height:80%" class="m-1">
         <textarea onchange="pasted(event)" i class="form-control z-depth-1 prettyprint" id="codeTextArea" onblur="pullTags()"
                   placeholder="Paste Code Here..."></textarea>
     </div>
-    <select class="browser-default custom-select" id="lang_op" onchange="changeLang(event)">
+    <select class="browser-default custom-select m-1 w-25" id="lang_op" onchange="changeLang(event)">
         <option selected value="text/x-csrc">C</option>
         <option value="text/x-c++src">C++</option>
         <option value="python">Python</option>
@@ -102,9 +103,16 @@
         <option value="text/html">HTML</option>
         <option value="javascript">JavaScript</option>
     </select>
-    <input id="codeFile" onchange="uploaded(event)" type="file" class="input-group-text"/>
-    <textarea class="form-control rounded-3 w-75 m-3" id="description" rows="2" placeholder="Description" onclick = "pullTags()" ></textarea>
-    <input type="button" class="btn btn-info my-4" value="submit" id="submitbtn" onclick="saveCode()"/>
+    <input id="codeFile" class="m-1 w-25" onchange="uploaded(event)" type="file" class="input-group-text"/>
+    <div class="card my-3 w-25 text-center">
+        <h6>How difficult do you rate this code?</h6>
+            <div class="row">
+                <input type="range" id='difficulty' class="custom-range px-5 w-100" min="1" max="3" id="customRange2">
+            </div>
+    </div>
+    </div>
+    <textarea class="form-control rounded-3 w-75 m-2" id="description" rows="2" placeholder="File Description" onclick = "pullTags()" ></textarea>
+    <input type="button" class="btn btn-elegant" value="submit" id="submitbtn" onclick="saveCode()"/>
 <script>
 
             lang_op = document.getElementById("lang_op");
@@ -297,6 +305,8 @@
             {
                 code = myCodeMirror.getDoc().getValue();
 
+                //difficulty = document.getElementById("customRange2").value;
+
                 tags_to_use = Array.from(document.getElementsByClassName("btn btn-outline-default waves-effect"));
 
                 console.log(tags_to_use);
@@ -312,9 +322,10 @@
 
                 comments_to_use = Array.from(document.getElementsByClassName("comment"));
                 comments = comments_to_use.map( (x) => x.value )
+                // alert(comments);
 
                 function_to_use = Array.from(document.getElementsByClassName("functionName"));
-                if(function_to_use != [])
+                if(function_to_use.length > 0)
                 {
                     func = function_to_use.map( (x) => x.innerHTML );
                 }
@@ -399,12 +410,14 @@
                 
                 divC = document.createElement("div");
                 divC.setAttribute("id","main_comment_holder");
+                divC.setAttribute("class","m-2");
                 divtitle = document.createElement("h5");
                 divtitle.innerHTML = "Add Tags: ";
                 
 
                 div = document.createElement("div");
                 div.setAttribute("id","tag_holder");
+                div.setAttribute("class","p-1 m-2");
                 add_ons = document.createElement("div");
                 add_ons.setAttribute("id","add_ons");
                 add_inp = document.createElement("input");
@@ -451,7 +464,7 @@
                     div2.setAttribute("id","comment_holder"+i);
                     addC = document.createElement("div");
                     addC.setAttribute("id","addC"+i);
-                    //addC.setAttribute("class","md-form");
+                    addC.setAttribute("class","card m-1 p-1");
                     commD = document.createElement("input");
                     commD.setAttribute("class","form-control comment");
                     commD.setAttribute("id","commD"+i);
@@ -461,7 +474,18 @@
                     lab.setAttribute("for","commD"+i);
                     lab.setAttribute("class","functionName")                    
                     lab.innerHTML = comment[1];
+                    but = document.createElement("button");
+                    but.setAttribute("type","button");
+                    but.setAttribute("class","close");
+                    but.style.position = "absolute";
+                    but.style.top = "0";
+                    but.style.right = "0";
+                    spn = document.createElement("span");
+                    spn.innerHTML = "x";
+                    but.addEventListener("click",changeCommClass,false);
+                    but.append(spn);
                     addC.append(lab);
+                    addC.append(but);
                     addC.append(commD);
                     div2.append(addC);
                     divC.append(div2);
@@ -473,7 +497,7 @@
                     div2.setAttribute("id","comment_holder"+i);
                     addC = document.createElement("div");
                     addC.setAttribute("id","addC"+i);
-                    //addC.setAttribute("class","md-form");
+                    addC.setAttribute("class","card m-1 p-1");
                     commD = document.createElement("input");
                     commD.setAttribute("class","form-control comment");
                     commD.setAttribute("id","commD"+i);
@@ -492,12 +516,22 @@
                 document.body.insertBefore(divC,submit_button);
             }
 
+            function changeCommClass(event)
+            {
+                prt = event.target.parentNode.parentNode;
+                labl = prt.getElementsByClassName("functionName");
+                console.log(prt);
+                labl[0].style.color = "red";
+                commt = prt.getElementsByClassName("form-control comment")
+                commt[0].setAttribute("class","");
+            }
+
             function pullTags()
             {
 
 
                 code_cont = myCodeMirror.getDoc().getValue();
-                code_type = myCodeMirror.getMode().helperType;
+                code_type = lang_op.value;
 
                 console.log(code_type);
 
