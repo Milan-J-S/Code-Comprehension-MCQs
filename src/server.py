@@ -9,8 +9,7 @@ import re
 from random import shuffle
 
 user_codes_matrix = []
-from sklearn.neighbors import NearestNeighbors
-from os import listdir
+
 import json
 from nltk.tokenize import word_tokenize
 import nltk
@@ -262,14 +261,6 @@ def showCode():
             i+=1
 
 
-        # while(comments[int(similar_docs[i][0])] == row[0]):
-        #     i+=1
-        # print(comments[int(similar_docs[i][0])])
-        # options.append((comments[int(similar_docs[i][0])],0))
-        # print(comments[int(similar_docs[i+1][0])])
-        # options.append((comments[int(similar_docs[4][0])],0))
-        # print(comments[int(similar_docs[i+2][0])])
-        # options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
 
@@ -291,7 +282,7 @@ def showCode():
                            filename=filename,
                            username=username,
                            options = options_per_func,
-                           difficulty = difficulty,
+                           difficulty = float(difficulty),
                            description = new_description,
                             )
 
@@ -863,24 +854,11 @@ def clusterCodes():
         i += 1
 
     j = 0
-    # for code in codes:
-    #     code_tensor = np.zeros(750)
-    #     for i in range(min(750, len(code))):
-    #         code_tensor[i] = code_dict[code[i]]
-    #     code_tensors.append(code_tensor)
+
 
     tagged_data = [TaggedDocument(list(filter(lambda x: x not in stop,word_tokenize(d.lower()))), tags=[str(i)]) for i, d in enumerate(comments)]
 
     tagged_code = [TaggedDocument([d.lower()], tags=[str(i)]) for i, d in enumerate(codes)]
-
-
-    # levenshtein_distances_matrix = np.zeros((len(codes), len(codes)))
-    #
-    # for i in range(len(code_tensors)):
-    #     for j in range(i+1, len(code_tensors)):
-    #         levenshtein_distances_matrix[i][j] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
-    #         levenshtein_distances_matrix[j][i] = distance.levenshtein(list(code_tensors[i]), list(code_tensors[j]))
-
 
     max_epochs = 3
     vec_size = 100
@@ -931,13 +909,6 @@ def clusterCodes():
     code2vec_model.save("c2v.model")
     print("Model Saved")
 
-    # nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(code_tensors)
-    # distances, indices = nbrs.kneighbors(np.asarray(code_tensors))
-    #
-    # print(indices)
-    # print(nbrs)
-    # # recommendForUser('milan.j.srinivas')
-    # # print(code_ten sors)
 
 clusterCodes()
 
