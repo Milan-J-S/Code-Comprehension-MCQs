@@ -238,7 +238,11 @@ def showCode():
     print(comments_options)
     for row in comments_options:
 
-        function = extractFunction(row[1], data)
+        if(row[1] == ""):
+            function = data
+        else:
+            function = extractFunction(row[1], data)
+            function = function.replace(row[1], "foo")
 
         doc2vec_model = Doc2Vec.load("d2v.model")
         v1 = doc2vec_model.infer_vector(list(filter(lambda x: x not in stop,word_tokenize(row[0].lower()))), steps=1000)
@@ -249,10 +253,12 @@ def showCode():
         options = []
         print(row[0])
         options.append((row[0],1))
+        options_actual = [row[0]]
         i = 1
         while(len(options)!=4):
             if(comments[int(similar_docs[i][0])] not in options):
                 options.append((comments[int(similar_docs[i][0])], 0))
+                options_actual.append(comments[int(similar_docs[i][0])])
             i+=1
 
 
@@ -266,7 +272,8 @@ def showCode():
         # options.append((comments[int(similar_docs[i+3][0])],0))
         shuffle(options)
 
-        options_per_func.append((row[1], options, function.replace(row[1], "foo") ))
+
+        options_per_func.append((row[1], options, function))
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
