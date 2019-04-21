@@ -58,13 +58,15 @@
             </li>
 
         </ul>
-        <ul class="navbar-nav ml-auto nav-flex-icons">
-            <a download="{{description}}" href="/download?filename={{filename}}">
-                <li class="nav-item">
+        <ul class="navbar-nav ml-auto ">
+            <li class="nav-item my-auto">
+                <a download="{{description}}" class="nav-link" href="/download?filename={{filename}}">
+
                     <img height="30px" width="30px" src="{{ url_for('static',filename = 'download.png')}}"
-                         alt="avatar image">
-                </li>
-            </a>
+                         class="z-depth-1 my-auto">
+
+                </a>
+            </li>
             <li class="nav-item avatar dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown"
                    aria-haspopup="true"
@@ -100,40 +102,39 @@
         <div class="col-sm-7 px-0">
 
 
-                    {% for function,option_list, func in options %}
-                    <div id="MCQ" class=" m-3 p-3 card ww-100">
-                        <h4 class="h4">What does this code do?</h4>
-                        <textarea class="funcDisplay" cols="25"
-                                  id="codeTextArea{{loop.index0}}">{{func}}</textarea>
-                        <br>
-                        {% for option in option_list %}
-                        <button class='btn btn-outline-primary waves-effect ' onclick="changeState(event)"
-                                id="{{option[1]}}">{{option[0]}}
-                        </button>
-                        {% endfor %}
-                        <br>
-                        <br>
-                        <h3 class="h3-responsive" id="showRes"></h3>
-                    </div>
-                    {% endfor %}
-                    <!-- {% for i in options.size %}
-                    <div id="MCQ" class="carousel-item">
-                      <h4 class="h4-responsive">What does this code do?: {{options[i][0]}}</h4>
-                      {% for option in options[i][1] %}
-                          <button class='btn btn-outline-primary waves-effect' onclick="changeState(event)" id="{{option[1]}}">{{option[0]}}</button>
-                      {% endfor %}
-                      <br>
-                      <br>
-                      <h3 class="h3-responsive" id="showRes"></h3>
-                  </div>
-                  {% endfor %} -->
+            {% for function,option_list, func in options %}
+            <div id="MCQ" class=" m-3 p-3 card ww-100">
+                <h4 class="h4">What does this code do?</h4>
+                <textarea class="funcDisplay" cols="25"
+                          id="codeTextArea{{loop.index0}}">{{func}}</textarea>
+                <br>
+                {% for option in option_list %}
+                <button class='btn btn-outline-dark waves-effect ' onclick="changeState(event)"
+                        id="{{option[1]}}">{{option[0]}}
+                </button>
+                {% endfor %}
+                <br>
+                <br>
+                <h3 class="h3-responsive" id="showRes"></h3>
+            </div>
+            {% endfor %}
+
         </div>
 
         <div class="col-sm-5 float-right sticky px-0 ">
-            <div class=card>
-                <h6>Adaptive Difficulty: </h6>
-                <h6>{{difficulty}}</h6>
+            <div class="row p-0 m-0">
+                <div class="col-sm-6">
+                    <div class='btn {%if difficulty <= 0%}btn-outline-default {%elif difficulty <= 2.5 %}btn-outline-warning {%else%}btn-outline-danger{% endif %} w-100'>
+                        Adaptive Difficulty: {{difficulty}}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+
+                    <button class='btn btn-outline-dark  w-100 'href="#codeTextArea" onclick="viewFullCode()">View Full Code
+                    </button>
+                </div>
             </div>
+
             <div class="card card-comments mb-3 wow fadeIn w-100 ">
                 <div id="postDetails" class="card-header font-weight-bold sticky w-100">{{rows|length}} posts</div>
                 <div id="comment_body" class="card-body  smooth-scroll">
@@ -155,37 +156,33 @@
                         <!-- Default input -->
                         <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>
 
-                        <button type="button" class="btn btn-primary" onclick="postIt()">Post</button>
+                        <button type="button" class="btn btn-dark" onclick="postIt()">Post</button>
                     </div>
 
-                    </div>
                 </div>
-            <h6 for="customRange2">How difficult do you rate this code?</h6>
-            <div class="row">
-                <input type="range" id='difficulty' class="custom-range px-5" min="1" max="3" id="customRange2">
-                <button class="btn btn-primary pull-right" onclick="rate(event)">RATE</button>
-            </div>
             </div>
 
+            <div class="card p-3">
+                <h6 class="text-center">How difficult do you rate this code?</h6>
+
+                <input type="range" id='difficulty' class="custom-range dark px-5 my-2" min="1" max="3"
+                       id="customRange2">
+                <button class="btn btn-dark pull-right w-50" onclick="rate(event)">RATE</button>
+            </div>
         </div>
+
+    </div>
 
 
 </div>
-<textarea id="codeTextArea">{{data}}</textarea>
+<div class="card p-1 pt-5" id="fullCode" style="display:none">
+    <h3 class="text-center my-3"> Full Source Code </h3>
+    <textarea id="codeTextArea">{{data}}</textarea>
+</div>
 
 
 <script>
-            myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
-               lineNumbers: true,
-               lineWrapping: true,
-                mode:  "text/x-csrc",
-                styleActiveLine :true,
-                matchBrackets: true,
-                indentUnit: 4,
-                indentWithTabs: true,
-                autoCloseTags: true,
-                autoCloseBrackets: true,
-            });
+
 
 
             listOfFunc = document.getElementsByClassName("funcDisplay");
@@ -209,8 +206,7 @@
             //loopCodeMirror[i].getDoc().setValue(document.getElementById("codeTextArea"+i.toString()).innerHTML.replace());
             }
 
-
-            myCodeMirror.setSize(auto,"100%")
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
 
             function sendAnswer(event)
             {
@@ -418,6 +414,34 @@
 
                 xhr.send(postvars);
             }
+
+            function viewFullCode()
+            {
+                document.getElementById("fullCode").style.display = 'block';
+
+                myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
+               lineNumbers: true,
+               lineWrapping: true,
+                mode:  "text/x-csrc",
+                styleActiveLine :true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+            });
+
+            myCodeMirror.setSize("100%","auto");
+            //window.location.hash = '#fullCode';
+
+            document.getElementById("fullCode").scrollIntoView();
+
+
+            }
+
+
+
+
 
 
 
