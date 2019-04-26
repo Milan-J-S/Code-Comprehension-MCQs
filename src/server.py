@@ -13,6 +13,8 @@ user_codes_matrix = []
 import json
 from nltk.tokenize import word_tokenize
 import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
 nltk.download('corpus')
 from nltk.corpus import stopwords
 stop = set(stopwords.words('english'))
