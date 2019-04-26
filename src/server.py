@@ -1,5 +1,5 @@
 import random
-import string
+import webbrowser
 
 from flask import Flask, request, jsonify, session, g, redirect, url_for, abort, \
     render_template, make_response
@@ -402,20 +402,16 @@ def prepareAll(username, lang, difficulty):
         if (difficulty_matrix[new_users_dict[username]][i] == 0):
             adaptive_score = 0
             count = 0
-
             for index in indices:
                 if (difficulty_matrix[index][i] > 0):
                     count += 1
                 adaptive_score += difficulty_matrix[index][i]
-
             if (count > 0):
                 code_difficulties.append(adaptive_score / count)
             else:
                 code_difficulties.append(0)
-
         else:
             code_difficulties.append(difficulty_matrix[new_users_dict[username]][i])
-
         adaptive_difficulty_matrix[new_users_dict[username]][i] = code_difficulties[-1]
 
     print(code_difficulties)
@@ -1072,6 +1068,8 @@ def getViewed(user):
     print("stats = " , stats )
 
     return (rows, stats)
+
+webbrowser.open_new("http://localhost:5000")
 
 def __init__():
     return app
