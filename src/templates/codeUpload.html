@@ -430,8 +430,17 @@
                 {
                     return;
                 }
+
+                if(response == "")
+                {
+                    tags = []
+                    comments = []
+                }
+                else
+                {
                 tags=JSON.parse(response).tags;
                 comments = JSON.parse(response).comments;
+                }
                 //alert(comments);
                 //alert(tags);
                 
@@ -555,8 +564,6 @@
 
             function pullTags()
             {
-
-
                 code_cont = myCodeMirror.getDoc().getValue();
                 code_type = lang_op.value;
 
@@ -574,6 +581,10 @@
                         if(xhr.readyState == 4 && xhr.status == 200)
                         {
                             showTags(xhr.response);
+                        }
+                        else if(xhr.readyState == 4 && xhr.status == 500)
+                        {
+                            showTags("");
                         }
                     }
 
