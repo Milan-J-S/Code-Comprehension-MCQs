@@ -1021,7 +1021,7 @@ def addPoints():
 
 def updatePoints(user,point):
 
-    if(user == '')
+    if(user == ''):
         return
 
     con = sqlite3.connect("database.db")
