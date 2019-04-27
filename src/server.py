@@ -1022,6 +1022,10 @@ def addPoints():
     return jsonify(success="success")
 
 def updatePoints(user,point):
+
+    if(user == ''):
+        return
+
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     cur.execute("SELECT score FROM Points WHERE user=(?)", (user,))

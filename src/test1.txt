@@ -8,412 +8,53 @@
                 "_nodetype": "Compound",
                 "block_items": [
                     {
-                        "_nodetype": "Decl",
-                        "bitsize": null,
-                        "coord": "test.txt:3:9",
-                        "funcspec": [],
-                        "init": null,
-                        "name": "n",
-                        "quals": [],
-                        "storage": [],
-                        "type": {
-                            "_nodetype": "TypeDecl",
+                        "_nodetype": "FuncCall",
+                        "args": {
+                            "_nodetype": "ExprList",
                             "coord": "test.txt:3:9",
-                            "declname": "n",
-                            "quals": [],
-                            "type": {
-                                "_nodetype": "IdentifierType",
-                                "coord": "test.txt:3:5",
-                                "names": [
-                                    "int"
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "_nodetype": "Decl",
-                        "bitsize": null,
-                        "coord": "test.txt:3:12",
-                        "funcspec": [],
-                        "init": null,
-                        "name": "i",
-                        "quals": [],
-                        "storage": [],
-                        "type": {
-                            "_nodetype": "TypeDecl",
-                            "coord": "test.txt:3:12",
-                            "declname": "i",
-                            "quals": [],
-                            "type": {
-                                "_nodetype": "IdentifierType",
-                                "coord": "test.txt:3:5",
-                                "names": [
-                                    "int"
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "_nodetype": "Decl",
-                        "bitsize": null,
-                        "coord": "test.txt:3:15",
-                        "funcspec": [],
-                        "init": {
-                            "_nodetype": "Constant",
-                            "coord": "test.txt:3:22",
-                            "type": "int",
-                            "value": "0"
-                        },
-                        "name": "flag",
-                        "quals": [],
-                        "storage": [],
-                        "type": {
-                            "_nodetype": "TypeDecl",
-                            "coord": "test.txt:3:15",
-                            "declname": "flag",
-                            "quals": [],
-                            "type": {
-                                "_nodetype": "IdentifierType",
-                                "coord": "test.txt:3:5",
-                                "names": [
-                                    "int"
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "_nodetype": "FuncCall",
-                        "args": {
-                            "_nodetype": "ExprList",
-                            "coord": "test.txt:5:12",
                             "exprs": [
                                 {
                                     "_nodetype": "Constant",
-                                    "coord": "test.txt:5:12",
+                                    "coord": "test.txt:3:9",
                                     "type": "string",
-                                    "value": "\"Enter a positive integer: \""
+                                    "value": "\"hello\""
                                 }
                             ]
                         },
-                        "coord": "test.txt:5:5",
+                        "coord": "test.txt:3:2",
                         "name": {
                             "_nodetype": "ID",
-                            "coord": "test.txt:5:5",
+                            "coord": "test.txt:3:2",
                             "name": "printf"
-                        }
-                    },
-                    {
-                        "_nodetype": "FuncCall",
-                        "args": {
-                            "_nodetype": "ExprList",
-                            "coord": "test.txt:6:11",
-                            "exprs": [
-                                {
-                                    "_nodetype": "Constant",
-                                    "coord": "test.txt:6:11",
-                                    "type": "string",
-                                    "value": "\"%d\""
-                                },
-                                {
-                                    "_nodetype": "UnaryOp",
-                                    "coord": "test.txt:6:18",
-                                    "expr": {
-                                        "_nodetype": "ID",
-                                        "coord": "test.txt:6:18",
-                                        "name": "n"
-                                    },
-                                    "op": "&"
-                                }
-                            ]
-                        },
-                        "coord": "test.txt:6:5",
-                        "name": {
-                            "_nodetype": "ID",
-                            "coord": "test.txt:6:5",
-                            "name": "scanf"
-                        }
-                    },
-                    {
-                        "_nodetype": "For",
-                        "cond": {
-                            "_nodetype": "BinaryOp",
-                            "coord": "test.txt:8:16",
-                            "left": {
-                                "_nodetype": "ID",
-                                "coord": "test.txt:8:16",
-                                "name": "i"
-                            },
-                            "op": "<=",
-                            "right": {
-                                "_nodetype": "BinaryOp",
-                                "coord": "test.txt:8:21",
-                                "left": {
-                                    "_nodetype": "ID",
-                                    "coord": "test.txt:8:21",
-                                    "name": "n"
-                                },
-                                "op": "/",
-                                "right": {
-                                    "_nodetype": "Constant",
-                                    "coord": "test.txt:8:23",
-                                    "type": "int",
-                                    "value": "2"
-                                }
-                            }
-                        },
-                        "coord": "test.txt:8:5",
-                        "init": {
-                            "_nodetype": "Assignment",
-                            "coord": "test.txt:8:9",
-                            "lvalue": {
-                                "_nodetype": "ID",
-                                "coord": "test.txt:8:9",
-                                "name": "i"
-                            },
-                            "op": "=",
-                            "rvalue": {
-                                "_nodetype": "Constant",
-                                "coord": "test.txt:8:13",
-                                "type": "int",
-                                "value": "2"
-                            }
-                        },
-                        "next": {
-                            "_nodetype": "UnaryOp",
-                            "coord": "test.txt:8:28",
-                            "expr": {
-                                "_nodetype": "ID",
-                                "coord": "test.txt:8:28",
-                                "name": "i"
-                            },
-                            "op": "++"
-                        },
-                        "stmt": {
-                            "_nodetype": "Compound",
-                            "block_items": [
-                                {
-                                    "_nodetype": "If",
-                                    "cond": {
-                                        "_nodetype": "BinaryOp",
-                                        "coord": "test.txt:11:12",
-                                        "left": {
-                                            "_nodetype": "BinaryOp",
-                                            "coord": "test.txt:11:12",
-                                            "left": {
-                                                "_nodetype": "ID",
-                                                "coord": "test.txt:11:12",
-                                                "name": "n"
-                                            },
-                                            "op": "%",
-                                            "right": {
-                                                "_nodetype": "ID",
-                                                "coord": "test.txt:11:14",
-                                                "name": "i"
-                                            }
-                                        },
-                                        "op": "==",
-                                        "right": {
-                                            "_nodetype": "Constant",
-                                            "coord": "test.txt:11:19",
-                                            "type": "int",
-                                            "value": "0"
-                                        }
-                                    },
-                                    "coord": "test.txt:11:9",
-                                    "iffalse": null,
-                                    "iftrue": {
-                                        "_nodetype": "Compound",
-                                        "block_items": [
-                                            {
-                                                "_nodetype": "Assignment",
-                                                "coord": "test.txt:13:13",
-                                                "lvalue": {
-                                                    "_nodetype": "ID",
-                                                    "coord": "test.txt:13:13",
-                                                    "name": "flag"
-                                                },
-                                                "op": "=",
-                                                "rvalue": {
-                                                    "_nodetype": "Constant",
-                                                    "coord": "test.txt:13:20",
-                                                    "type": "int",
-                                                    "value": "1"
-                                                }
-                                            },
-                                            {
-                                                "_nodetype": "Break",
-                                                "coord": "test.txt:14:13"
-                                            }
-                                        ],
-                                        "coord": "test.txt:12:1"
-                                    }
-                                }
-                            ],
-                            "coord": "test.txt:9:1"
-                        }
-                    },
-                    {
-                        "_nodetype": "If",
-                        "cond": {
-                            "_nodetype": "BinaryOp",
-                            "coord": "test.txt:18:9",
-                            "left": {
-                                "_nodetype": "ID",
-                                "coord": "test.txt:18:9",
-                                "name": "n"
-                            },
-                            "op": "==",
-                            "right": {
-                                "_nodetype": "Constant",
-                                "coord": "test.txt:18:14",
-                                "type": "int",
-                                "value": "1"
-                            }
-                        },
-                        "coord": "test.txt:18:5",
-                        "iffalse": {
-                            "_nodetype": "Compound",
-                            "block_items": [
-                                {
-                                    "_nodetype": "If",
-                                    "cond": {
-                                        "_nodetype": "BinaryOp",
-                                        "coord": "test.txt:24:13",
-                                        "left": {
-                                            "_nodetype": "ID",
-                                            "coord": "test.txt:24:13",
-                                            "name": "flag"
-                                        },
-                                        "op": "==",
-                                        "right": {
-                                            "_nodetype": "Constant",
-                                            "coord": "test.txt:24:21",
-                                            "type": "int",
-                                            "value": "0"
-                                        }
-                                    },
-                                    "coord": "test.txt:24:9",
-                                    "iffalse": {
-                                        "_nodetype": "FuncCall",
-                                        "args": {
-                                            "_nodetype": "ExprList",
-                                            "coord": "test.txt:27:18",
-                                            "exprs": [
-                                                {
-                                                    "_nodetype": "Constant",
-                                                    "coord": "test.txt:27:18",
-                                                    "type": "string",
-                                                    "value": "\"%d is not a prime number.\""
-                                                },
-                                                {
-                                                    "_nodetype": "ID",
-                                                    "coord": "test.txt:27:47",
-                                                    "name": "n"
-                                                }
-                                            ]
-                                        },
-                                        "coord": "test.txt:27:11",
-                                        "name": {
-                                            "_nodetype": "ID",
-                                            "coord": "test.txt:27:11",
-                                            "name": "printf"
-                                        }
-                                    },
-                                    "iftrue": {
-                                        "_nodetype": "FuncCall",
-                                        "args": {
-                                            "_nodetype": "ExprList",
-                                            "coord": "test.txt:25:18",
-                                            "exprs": [
-                                                {
-                                                    "_nodetype": "Constant",
-                                                    "coord": "test.txt:25:18",
-                                                    "type": "string",
-                                                    "value": "\"%d is a prime number.\""
-                                                },
-                                                {
-                                                    "_nodetype": "ID",
-                                                    "coord": "test.txt:25:43",
-                                                    "name": "n"
-                                                }
-                                            ]
-                                        },
-                                        "coord": "test.txt:25:11",
-                                        "name": {
-                                            "_nodetype": "ID",
-                                            "coord": "test.txt:25:11",
-                                            "name": "printf"
-                                        }
-                                    }
-                                }
-                            ],
-                            "coord": "test.txt:23:1"
-                        },
-                        "iftrue": {
-                            "_nodetype": "Compound",
-                            "block_items": [
-                                {
-                                    "_nodetype": "FuncCall",
-                                    "args": {
-                                        "_nodetype": "ExprList",
-                                        "coord": "test.txt:20:14",
-                                        "exprs": [
-                                            {
-                                                "_nodetype": "Constant",
-                                                "coord": "test.txt:20:14",
-                                                "type": "string",
-                                                "value": "\"1 is neither a prime nor a composite number.\""
-                                            }
-                                        ]
-                                    },
-                                    "coord": "test.txt:20:7",
-                                    "name": {
-                                        "_nodetype": "ID",
-                                        "coord": "test.txt:20:7",
-                                        "name": "printf"
-                                    }
-                                }
-                            ],
-                            "coord": "test.txt:19:1"
-                        }
-                    },
-                    {
-                        "_nodetype": "Return",
-                        "coord": "test.txt:30:5",
-                        "expr": {
-                            "_nodetype": "Constant",
-                            "coord": "test.txt:30:12",
-                            "type": "int",
-                            "value": "0"
                         }
                     }
                 ],
                 "coord": "test.txt:2:1"
             },
-            "coord": "test.txt:1:5",
+            "coord": "test.txt:1:6",
             "decl": {
                 "_nodetype": "Decl",
                 "bitsize": null,
-                "coord": "test.txt:1:5",
+                "coord": "test.txt:1:6",
                 "funcspec": [],
                 "init": null,
-                "name": "main",
+                "name": "min",
                 "quals": [],
                 "storage": [],
                 "type": {
                     "_nodetype": "FuncDecl",
                     "args": null,
-                    "coord": "test.txt:1:5",
+                    "coord": "test.txt:1:6",
                     "type": {
                         "_nodetype": "TypeDecl",
-                        "coord": "test.txt:1:5",
-                        "declname": "main",
+                        "coord": "test.txt:1:6",
+                        "declname": "min",
                         "quals": [],
                         "type": {
                             "_nodetype": "IdentifierType",
                             "coord": "test.txt:1:1",
                             "names": [
-                                "int"
+                                "void"
                             ]
                         }
                     }
