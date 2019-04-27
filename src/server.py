@@ -353,6 +353,14 @@ def recommendCodes(user):
     codes_ordered = sorted(code_to_recommend.items(), key=lambda kv: kv[1], reverse=True)[1:]
 
     print(codes_ordered)
+    print("length =", len(codes_ordered))
+
+    if len(codes_ordered) == 0:
+        print("new user")
+        codes = []
+        for code in new_codes_dict.items():
+            codes.append(code)
+        return codes
 
     for code in codes_ordered:
         print(new_codes_reverse_map[code[0]])
@@ -365,15 +373,15 @@ def prepareAll(username, lang, difficulty):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     if(lang == ''):
-        cur.execute("SELECT filename, description, lang, difficulty  FROM Codes INNER JOIN CodeViews where filename=code AND user = (?)", (username,))
+        cur.execute("SELECT filename, description, lang  FROM Codes ")
 
     else:
-        cur.execute("SELECT filename, description,lang, difficulty  FROM Codes INNER JOIN CodeViews where filename=code AND user = (?) and lang=(?)", (username, lang,))
+        cur.execute("SELECT filename, description,lang FROM Codes where lang=(?)", (lang,))
 
     rows = cur.fetchall()
 
     for row in rows:
-        code_desc[new_codes_dict[row[0]]] = (row[1], row[2], row[3])
+        code_desc[new_codes_dict[row[0]]] = (row[1], row[2], 0)
     rows = recommendCodes(username)
 
     global difficulty_matrix
@@ -416,9 +424,12 @@ def prepareAll(username, lang, difficulty):
 
     print(code_difficulties)
 
-    for key in list(code_desc.keys()):
-        if(code_desc[key]!=0):
-            code_difficulties[key] = code_desc[key][2]
+
+    cur = con.cursor()
+    cur.execute("SELECT filename, difficulty FROM Codes INNER JOIN CodeViews where filename = code AND user = (?)", (username,))
+    for row in cur.fetchall():
+        if(row[0] in code_desc):
+            code_difficulties[row[0]] = row[1]
 
 
     rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]][0], code_difficulties[x[0]], code_desc[x[0]][1]) for x in
@@ -907,7 +918,7 @@ def search():
     print("difficulty = ", difficulty)
 
     if searchTerms == []:
-        items = prepareAll(request.cookies.get("username","Login/Sign Up").split("@")[0], lang, difficulty)
+        items = prepareAll(request.cookies.get("user","Login/Sign Up").split("@")[0], lang, difficulty)
         return jsonify(files=items)
 
 
