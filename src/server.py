@@ -785,31 +785,6 @@ codes_reverse_map = []
 codes_dict = {}
 
 
-# def recommendForUser(user):
-#     con = sqlite3.connect("database.db")
-#     cur = con.cursor()
-#     cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
-#
-#     rows = cur.fetchall()
-#
-#     reco = {}
-#
-#     print(rows)
-#     for item in rows:
-#         print(codes_dict[item[0]])
-#         for code in indices[codes_dict[item[0]]]:
-#             if (code not in reco):
-#                 reco[code] = 0
-#             reco[code] += 1
-#
-#     print(reco)
-#
-#     reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
-#     reco_ordered = [x[0] for x in reco_ordered[:10]]
-#
-#     for rec in reco_ordered:
-#         print(codes_reverse_map[rec])
-
 
 def clusterCodes():
     global code_tensors
@@ -1078,6 +1053,13 @@ def getViewed(user):
     return (rows, stats)
 
 webbrowser.open_new("http://localhost:5000")
+
+@app.route("/logout", methods = ["GET"])
+def logout():
+    resp = jsonify()
+    resp.set_cookie('user', '', expires=0)
+
+    return resp
 
 def __init__():
     return app
