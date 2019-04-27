@@ -122,16 +122,16 @@
 </div>
     </div>
 <!-- Card -->
-<div id="scoreboard">
-  <h3 class="card-title">SCORE BOARD</h3>
-      <div class="row">
-              <div class="col-sm-4 card-title">USER</div>
-              <div class="col-sm-4 card-title">SCORE</div>
+<div id="scoreboard" class="px-2 m-2 py-2 card text-center">
+  <h3 class="card-title" style="background:black;color:white">SCORE BOARD</h3>
+      <div class="row text-center">
+              <div class="col-sm-6 card-title h4" >USER</div>
+              <div class="col-sm-6 card-title h4">SCORE</div>
       </div>
       {% for item in ranked %}
-          <div class="row">
-            <div class="col-sm-4">{{item[0]}}</div>
-            <div class="col-sm-4">{{item[1]}}</div>
+          <div class="row text-center">
+            <div class="col-sm-6">{{item[0]}}</div>
+            <div class="col-sm-6">{{item[1]}}</div>
           </div>
       {% endfor %}
 </div>
