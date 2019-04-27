@@ -337,7 +337,6 @@
                 {
                         if(xhr.readyState == 4 && xhr.status == 200 )
                         {
-                            // alert(JSON.parse(xhr.response));
                             if(JSON.parse(xhr.response).auth==true)
                             {
                                document.getElementById("passw").style.background = "white";
@@ -347,8 +346,6 @@
                                document.getElementById("codeTextArea").click();
                                document.getElementById("userName").innerHTML = email.split("@")[0];
                                document.location.reload();
-
-
                             }
                             else{
                             document.getElementById("passw").style.background = "red";
@@ -359,10 +356,6 @@
                 postvars = "email="+email+"&password="+passw+"&operation="+operation;
 
                 xhr.send(postvars);
-
-
-
-
             }
 
 
