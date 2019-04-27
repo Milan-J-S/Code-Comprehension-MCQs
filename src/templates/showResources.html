@@ -167,10 +167,8 @@
               diff = document.getElementById('diff_op').value;
               console.log(lang);
 
-              //if(inp == '')
-                //document.getElementById('resources').style.display = 'block'
-              //else
-                document.getElementById('resources').style.display = 'none';
+
+              document.getElementById('resources').style.display = 'none';
 
               var xhr = new XMLHttpRequest();
               xhr.open("POST", "http://localhost:5000/search");
