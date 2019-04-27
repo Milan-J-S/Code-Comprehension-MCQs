@@ -80,10 +80,11 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center" aria-labelledby="navbarDropdownMenuLink-55">
             <a class="dropdown-item" href="#">Login Or SignUp</a>
-            <input id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
+            <input type="email" id="email" class = "form-control my-3"  placeholder="email" onblur="checkUser()"/>
             <input type="password" id="passw" class = "form-control my-3" placeholder="password"/>
             <input type="password" id="confirmpassw" style="display:none" class = "form-control my-3" placeholder="confirm password"/>
-            <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto" value="LOGIN" onclick="loginRequest()">
+            <input type="button" id="loginBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-100 text-center" value="LOGIN" onclick="loginRequest()">
+            <input type="button" id="logoutBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-100 text-center" value="LOGOUT" onclick="logoutRequest()">
         </div>
       </li>
     </ul>
@@ -104,14 +105,9 @@
         <option value="javascript">JavaScript</option>
     </select>
     <input id="codeFile" class="m-1 w-25" onchange="uploaded(event)" type="file" class="input-group-text"/>
-    <div class="card my-3 w-25 text-center">
-        <h6>How difficult do you rate this code?</h6>
-            <div class="row">
-                <input type="range" id='difficulty' class="custom-range px-5 w-100" min="1" max="3" id="customRange2">
-            </div>
+
     </div>
-    </div>
-    <textarea class="form-control rounded-3 w-75 m-2" id="description" rows="2" placeholder="File Description" onclick = "pullTags()" ></textarea>
+    <textarea class="form-control rounded-3 w-75 m-2"  required id="description" rows="2" placeholder="File Description" onclick = "pullTags()" ></textarea>
     <input type="button" class="btn btn-elegant" value="submit" id="submitbtn" onclick="saveCode()"/>
 <script>
 
@@ -261,9 +257,21 @@
 
                 xhr.send(postvars);
 
-                
+            }
 
-
+            function logoutRequest()
+            {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET","/logout");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                               document.location.reload();
+                        }
+                }
+                xhr.send()
             }
 
             
@@ -302,6 +310,13 @@
             function saveCode()
             {
                 code = myCodeMirror.getDoc().getValue();
+                description = document.getElementById("description").value;
+
+                if(code == "" || description == "")
+                {
+                    alert("Please fill in the code and the description");
+                    return;
+                }
 
                 //difficulty = document.getElementById("customRange2").value;
 

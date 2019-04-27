@@ -104,8 +104,6 @@ def generateComments(code):
     global comments_reverse_map_p
     code_tensors = []
 
-
-
     code = re.sub("\"[^\"]*\"", "0", code)
     code = re.sub("name: [^,}]+", "name", code)
     code = re.sub("value: [^,}]+", "value", code)
@@ -367,15 +365,15 @@ def prepareAll(username, lang, difficulty):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     if(lang == ''):
-        cur.execute("SELECT filename, description,lang  FROM Codes")
+        cur.execute("SELECT filename, description, lang, difficulty  FROM Codes INNER JOIN CodeViews where filename=code AND user = (?)", (username,))
 
     else:
-        cur.execute("SELECT filename, description,lang  FROM Codes where lang=(?)", (lang,))
+        cur.execute("SELECT filename, description,lang, difficulty  FROM Codes INNER JOIN CodeViews where filename=code AND user = (?) and lang=(?)", (username, lang,))
 
     rows = cur.fetchall()
 
     for row in rows:
-        code_desc[new_codes_dict[row[0]]] = (row[1], row[2])
+        code_desc[new_codes_dict[row[0]]] = (row[1], row[2], row[3])
     rows = recommendCodes(username)
 
     global difficulty_matrix
@@ -417,6 +415,11 @@ def prepareAll(username, lang, difficulty):
         adaptive_difficulty_matrix[new_users_dict[username]][i] = code_difficulties[-1]
 
     print(code_difficulties)
+
+    for key in list(code_desc.keys()):
+        if(code_desc[key]!=0):
+            code_difficulties[key] = code_desc[key][2]
+
 
     rows = [(new_codes_reverse_map[x[0]], code_desc[x[0]][0], code_difficulties[x[0]], code_desc[x[0]][1]) for x in
             rows if x[0] in code_desc ]
@@ -782,31 +785,6 @@ codes_reverse_map = []
 codes_dict = {}
 
 
-# def recommendForUser(user):
-#     con = sqlite3.connect("database.db")
-#     cur = con.cursor()
-#     cur.execute("SELECT code from CodeViews WHERE user = (?)", (user,))
-#
-#     rows = cur.fetchall()
-#
-#     reco = {}
-#
-#     print(rows)
-#     for item in rows:
-#         print(codes_dict[item[0]])
-#         for code in indices[codes_dict[item[0]]]:
-#             if (code not in reco):
-#                 reco[code] = 0
-#             reco[code] += 1
-#
-#     print(reco)
-#
-#     reco_ordered = sorted(reco.items(), key=lambda kv: kv[1], reverse=True)
-#     reco_ordered = [x[0] for x in reco_ordered[:10]]
-#
-#     for rec in reco_ordered:
-#         print(codes_reverse_map[rec])
-
 
 def clusterCodes():
     global code_tensors
@@ -926,6 +904,7 @@ def search():
     difficulty = request.form.get("difficulty", "")
 
     print("lang = ", lang)
+    print("difficulty = ", difficulty)
 
     if searchTerms == []:
         items = prepareAll(request.cookies.get("username","Login/Sign Up").split("@")[0], lang, difficulty)
@@ -969,6 +948,8 @@ def search():
                       code_desc[x[0]][1]) for x in files_ordered]
 
     items = list(map(convertToDict, files_ordered))
+    if (difficulty != ''):
+        items = list(filter(lambda x: checkDifficulty(x, difficulty), items))
 
     return jsonify(files=items)
 
@@ -1072,6 +1053,13 @@ def getViewed(user):
     return (rows, stats)
 
 webbrowser.open_new("http://localhost:5000")
+
+@app.route("/logout", methods = ["GET"])
+def logout():
+    resp = jsonify()
+    resp.set_cookie('user', '', expires=0)
+
+    return resp
 
 def __init__():
     return app
