@@ -274,6 +274,7 @@ def showCode():
     new_description = 'no_desc'
     if (description != []):
         new_description = '_'.join(description[0][0].split())+"."+code_to_ext[description[0][1]]
+    language = description[0][1]
 
     print(description)
     return render_template('codeView.html',
@@ -283,6 +284,7 @@ def showCode():
                            username=username,
                            options = options_per_func,
                            difficulty = float(difficulty),
+                           language = language,
                            description = new_description,
                             )
 
