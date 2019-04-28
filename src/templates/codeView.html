@@ -330,7 +330,12 @@
             {
                 email = document.getElementById("email").value;
                 passw = document.getElementById("passw").value;
-
+                if(operation == "signup")
+                    if( passw != document.getElementById("confirmpassw").value )
+                    {
+                        alert( "passwords do not match" );
+                        return;
+                    }
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST","/login");
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
