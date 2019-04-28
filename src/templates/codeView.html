@@ -84,8 +84,9 @@
                     <input type="password" id="confirmpassw" style="display:none" class="form-control my-3"
                            placeholder="confirm password"/>
                     <input type="button" id="loginBtn"
-                           class="dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-auto"
+                           class="dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-100"
                            value="LOGIN" onclick="loginRequest()">
+                           <input type="button" id="logoutBtn" class = "dropdown-item form-control dropdown-toggle btn btn-info my-1 mx-1 w-100 text-center" value="LOGOUT" onclick="logoutRequest()">
                 </div>
             </li>
         </ul>
@@ -358,7 +359,20 @@
                 xhr.send(postvars);
             }
 
-
+            function logoutRequest()
+            {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET","/logout");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                               document.location.reload();
+                        }
+                }
+                xhr.send()
+            }
 
             function checkUser()
             {
