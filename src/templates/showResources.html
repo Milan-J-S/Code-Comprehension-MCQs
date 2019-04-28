@@ -260,6 +260,12 @@
             function checkUser()
             {
                 email = document.getElementById("email").value;
+                re = /.+@.+\.com/;
+                if( !re.test(email) )
+                {
+                    alert("not a valid email");
+                    return;
+                }
 
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST","/userExists");
