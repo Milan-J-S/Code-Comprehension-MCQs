@@ -474,7 +474,7 @@ def showAll():
     username = request.cookies.get("user", "Login/Sign Up").split("@")[0]
     items = prepareAll(username, '','')
 
-    resp = make_response(render_template('showResources.html', items=items, username=username))
+    resp = make_response(render_template('showResources.html', items =items, username=username))
 
     return (resp)
 
@@ -752,7 +752,8 @@ def KNN(code):
     #     if code[i] in code_dict:
     #         code_tensor[i] = code_dict[code[i]]
     #
-    code_vector = code2vec_model.infer_vector([code], steps=1000)
+    code2vec_model = Doc2Vec.load("c2v.model")
+    code_vector = code2vec_model.infer_vector(word_tokenize(code), epochs=1000)
 
     similar_docs = code2vec_model.docvecs.most_similar([code_vector], topn=10)
 
@@ -782,6 +783,9 @@ def KNN(code):
                 words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
 
     words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
+
+    print(words_ordered)
+
     tags = [x[0] for x in words_ordered[:5]]
     # print(tags, "\n\n\n")
     return tags
@@ -847,9 +851,9 @@ def clusterCodes():
 
     tagged_data = [TaggedDocument(list(filter(lambda x: x not in stop,word_tokenize(d.lower()))), tags=[str(i)]) for i, d in enumerate(comments)]
 
-    tagged_code = [TaggedDocument([d.lower()], tags=[str(i)]) for i, d in enumerate(codes)]
+    tagged_code = [TaggedDocument(word_tokenize(d.lower()), tags=[str(i)]) for i, d in enumerate(codes)]
 
-    max_epochs = 3
+    max_epochs = 300
     vec_size = 100
     alpha = 0.125
 
@@ -875,28 +879,28 @@ def clusterCodes():
     doc2vec_model.save("d2v.model")
     print("Model Saved")
 
-
-    global code2vec_model
-
-    code2vec_model = Doc2Vec(size=100,
-                    alpha=alpha,
-                    min_alpha=0.00025,
-                    min_count=1,
-                    dm=1)
-
-    code2vec_model.build_vocab(tagged_code)
-
-    for epoch in range(max_epochs):
-        code2vec_model.train(tagged_code,
-                    total_examples=code2vec_model.corpus_count,
-                    epochs=code2vec_model.iter)
-        # decrease the learning rate
-        code2vec_model.alpha -= 0.0002
-        # fix the learning rate, no decay
-        code2vec_model.min_alpha = code2vec_model.alpha
-
-    code2vec_model.save("c2v.model")
-    print("Model Saved")
+    alpha = 0.125
+    # global code2vec_model
+    #
+    # code2vec_model = Doc2Vec(size=300,
+    #                 alpha=alpha,
+    #                 min_alpha=0.00025,
+    #                 min_count=1,
+    #                 dm=1)
+    #
+    # code2vec_model.build_vocab(tagged_code)
+    #
+    # for epoch in range(400):
+    #     code2vec_model.train(tagged_code,
+    #                 total_examples=code2vec_model.corpus_count,
+    #                 epochs=code2vec_model.iter)
+    #     # decrease the learning rate
+    #     code2vec_model.alpha -= 0.0002
+    #     # fix the learning rate, no decay
+    #     code2vec_model.min_alpha = code2vec_model.alpha
+    #
+    # code2vec_model.save("c2v.model")
+    # print("Model Saved")
 
 
 clusterCodes()
