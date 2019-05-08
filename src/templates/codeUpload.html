@@ -180,7 +180,7 @@
                     const reader = new FileReader()
                     reader.onload = event => {
                         myCodeMirror.getDoc().setValue(event.target.result);
-                        pullTags();
+
                     }
                     cont  = reader.readAsText(event.target.files[0]);
                     name = event.target.files[0].name.split(".")[1];

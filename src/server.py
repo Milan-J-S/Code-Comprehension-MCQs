@@ -55,7 +55,7 @@ def convertToDict(x):
     obj['filename'] = x[0]
     obj['title'] = x[1]
     if len(x)>2:
-        obj['difficulty'] = x[2]
+        obj['difficulty'] = round(x[2],3)
         if len(x)>3:
             obj['lang'] = code_to_mode[x[3]]
     return obj
@@ -255,7 +255,7 @@ def showCode():
         options_actual = [row[0]]
         i = 1
         while(len(options)!=4):
-            if(comments[int(similar_docs[i][0])] not in options):
+            if(comments[int(similar_docs[i][0])] not in options_actual):
                 options.append((comments[int(similar_docs[i][0])], 0))
                 options_actual.append(comments[int(similar_docs[i][0])])
             i+=1
@@ -466,7 +466,7 @@ def checkDifficulty( item, difficulty ):
     elif(difficulty == 3):
         return item['difficulty'] >= 2.5
     elif(difficulty == 2):
-        return (item['difficulty'] < 2.5 and item['difficulty'] > 2.5)
+        return (item['difficulty'] < 2.5 and item['difficulty'] > 1.5)
 
 
 @app.route("/")
@@ -1056,7 +1056,7 @@ def download():
 def getViewed(user):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT DISTINCT description, lang, filename FROM CodeViews v INNER JOIN Codes c WHERE user=(?)", (user,))
+    cur.execute("SELECT DISTINCT description, lang, filename FROM CodeViews v INNER JOIN Codes c WHERE user=(?) AND filename=code", (user,))
     rows = cur.fetchall()
 
     rows = list(map(convertToFilesDict, rows))

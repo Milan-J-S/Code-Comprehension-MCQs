@@ -1,0 +1,165 @@
+#import modules
+from keras.models import Model
+from keras.layers import Input, LSTM, Dense
+import os
+import numpy as np
+from nltk.tokenize import word_tokenize 
+import nltk
+nltk.download('punkt')
+
+import pickle
+
+
+def convert_to_onehot( c ):
+    tensor = np.zeros(128)
+    tensor[ord(c)] = 1
+    return tensor
+
+code_tensors = []
+codes = []
+comments = []
+
+comments_reverse_map = []
+vocab = set()
+code_vocab = set()
+comments_dict = {}
+code_dict = {}
+
+
+file_path = 'src/code'
+for root,dirs,files in os.walk(file_path):
+    for fl in files:
+        code = open('src/code/'+fl).read()
+        codes.append(word_tokenize(code))
+        for word in (word_tokenize(code)):
+            code_vocab.add(word)
+        comment = open('src/comments/'+fl).read()
+        for com in comment.split():
+            vocab.add( com )
+        comments.append( comment )
+
+i=0
+for item in vocab:
+    comments_dict[item]=i
+    comments_reverse_map.append(item)
+    i=i+1
+
+i=0
+for item in code_vocab:
+    code_dict[item]=i
+    i=i+1
+
+comment_tensors_input = []
+comment_tensors_target = []
+
+print(len(comments))
+
+for item in comments:
+    comment_tensors = []
+    comment_tensor = np.zeros(len(vocab)+3)
+    comment_tensor[1] = 1   # denotes start symbol
+    comment_tensors.append(comment_tensor)
+    comment = item.split()
+    for i in range(9):
+        comment_tensor = np.zeros(len(vocab)+3)
+        if(i < len(comment)):
+            comment_tensor[comments_dict[comment[i]]+3] = 1
+        elif(i == len(comment)):
+            comment_tensor[2] = 1
+        else:
+            comment_tensor[0] = 1
+        comment_tensors.append(comment_tensor)
+    comment_tensors_input.append(comment_tensors)
+    comment_targets = comment_tensors[1:]
+    zero_vec = np.zeros(len(vocab)+3)
+    zero_vec[0] = 1 
+    comment_targets.append(zero_vec)
+    
+    comment_tensors_target.append(comment_targets)
+
+
+for item in codes:
+    code_tensor = []
+    code_word = np.zeros(len(code_vocab)+4)
+    code_word[1] = 1
+    code_tensor.append(code_word)
+    for i in range(750):
+        code_word = np.zeros(len(code_vocab)+4)
+        if(i < len(item)):
+            code_word[code_dict[item[i]]+4] = 1
+        elif(i == len(item)):
+            code_word[2] = 1
+        else:
+            code_word[0] = 1
+        code_tensor.append(code_word)
+    code_tensors.append(code_tensor)
+        
+
+        
+print(np.asarray(code_tensors).shape)
+print(np.asarray(comment_tensors_input).shape)
+print(np.asarray(comment_tensors_target).shape)
+
+pickle.dump(code_dict, open("code_dict.pickle","wb+"))
+pickle.dump(comments_dict, open("comments_dict.pickle","wb+"))
+pickle.dump(comments_reverse_map, open("comments_reverse_map.pickle", "wb+"))
+
+
+# Define an input sequence and process it.
+encoder_inputs = Input(shape=(None, len(code_vocab)+4))
+encoder = LSTM(1024, return_state=True)
+encoder_outputs, state_h, state_c = encoder(encoder_inputs)
+# We discard `encoder_outputs` and only keep the states.
+encoder_states = [state_h, state_c]
+
+# Set up the decoder, using `encoder_states` as initial state.
+decoder_inputs = Input(shape=(None, len(vocab)+3))
+# We set up our decoder to return full output sequences,
+# and to return internal states as well. We don't use the 
+# return states in the training model, but we will use them in inference.
+decoder_lstm = LSTM(1024, return_sequences=True, return_state=True)
+decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
+                                     initial_state=encoder_states)
+decoder_dense = Dense(len(vocab)+3, activation='softmax')
+decoder_outputs = decoder_dense(decoder_outputs)
+
+# Define the model that will turn
+# `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
+model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+
+model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics = ['accuracy'])
+
+print(model.summary())
+
+
+
+encoder_model = Model(encoder_inputs, encoder_states)
+
+decoder_state_input_h = Input(shape=(1024,))
+decoder_state_input_c = Input(shape=(1024,))
+decoder_states_inputs = [decoder_state_input_h, decoder_state_input_c]
+decoder_outputs, state_h, state_c = decoder_lstm(
+    decoder_inputs, initial_state=decoder_states_inputs)
+decoder_states = [state_h, state_c]
+decoder_outputs = decoder_dense(decoder_outputs)
+decoder_model = Model(
+    [decoder_inputs] + decoder_states_inputs,
+    [decoder_outputs] + decoder_states)
+
+
+
+print(model.summary())
+print(encoder_model.summary())
+print(decoder_model.summary())
+
+
+
+
+model.fit([np.asarray(code_tensors), np.asarray(comment_tensors_input)], np.asarray(comment_tensors_target),
+          batch_size=5,
+          epochs=100,
+          validation_split=0.5)
+
+decoder_model.save("dec.h5")
+encoder_model.save("enc.h5")
+model.save("encdec.h5")
