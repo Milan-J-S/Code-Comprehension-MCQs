@@ -252,12 +252,12 @@ def showCode():
         options = []
         print(row[0])
         options.append((row[0],1))
-        options_actual = [row[0]]
+        options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].split())))]
         i = 1
         while(len(options)!=6):
-            if(comments[int(similar_docs[i][0])] not in options_actual):
+            if(' '.join(list(filter(lambda x: x not in stop, comments[int(similar_docs[i][0])].split()))) not in options_actual):
                 options.append((comments[int(similar_docs[i][0])], 0))
-                options_actual.append(comments[int(similar_docs[i][0])])
+                options_actual.append(' '.join(list(filter(lambda x: x not in stop, comments[int(similar_docs[i][0])].split()))))
             i+=1
 
 
