@@ -114,9 +114,17 @@
                         id="{{option[1]}}">{{option[0]}}
                 </button>
                 {% endfor %}
-                <br>
-                <br>
-                <h3 class="h3-responsive" id="showRes"></h3>
+                <!-- <div>
+                        <input type="button" id="feedbackBtn" class = "btn btn-dark my-1 mx-1 w-25 text-center" value="FEEDBACK" onclick="showFeedback(event)">
+                        <div style="display: none;" id="feedback{{loop.index0}}">
+                            <h6 class="text-center">How relevant were the options presented for the question?</h6>
+                            <input type="range" id='relevance' class="custom-range dark px-5 my-2" min="1" max="3">
+                            <h6 class="text-center">Would you see use these for classroom tests/assignments?</h6>
+                            <input type="range" id='usage' class="custom-range dark px-5 my-2" min="1" max="3">
+                        </div>
+                </div> -->
+            </div>
+            <h3 class="h3-responsive" id="showRes"></h3>
             </div>
             {% endfor %}
 
@@ -209,6 +217,20 @@
 
             document.body.scrollTop = document.documentElement.scrollTop = 0;
 
+            function showFeedback(event)
+            {
+                buttonClicked = event.target;
+                showDiv = buttonClicked.nextElementSibling;
+                if(showDiv.getAttribute("style")=="display:block")
+                {
+                    showDiv.setAttribute("style","display:none");
+                }
+                else
+                {
+                    showDiv.setAttribute("style","display:block");
+                }
+            }
+            
             function sendAnswer(event)
             {
                 document.getElementById("showRes").innerHTML = "";
