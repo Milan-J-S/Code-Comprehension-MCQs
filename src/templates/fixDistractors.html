@@ -98,10 +98,7 @@
     <div class="force-overflow"></div>
 </div>
 
-<div class="h-100 container mx-auto mw-100 scrollbar scrollbar-primary">
-    <div class="force-overflow row">
-        <div class="col-sm-7 px-0">
-
+<div class="h-100 w-100 container mx-auto mw-100 scrollbar scrollbar-primary">
 
             {% for function,option_list, func in options %}
             <div id="MCQ" class=" m-3 p-3 card ww-100">
@@ -109,71 +106,25 @@
                 <textarea class="funcDisplay" cols="25"
                           id="codeTextArea{{loop.index0}}">{{func}}</textarea>
                 <br>
-                {% for option in option_list %}
-                <p>{{option[0]}}</p>
-                <button class='btn btn-outline-dark waves-effect ' onclick="changeState(event)"
-                        id="{{option[1]}}">{{option[0]}}
-                </button>
+                <h4>Correct answer : </h4><h3>{{option_list[0][0]}}</h3></br>
+
+                <h5>Please choose the best 3 options and edit the options. Delete the rest</h5>
+                {% for option in option_list[1:] %}
+                <div width="100%">
+                <input width="100%" size="100"
+                       class = "distractor"
+                       onChange = "startTimer()"
+                       id = "text{{loop.index}}"
+                        value = "{{option[0]}}"/>
+                    <button id = "{{loop.index}}" onclick = "remove(event)"> Delete </button>
+                    </div>
                 {% endfor %}
                 <br>
                 <br>
                 <h3 class="h3-responsive" id="showRes"></h3>
+                <button onclick="submit()"> Submit </button>
             </div>
             {% endfor %}
-
-        </div>
-
-        <div class="col-sm-5 float-right sticky px-0 ">
-            <div class="row p-0 m-0">
-                <div class="col-sm-6">
-                    <div class='btn {%if difficulty <= 0%}btn-outline-default {%elif difficulty <= 2.5 %}btn-outline-warning {%else%}btn-outline-danger{% endif %} w-100'>
-                        Adaptive Difficulty: {{difficulty}}
-                    </div>
-                </div>
-                <div class="col-sm-6">
-
-                    <button class='btn btn-outline-dark  w-100 'href="#codeTextArea" onclick="viewFullCode()">View Full Code
-                    </button>
-                </div>
-            </div>
-
-            <div class="card card-comments mb-3 wow fadeIn w-100 ">
-                <div id="postDetails" class="card-header font-weight-bold sticky w-100">{{rows|length}} posts</div>
-                <div id="comment_body" class="card-body  smooth-scroll">
-                    {% for item in rows %}
-                    <div class="media  d-block d-md-flex mt-4 h-25">
-                        <img height="50px" width="50px" class="d-flex mb-3 mx-auto "
-                             src="{{ url_for('static',filename = 'user-white.svg')}}" alt="Generic placeholder image">
-                        <div class="media-body text-center word-wrap text-md-left ml-md-3 ml-0 w-75 "
-                             style="overflow:none">
-                            <h5 class="mt-0 font-weight-bold"> {{item[0]}}
-
-                            </h5>
-                            {{item[1]}}
-                        </div>
-                    </div>
-
-                    {% endfor %}
-                    <div id="new_comment" class="media d-block d-md-flex mt-4 w-100 h-25">
-                        <!-- Default input -->
-                        <textarea class="form-control rounded-3 w-100" id="userPost" rows="3"></textarea>
-
-                        <button type="button" class="btn btn-dark" onclick="postIt()">Post</button>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="card p-3">
-                <h6 class="text-center">How difficult do you rate this code?</h6>
-
-                <input type="range" id='difficulty' class="custom-range dark px-5 my-2" min="1" max="3"
-                       id="customRange2">
-                <button class="btn btn-dark pull-right w-50" onclick="rate(event)">RATE</button>
-            </div>
-        </div>
-
-    </div>
 
 
 </div>
@@ -185,6 +136,8 @@
 
 <script>
 
+
+            timer = 0;
 
 
             listOfFunc = document.getElementsByClassName("funcDisplay");
@@ -209,6 +162,65 @@
             }
 
             document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+            function startTimer()
+            {
+                if(timer === 0)
+                {
+                    date =  new Date();
+                    timer = date.getTime();
+                }
+            }
+
+            function remove(event)
+            {
+                inputToDelete = document.getElementById("text"+event.target.id);
+                console.log(inputToDelete);
+                inputToDelete.setAttribute("class", "deleted");
+                inputToDelete.style.display = "none";
+                event.target.style.display = "none";
+            }
+
+            function submit()
+            {
+                date =  new Date();
+                endTime = date.getTime();
+                if( timer === 0)
+                    timeDiff = 0;
+                else
+                    timeDiff = endTime - timer;
+
+                distractors = Array.from(document.getElementsByClassName("distractor"));
+
+                if(distractors.length !== 3)
+                {
+                    alert ("Please select only 3 options");
+                    return;
+                }
+
+                xhr =  new XMLHttpRequest();
+                xhr.open("POST","/modifiedDistractors");
+                xhr.setRequestHeader("Content-type", "application/json");
+
+                var original  ={{options | tojson }};
+
+                json = {
+                    original : original[0][1],
+                    modified : distractors.map( function (dist) {
+                        return dist.value;
+                    } ),
+                    selected : distractors.map( function (dist) {
+                        return dist.id;
+                    } ),
+                    time  : timeDiff,
+                    filename: "{{filename}}"
+                };
+
+
+
+                xhr.send(JSON.stringify(json));
+                window.location ="/" ;
+            }
 
             function sendAnswer(event)
             {
