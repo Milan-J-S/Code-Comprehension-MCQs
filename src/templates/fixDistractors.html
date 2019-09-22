@@ -202,15 +202,10 @@
                 xhr.open("POST","/modifiedDistractors");
                 xhr.setRequestHeader("Content-type", "application/json");
 
-                console.log(distractors);
-
-                var original  ={{options | safe }};
-                console.log( original );
-
-
+                var original  ={{options | tojson }};
 
                 json = {
-                    original : original,
+                    original : original[0][1],
                     modified : distractors.map( function (dist) {
                         return dist.value;
                     } ),

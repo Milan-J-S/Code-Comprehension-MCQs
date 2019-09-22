@@ -296,6 +296,7 @@ def showCode():
                            difficulty = float(difficulty),
                            language = language,
                            description = new_description,
+
                             )
 
 def extractFunction(name, code):
@@ -1119,7 +1120,7 @@ def modifiedDistractors():
     cur = con.cursor()
     originalComment = [ ]
     for selection in selected:
-        originalComment.append(original[int(selection[4:])])
+        originalComment.append(original[int(selection[4:])][0])
     cur.execute("INSERT INTO ModifiedDistractors VALUES (?,?,?,?,?,?,?,?,?)", (user, time, filename, modified[0], modified[1], modified[2], originalComment[0] , originalComment[1] , originalComment[2]))
     con.commit()
 
