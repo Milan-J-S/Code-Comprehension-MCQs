@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intelligent Teaching Assistant</title>
+    <!-- Bootstrap core CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
+
+
+    <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
+
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/src/line/highlight.js')}}"></script>
+    <script src="{{ url_for('static',filename = 'codemirror-5.44.0/mode/clike/clike.js')}}"></script>
+    <link href="{{ url_for('static',filename = 'codemirror-5.44.0/lib/codemirror.css')}}" rel="stylesheet">
+
+    <link href="{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.14.2/highlight.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/html/html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/edit/closebrackets.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
+
+</head>
+<body class="mw-100 ">
+
+
+<nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
+    <a class="navbar-brand" href="#">Intelligent Teaching Assistant</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-555"
+            aria-controls="navbarSupportedContent-555" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent-555">
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="/upload">Upload Code</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/"><span class="sr-only">(current)</span>View Codes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">View Profile</a>
+            </li>
+
+        </ul>
+        <ul class="navbar-nav ml-auto ">
+            <li class="nav-item my-auto">
+                <a download="{{description}}" class="nav-link" href="/download?filename={{filename}}">
+
+                    <img height="30px" width="30px" src="{{ url_for('static',filename = 'download.png')}}"
+                         class="z-depth-1 my-auto">
+
+                </a>
+            </li>
+            <li class="nav-item avatar dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-55" data-toggle="dropdown"
+                   aria-haspopup="true"
+                   aria-expanded="false">
+
+                    <span id="userName" style="color:white">{{username}}</span>
+                    <img height="30px" width="30px" src="{{ url_for('static',filename = 'user-white.svg')}}"
+                         class="rounded-circle z-depth-1" alt="avatar image">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-secondary p-3 justify-content-center"
+                     aria-labelledby="navbarDropdownMenuLink-55">
+                    <a class="dropdown-item" href="#">Login Or SignUp</a>
+                    <input id="email" class="form-control my-3" placeholder="email" onblur="checkUser()"/>
+                    <input type="password" id="passw" class="form-control my-3" placeholder="password"/>
+                    <input type="password" id="confirmpassw" style="display:none" class="form-control my-3"
+                           placeholder="confirm password"/>
+                    <input type="button" id="loginBtn"
+                           class="btn btn-dark my-1 mx-1 w-100"
+                           value="LOGIN" onclick="loginRequest()">
+                           <input type="button" id="logoutBtn" class = "btn btn-outline-dark my-1 mx-1 w-100 text-center" value="LOGOUT" onclick="logoutRequest()">
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!--/.Navbar -->
+
+<div class="scrollbar scrollbar-primary">
+    <div class="force-overflow"></div>
+</div>
+
+<div class="h-100 w-100 container mx-auto mw-100 scrollbar scrollbar-primary">
+
+            {% for function,option_list, func in options %}
+            <div id="MCQ" class=" m-3 p-3 card ww-100">
+                <h4 class="h4">What does this code do?</h4>
+                <textarea class="funcDisplay" cols="25"
+                          id="codeTextArea{{loop.index0}}">{{func}}</textarea>
+                <br>
+                <h4>Correct answer : </h4><input id="correctComment" value="{{option_list[0][0]}}"/><button onclick="changeComment()">Change in Database</button></br>
+
+                <h5>Please enter 3 good options for the given code and the correct answer</h5>
+                {% for option in option_list[0:3] %}
+                <div width="100%">
+                <input width="100%" size="100"
+                       class = "distractor"
+                       onChange = "startTimer()"
+                       id = "text{{loop.index}}"
+                        />
+                    </div>
+                {% endfor %}
+                <br>
+                <br>
+                <h3 class="h3-responsive" id="showRes"></h3>
+                <button onclick="submit()"> Submit </button>
+            </div>
+            {% endfor %}
+
+
+</div>
+<div class="card p-1 pt-5" id="fullCode" style="display:none">
+    <h3 class="text-center my-3"> Full Source Code </h3>
+    <textarea id="codeTextArea">{{data}}</textarea>
+</div>
+
+
+<script>
+
+
+            timer = 0;
+
+
+            listOfFunc = document.getElementsByClassName("funcDisplay");
+            loopCodeMirror = []
+            for(var i=0; i<listOfFunc.length; i++)
+            {
+                loopCodeMirror.push(CodeMirror.fromTextArea(document.getElementById("codeTextArea"+i.toString()), {
+                lineNumbers: true,
+                lineWrapping: true,
+                mode:  "{{language}}",
+                styleActiveLine :true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+                autoRefresh:true,
+                readOnly: true,
+                autofocus: true
+            }));
+            //loopCodeMirror[i].getDoc().setValue(document.getElementById("codeTextArea"+i.toString()).innerHTML.replace());
+            }
+
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+            function startTimer()
+            {
+                if(timer === 0)
+                {
+                    date =  new Date();
+                    timer = date.getTime();
+                }
+            }
+
+
+
+
+            function submit()
+            {
+                date =  new Date();
+                endTime = date.getTime();
+                if( timer === 0)
+                    timeDiff = 0;
+                else
+                    timeDiff = endTime - timer;
+
+                distractors = Array.from(document.getElementsByClassName("distractor"));
+
+                if(distractors.length !== 3)
+                {
+                    alert ("Please select only 3 options");
+                    return;
+                }
+
+                for(var i=0; i< 3; i++)
+                {
+                    if(distractors[i].value === '') {
+                        alert("One or more of the options are empty");
+                        return;
+                    }
+                }
+
+                xhr =  new XMLHttpRequest();
+                xhr.open("POST","/createDistractors");
+                xhr.setRequestHeader("Content-type", "application/json");
+
+                json = {
+                    created : distractors.map( function (dist) {
+                        return dist.value;
+                    } ),
+                    time  : timeDiff,
+                    filename : "{{filename}}"
+                };
+
+                xhr.send(JSON.stringify(json));
+                window.location ="/";
+            }
+
+            function changeComment()
+            {
+                xhr =  new XMLHttpRequest();
+                xhr.open("POST","/changeComment");
+                xhr.setRequestHeader("Content-type", "application/json");
+
+                var og = {{options[0][1][0] | tojson}};
+
+                json = {
+                    filename: "{{filename}}",
+                    comment: document.getElementById("correctComment").value,
+                    originalComment: og
+                };
+
+
+                xhr.send(JSON.stringify(json));
+                alert("CHANGED IN DATABASE");
+            }
+
+            function sendAnswer(event)
+            {
+                document.getElementById("showRes").innerHTML = "";
+                ans = document.getElementsByClassName("btn btn-outline-danger waves-effect");
+                if(ans.length==0)
+                {
+                    alert("Please pick an answer!");
+                    return;
+                }
+                else if(ans.length>1)
+                {
+                    alert("Please pick ONE answer");
+                    return;
+                }
+                else
+                {
+                    if(ans[0].id=='answer1')
+                    {
+                        document.getElementById("showRes").innerHTML = "You are CORRECT!";
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST","/addPoints");
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        var score_answer = 1;
+                        postvars = "addscore="+score_answer;
+                        xhr.send(postvars);
+                        return;
+                    }
+                    else
+                    {
+                        document.getElementById("showRes").innerHTML = "Oops! Wrong Answer. Try again!";
+                        return;
+                    }
+                }
+            }
+
+            function changeState(event)
+            {
+                parent = event.target.parentElement;
+
+                siblings = parent.childNodes
+                for(var i=0;i<siblings.length;i++)
+                {
+                    siblings[i].onclick = function() {
+                                             return false;
+                                           }
+                    if(siblings[i].id == 1)
+                        siblings[i].setAttribute( "class", "btn btn-outline-default waves-effect");
+
+                }
+
+                if(event.target.id == 1)
+                {
+                    event.target.setAttribute( "class", "btn btn-success waves-effect");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST","/addPoints");
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    var score_answer = 1;
+                    postvars = "addscore="+score_answer;
+                    xhr.send(postvars);
+                }
+                else
+                {
+                    event.target.setAttribute( "class", "btn btn-outline-danger waves-effect");
+
+                }
+            }
+
+            function postIt()
+            {
+                post = document.getElementById("userPost");
+                addComment(post.value);
+
+                media = document.createElement("div");
+                media.setAttribute("class","media d-block d-md-flex mt-4 w-100 h-25");
+
+                img = document.createElement("img");
+                img.setAttribute("src","{{ url_for('static',filename = 'user-white.svg')}}");
+                img.setAttribute("height","50px");
+                img.setAttribute("width","50px");
+
+                media.appendChild(img);
+
+                mediabody = document.createElement("div");
+                mediabody.setAttribute("class","media-body text-center text-md-left ml-md-3 ml-0");
+
+                h5 = document.createElement("h5");
+                h5.setAttribute("class","mt-0 font-weight-bold");
+                h5.innerHTML=document.getElementById("userName").innerHTML;
+                mediabody.appendChild(h5);
+                
+                p = document.createElement("p");
+                p.innerHTML = post.value
+                mediabody.appendChild(p);
+
+                media.appendChild(mediabody);
+                
+                new_comment = document.getElementById("new_comment");
+                document.getElementById("comment_body").insertBefore(media, new_comment);
+
+                post.value = "";
+                postDetails = document.getElementById("postDetails")
+
+                postDetails.innerHTML = String(parseInt(postDetails.innerHTML.split(" ")[0])+1) +" "+ postDetails.innerHTML.split(" ")[1];
+
+            }
+
+            function addComment(comment)
+            {
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("POST", "http://localhost:5000/putConvos", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("filename={{filename}}&id=1&comment="+comment);
+
+           }
+           var operation = "signup";
+
+            function loginRequest()
+            {
+                email = document.getElementById("email").value;
+                passw = document.getElementById("passw").value;
+                if(operation == "signup")
+                    if( passw != document.getElementById("confirmpassw").value )
+                    {
+                        alert( "passwords do not match" );
+                        return;
+                    }
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/login");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            if(JSON.parse(xhr.response).auth==true)
+                            {
+                               document.getElementById("passw").style.background = "white";
+                               document.getElementById("passw").value = "";
+                               document.getElementById("confirmpassw").value = "";
+                               document.getElementById("email").value = "";
+                               document.getElementById("codeTextArea").click();
+                               document.getElementById("userName").innerHTML = email.split("@")[0];
+                               document.location.reload();
+                            }
+                            else{
+                            document.getElementById("passw").style.background = "red";
+                            }
+
+                        }
+                }
+                postvars = "email="+email+"&password="+passw+"&operation="+operation;
+
+                xhr.send(postvars);
+            }
+
+            function logoutRequest()
+            {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET","/logout");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                               document.location.reload();
+                        }
+                }
+                xhr.send()
+            }
+
+            function checkUser()
+            {
+                email = document.getElementById("email").value;
+                re = /.+@.+\.com/;
+                if( !re.test(email) )
+                {
+                    alert("not a valid email");
+                    return;
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST","/userExists");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function()
+                {
+                        if(xhr.readyState == 4 && xhr.status == 200 )
+                        {
+                            if(JSON.parse(xhr.response).success>0)
+                            {
+                                operation = "login";
+                                document.getElementById("confirmpassw").style.display = 'none';
+                                document.getElementById("loginBtn").setAttribute("value","LOGIN");
+                            }
+                            else{
+                                operation="signup";
+                                document.getElementById("confirmpassw").style.display = 'block';
+                                document.getElementById("loginBtn").setAttribute("value","SIGN UP");
+                            }
+
+                        }
+                }
+                postvars = "email="+email;
+
+                xhr.send(postvars);
+
+
+            }
+
+            function rate(event)
+            {
+                xhr = new XMLHttpRequest();
+                xhr.open("POST","/difficulty");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function()
+                {
+                    if(xhr.readyState==4 && xhr.status == 200)
+                        event.target.innerHTML = "Thanks! Click to change the rating";
+                }
+                postvars = "difficulty="+document.getElementById('difficulty').value+"&filename={{filename}}";
+
+                xhr.send(postvars);
+            }
+
+            function viewFullCode()
+            {
+                document.getElementById("fullCode").style.display = 'block';
+
+                myCodeMirror = CodeMirror.fromTextArea(document.getElementById("codeTextArea"), {
+               lineNumbers: true,
+               lineWrapping: true,
+                mode:  "text/x-csrc",
+                styleActiveLine :true,
+                matchBrackets: true,
+                indentUnit: 4,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+            });
+
+            myCodeMirror.setSize("100%","auto");
+            //window.location.hash = '#fullCode';
+
+            document.getElementById("fullCode").scrollIntoView();
+
+
+            }
+
+
+</script>
+
+</body>
+</html>
