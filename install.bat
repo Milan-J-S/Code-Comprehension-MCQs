@@ -7,4 +7,3 @@ pip install keras
 
 ECHO All dependencies installed
 
-python src/DBOps.py
