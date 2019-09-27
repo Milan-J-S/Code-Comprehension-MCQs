@@ -27,7 +27,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 import random
 
-from keras.models import load_model
+# from keras.models import load_model
 app = Flask(__name__)
 
 code_to_mode = {
@@ -89,9 +89,9 @@ def generateRandomFilename():
         filename += (chr(random.randrange(97, 123)))
     return filename
 
-automodel = load_model("encoder (1).h5")
+# automodel = load_model("encoder (1).h5")
 
-attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
+# attnmodel = load_model("attention (2).h5", custom_objects={'AttentionDecoder': AttentionDecoder})
 
 code_dict_p = pickle.load(open("code_dict (3).pickle", "rb+"))
 print(code_dict_p)
@@ -100,6 +100,7 @@ print(code_dict_p)
 comments_reverse_map_p = pickle.load(open("comments_reverse_map (3).pickle", "rb+"))
 
 def generateComments(code):
+    return ''
     global automodel
     global attnmodel
     global code_dict_p
