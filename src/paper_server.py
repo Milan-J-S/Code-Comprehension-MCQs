@@ -248,18 +248,26 @@ def showCode():
         doc2vec_model = Doc2Vec.load("d2v.model")
         v1 = doc2vec_model.infer_vector(list(filter(lambda x: x not in stop,word_tokenize(row[0].lower()))), steps=1000)
 
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute("SELECT synonym from Synonyms WHERE answer = (?)", (row[0].lower().strip(),))
+
+        # print("Results: ",cur.fetchall())
+        synonyms = list(map(lambda x: x[0], cur.fetchall()))
+
+        print("Synonyms : ", synonyms, "\n\n\n")
 
         similar_docs = doc2vec_model.docvecs.most_similar([v1], topn=len(doc2vec_model.docvecs))
 
         options = []
         print(row[0])
         options.append((row[0],1))
-        options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].split())))]
+        options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].lower().split())))]
         i = 1
         while(len(options)!=6):
-            if(' '.join(list(filter(lambda x: x not in stop, similar_docs[i][0].split()))) not in options_actual):
+            if( similar_docs[i][0] not in synonyms and len(similar_docs[i][0].split()) > 3 and ' '.join(list(filter(lambda x: x not in stop, similar_docs[i][0].lower().split()))) not in options_actual):
                 options.append((similar_docs[i][0], 0))
-                options_actual.append(' '.join(list(filter(lambda x: x not in stop,similar_docs[i][0].split()))))
+                options_actual.append(' '.join(list(filter(lambda x: x not in stop,similar_docs[i][0].lower().split()))))
             i+=1
 
 
@@ -1139,6 +1147,20 @@ def createDistractors():
     cur = con.cursor()
 
     cur.execute("INSERT INTO CreatedDistractors VALUES (?,?,?,?,?,?)", (user, time, created[0], created[1], created[2], filename))
+    con.commit()
+
+    return (jsonify (success = True))
+
+@app.route("/markDuplicate", methods = ["GET"])
+def markDuplicate():
+    payload = request.args
+    correct = payload.get("correct", "")
+    duplicate = payload.get("duplicate", "")
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("INSERT INTO Synonyms VALUES (?,?)", (correct.lower().strip(), duplicate))
     con.commit()
 
     return (jsonify (success = True))
