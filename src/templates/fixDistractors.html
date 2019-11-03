@@ -106,7 +106,7 @@
                 <textarea class="funcDisplay" cols="25"
                           id="codeTextArea{{loop.index0}}">{{func}}</textarea>
                 <br>
-                <h4>Correct answer : </h4><h3>{{option_list[0][0]}}</h3></br>
+                <h4>Correct answer : </h4><h3 id="correctAnswer">{{option_list[0][0]}}</h3></br>
 
                 <h5>Please choose the best 3 options and edit the options. Delete the rest</h5>
                 {% for option in option_list[1:] %}
@@ -117,6 +117,7 @@
                        id = "text{{loop.index}}"
                         value = "{{option[0]}}"/>
                     <button id = "{{loop.index}}" onclick = "remove(event)"> Delete </button>
+                    <button id = "{{loop.index}}" onclick = "duplicate(event)"> Same as Correct Answer </button>
                     </div>
                 {% endfor %}
                 <br>
@@ -179,6 +180,17 @@
                 inputToDelete.setAttribute("class", "deleted");
                 inputToDelete.style.display = "none";
                 event.target.style.display = "none";
+            }
+
+            function duplicate(event)
+            {
+                inputToDelete = document.getElementById("text"+event.target.id);
+                correctAnswer = document.getElementById("correctAnswer").innerHTML;
+                console.log(correctAnswer);
+                xhr = new XMLHttpRequest();
+                xhr.open("GET","/markDuplicate?duplicate="+inputToDelete.value+"&correct="+correctAnswer);
+
+                xhr.send()
             }
 
             function submit()
