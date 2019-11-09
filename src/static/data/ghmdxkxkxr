@@ -1,0 +1,10 @@
+void swap(int arr[], int fi, int si, int d) 
+{ 
+   int i, temp; 
+   for(i = 0; i<d; i++)    
+   { 
+     temp = arr[fi + i]; 
+     arr[fi + i] = arr[si + i]; 
+     arr[si + i] = temp; 
+   }      
+}

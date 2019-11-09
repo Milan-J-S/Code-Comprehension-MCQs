@@ -1,0 +1,27 @@
+void leftRotate(int arr[], int d, int n) 
+{  
+  /* Return If number of elements to be rotated is  
+    zero or equal to array size */  
+  if(d == 0 || d == n) 
+    return; 
+      
+  /*If number of elements to be rotated is exactly  
+    half of array size */  
+  if(n-d == d) 
+  { 
+    swap(arr, 0, n-d, d);    
+    return; 
+  }   
+      
+ /* If A is shorter*/              
+  if(d < n-d) 
+  {   
+    swap(arr, 0, n-d, d); 
+    leftRotate(arr, d, n-d);     
+  }     
+  else /* If B is shorter*/              
+  { 
+    swap(arr, 0, d, n-d); 
+    leftRotate(arr+n-d, 2*d-n, d); /*This is tricky*/
+  } 
+} 

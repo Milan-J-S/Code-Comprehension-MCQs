@@ -1,0 +1,20 @@
+// Function to delete an element 
+int deleteElement(int arr[], int n,  
+                  int key) 
+{ 
+    // Find position of element to be deleted 
+    int pos = findElement(arr, n, key); 
+  
+    if (pos == - 1) 
+    { 
+        printf("Element not found"); 
+        return n; 
+    } 
+  
+    // Deleting element 
+    int i; 
+    for (i = pos; i < n - 1; i++) 
+        arr[i] = arr[i + 1]; 
+  
+    return n - 1; 
+} 

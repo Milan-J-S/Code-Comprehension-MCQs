@@ -1,0 +1,6 @@
+void leftRotate(int arr[], int d, int n) 
+{ 
+    rvereseArray(arr, 0, d-1); 
+    rvereseArray(arr, d, n-1); 
+    rvereseArray(arr, 0, n-1); 
+} 

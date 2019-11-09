@@ -1,0 +1,14 @@
+int insertAtEnd(int arr[], int n,  
+                 int key, 
+                 int capacity) 
+{ 
+  
+    // Cannot insert more elements if n is  
+    // already more than or equal to capcity 
+    if (n >= capacity) 
+       return n; 
+  
+    arr[n] = key; 
+  
+    return (n + 1); 
+}
