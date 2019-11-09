@@ -1,0 +1,502 @@
+compute the value of the complement of an element
+
+
+print all elements in the list from left to right
+
+
+return the first element of the list
+
+
+check for vowel using a switch case construct
+
+
+store information using structures with dynamically memory allocation 
+
+
+adjust the elements of the heap to get a min heap
+
+
+find the number of occurrences of a substring in a string
+
+
+scan 2 numbers, add using pointers and print the result
+
+
+linearly search for element x in an array from left to right
+
+
+compute the quotient and divisor of the given pair of numbers
+
+
+get text input and call a function
+
+
+read a line from a file and display it
+
+
+convert each uppercase character in a string to lowercase
+
+
+push an element to the top of a stack
+
+
+scan a string, convert to lowercase and print the result
+
+
+copy a string character by character
+
+
+read a string from input
+
+
+find if a number is odd or even using bitwise operations
+
+
+merge the contents of two files
+
+
+insert an element to the start of a circular list
+
+
+get ip address of the system by executing a system command
+
+
+sort a list by comparing and swapping adjacent elements
+
+
+return the average of 2 numbers
+
+
+take numeric input and check if the value equals 2
+
+
+find the number of occurrences of each character in a string
+
+
+allocate space to array element in structure and print all elements
+
+
+recursively search for an element breadth first in a graph
+
+
+search a suffix tree for a string 
+
+
+find largest number in an array using dynamic memory allocation 
+
+
+insert an element into a linked list
+
+
+take inputs from users to perform specific actions
+
+
+search for an element recursively in a binary search tree
+
+
+sort an array by moving all items greater than key forward
+
+
+multiply the values of two structures
+
+
+check if there is a clash in values of 2 characters
+
+
+print all elements in the list from right to left
+
+
+scan 2 numbers, swap using bitwise operators and print the numbers
+
+
+print numbers using while loop
+
+
+delete element from a dynamic array
+
+
+compare the values of 2 strings
+
+
+find the size of int, float, double and char 
+
+
+scan a string, convert to uppercase and print
+
+
+insert an element into a list based on the value specified
+
+
+compute the complement of a number
+
+
+scan a string and call a function on the string
+
+
+insert an element into a priority heap
+
+
+search for an element in a tree structure
+
+
+reverse the elements of a linked list
+
+
+add the values of two structures
+
+
+remove element from end of queue
+
+
+perform arithmetic operations on two numbers
+
+
+write a sentence to a file
+
+
+print a string
+
+
+merge 2 subarrays from l to r
+
+
+scan inputs from the user
+
+
+perform least recently used replacement to find the oldest element and replace it with a new value
+
+
+print a string and an element of a 2D array
+
+
+check whether a character is a vowel or a consonant 
+
+
+delete an element from a queue structure
+
+
+count the number of vowels and consonants in a string
+
+
+insert an element at a certain position of a linked list
+
+
+return the substring in some position of a string
+
+
+scan an input string
+
+
+add 2 complex numbers using structures
+
+
+display all the items of a linked list
+
+
+initialize a 2D grid to zeros
+
+
+select an operation based on a number
+
+
+sort an array by comparing elements with the previous element
+
+
+add two integers
+
+
+search an array for the location of an element x recursively, searching half the array only each time 
+
+
+print all the items of a circular list
+
+
+compute the difference between sum of squares an square of sum of 100 numbers 
+
+
+scan some numbers and print the function result
+
+
+execute play and display till condition satisfied
+
+
+open a file and read
+
+
+print smallest element of an array and its location pointer
+
+
+scan a string and delete all vowels
+
+
+scan 2 strings and check if one is a subsequence of another
+
+
+print all the elements of a priority queue
+
+
+sort an array by performing counting sort by digit recursively
+
+
+find lowest common multiple of two numbers 
+
+
+open a file and read the contents
+
+
+print all the elements in an array
+
+
+print all elements of a linked list
+
+
+insert at the end of a double linked list
+
+
+convert lowercase letters to uppercase and vice versa in a string
+
+
+map char to number
+
+
+compare the values of structures
+
+
+delete an element from a dynamic array
+
+
+find the maximum element stored in a tree
+
+
+compute frequency of each character in a string and store in array
+
+
+find greatest common divisor using recursion
+
+
+insert element into a list based on priority
+
+
+perform heap sort on an array by creating a heap, extracting the smallest element, and adjusting the heap
+
+
+print numbers from 1 to n in a triangle format
+
+
+delete the element from a specified position in an array
+
+
+reverse a number using recursion
+
+
+print all the elements in the list
+
+
+print all elements of a priority queue
+
+
+print a string
+
+
+evaluate a given postfix expression
+
+
+generate multiplication table 
+
+
+find the sum of n natural numbers using recursion 
+
+
+find and remove extra spaces in a string using pointers
+
+
+delete the element at specified position in a linked list
+
+
+increment and print all the elements of a list
+
+
+find the ascii value of a character 
+
+
+select an operation based on a numerical value
+
+
+scan a list, call a function and print all elements
+
+
+call a function to sort an array
+
+
+number to symbol mapping
+
+
+sort a list by finding minimum element at each iteration and print
+
+
+insert an element into a min heap
+
+
+check if a number is even or odd using integer division
+
+
+calculate sum of digits in a number by converting to character
+
+
+sort the characters of a string
+
+
+display all the factors of a number 
+
+
+swap the value of 2 numbers
+
+
+reverse a string
+
+
+convert a tree to a heap
+
+
+compute sum of 2 numbers
+
+
+print all elements in the list
+
+
+find the element in the list that appears as a majority, or more than half the times 
+
+
+swap the values of two elements
+
+
+recursively compute the sum of previous 2 elements to get fibonacci sequence
+
+
+scan a 2d matrix, transpose it and print the matrix
+
+
+swap elements in list from both side to sort
+
+
+remove element from top of a stack
+
+
+find all numbers in a given range that are palindromes
+
+
+select an operation based on numerical value
+
+
+scan a string and call a function
+
+
+print all elements of a heap
+
+
+cyclically rotate the array clockwise by one place
+
+
+insert an element into a queue
+
+
+merge 2 lists in order
+
+
+select an operation
+
+
+recursively split an array and sort the subarrays
+
+
+display all elements of a list
+
+
+check for leap year using divisibility
+
+
+compute the factorial of a number using a for loop
+
+
+scan 2 numbers, swap the numbers and print
+
+
+check if a stack is empty
+
+
+scan an integer and check if it is equal to its reverse
+
+
+sort an array based on individual digit values
+
+
+delete maximum element in a max heap
+
+
+check if a string is equal to its reverse using pointers
+
+
+store information in a structure
+
+
+return the index of the largest element of an array
+
+
+return the difference of 2 numbers
+
+
+find the largest element of an array 
+
+
+delete element from binary search tree
+
+
+print all elements of a linked list 
+
+
+print all elements of tree in inorder 
+
+
+calculate Area of Equilatral triangle
+
+
+scan 2 arrays and call a function on both and print the result
+
+
+search for a string in another string
+
+
+copy a string
+
+
+print all elements of key in list
+
+
+compute value of a polynomial
+
+
+recursively calculate sum of digits
+
+
+recursive split and sort an array
+
+
+scan 2 strings and check if they are equal
+
+
+find the length of a string using pointers
+
+
+insert element into binary search tree
+
+
+pop an element from a stack
+
+
+insert an element at the end of an array
+
+
+perform recursive multiplication of structure values
+
+
+sort a list by comparing adjacent elements and print
