@@ -206,7 +206,7 @@ def showCode():
     filename = request.args['filename']
     difficulty = request.args.get('difficulty',0)
     rows = fetchConvos(filename)
-    full_filename = 'static/data/' + filename
+    full_filename = 'static/data/' + filename.strip()
     # print(full_filename)
 
     f = open(full_filename)
