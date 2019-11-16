@@ -888,25 +888,25 @@ def clusterCodes():
 
     global doc2vec_model
 
-    # doc2vec_model = Doc2Vec(size=vec_size,
-    #                 alpha=alpha,
-    #                 min_alpha=0.00025,
-    #                 min_count=1,
-    #                 dm=1)
+    doc2vec_model = Doc2Vec(size=vec_size,
+                    alpha=alpha,
+                    min_alpha=0.00025,
+                    min_count=1,
+                    dm=1)
 
-    # doc2vec_model.build_vocab(tagged_data)
+    doc2vec_model.build_vocab(tagged_data)
 
-    # for epoch in range(max_epochs):
-    #     doc2vec_model.train(tagged_data,
-    #                 total_examples=doc2vec_model.corpus_count,
-    #                 epochs=doc2vec_model.iter)
-    #     # decrease the learning rate
-    #     doc2vec_model.alpha -= 0.0002
-    #     # fix the learning rate, no decay
-    #     # doc2vec_model.min_alpha = doc2vec_model.alpha
+    for epoch in range(max_epochs):
+        doc2vec_model.train(tagged_data,
+                    total_examples=doc2vec_model.corpus_count,
+                    epochs=doc2vec_model.iter)
+        # decrease the learning rate
+        doc2vec_model.alpha -= 0.0002
+        # fix the learning rate, no decay
+        # doc2vec_model.min_alpha = doc2vec_model.alpha
 
-    # doc2vec_model.save("d2v.model")
-    # print("Model Saved")
+    doc2vec_model.save("d2v.model")
+    print("Model Saved")
 
     doc2vec_mode = Doc2Vec.load("d2v.model")
 
