@@ -1,0 +1,10 @@
+//Find the maximum of an array
+int max(int *A, int n) {
+	int result = A[0];
+	for (int i = 1; i < n; i++) {
+		if (A[i] > result) {
+			result = A[i];
+		}
+	}
+	return result;
+}

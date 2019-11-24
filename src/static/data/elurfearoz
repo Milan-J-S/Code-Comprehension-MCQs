@@ -1,0 +1,17 @@
+//Count the number of distinct elements in an array
+int distinctUnsorted(int *A, int n) {
+	if (n == 0) {
+		return 0;
+	}
+	int result = 1;
+	for (int i = 1; i < n; i++) {
+		result++;
+		for (int j = 0; j < i; j++) {
+			if (A[i] == A[j]) {
+				result--;
+				break;
+			}
+		}
+	}
+	return result;
+}

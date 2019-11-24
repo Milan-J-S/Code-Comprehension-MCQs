@@ -1,0 +1,10 @@
+//Find the minimum of an array
+int min(int *A, int n) {
+	int result = A[0];
+	for (int i = 1; i < n; i++) {
+		if (A[i] < result) {
+			result = A[i];
+		}
+	}
+	return result;
+}

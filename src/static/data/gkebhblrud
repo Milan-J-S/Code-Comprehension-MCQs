@@ -1,0 +1,14 @@
+//Find the number of times the maximum value appears in an array
+int numMax(int *A, int n) {
+	int m = A[0];
+	int result = 1;
+	for (int i = 1; i < n; i++) {
+		if (A[i] > m) {
+			m = A[i];
+			result = 1;
+		} else if (A[i] == m) {
+			result++;
+		}
+	}
+	return result;
+}

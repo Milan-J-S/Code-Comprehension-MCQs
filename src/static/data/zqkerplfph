@@ -1,0 +1,8 @@
+//Replace all occurrences of a given integer in an array with another integer
+void replace(int *A, int n, int x, int y) {
+	for (int i = 0; i < n; i++) {
+		if (A[i] == x) {
+			A[i] = y;
+		}
+	}
+}

@@ -1,0 +1,16 @@
+// Check if two arrays sorted in non-decreasing order contain a common integer
+int commonSorted(int n, int A[n], int m, int B[m]) {
+	int i = 0;
+	int j = 0;
+	while (i < n && j < m) {
+		if (A[i] == B[j]) {
+			return 1;
+		}
+		if (A[i] < B[j]) {
+			i++;
+		} else {
+			j++;
+		}
+	}
+	return 0;
+}

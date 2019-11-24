@@ -1,0 +1,16 @@
+// Check if an integer is equal to its reverse in decimal (ignoring the sign)
+int isPalindrome(int n) {
+	if (n < 0) {
+		n = -n;
+	}
+	if (n <= 9) {
+		return 1;
+	}
+	int n1 = n;
+	int n2 = 0;
+	while (n1 > 0) {
+		n2 = 10 * n2 + n1 % 10;
+		n1 = n1 / 10;
+	}
+	return (n == n2);
+}

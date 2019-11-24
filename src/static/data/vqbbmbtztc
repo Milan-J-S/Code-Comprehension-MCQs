@@ -1,0 +1,16 @@
+//Find an index at which a given integer appears in an array sorted in non-decreasing order
+int findIndexSorted(int *A, int n, int x) {
+	int lo = 0;
+	int hi = n-1;
+	while (lo <= hi) {
+		int mid = (lo + hi)/2;
+		if (A[mid] == x) {
+			return mid;
+		} else if (A[mid] < x) {
+			lo = mid + 1;
+		} else {
+			hi = mid - 1;
+		}
+	}
+	return -1;
+}
