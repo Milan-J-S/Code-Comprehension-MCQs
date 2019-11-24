@@ -142,7 +142,7 @@ def generateTags(code):
     f.close()
 
     os.system("pcpp cleaned.txt --line-directive > test.txt")
-    os.system("python3 parseToJson.py test.txt > test1.txt")
+    os.system("python parseToJson.py test.txt > test1.txt")
 
     f = open("test1.txt", "r")
     AST = json.loads(f.read())
@@ -264,7 +264,7 @@ def showCode():
         options.append((row[0],1))
         options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].lower().split())))]
         i = 1
-        while(len(options)!=6):
+        while(len(options)!=4):
             if( similar_docs[i][0] not in synonyms and len(similar_docs[i][0].split()) > 3 and ' '.join(list(filter(lambda x: x not in stop, similar_docs[i][0].lower().split()))) not in options_actual):
                 options.append((similar_docs[i][0], 0))
                 options_actual.append(' '.join(list(filter(lambda x: x not in stop,similar_docs[i][0].lower().split()))))
@@ -288,10 +288,12 @@ def showCode():
 
     print(description)
 
-    if random.random() < 0.5:
-        fileToRender =  'createDistractors.html'
-    else:
-        fileToRender = 'fixDistractors.html'
+    # if random.random() < 0.5:
+    #     fileToRender =  'createDistractors.html'
+    # else:
+    #     fileToRender = 'fixDistractors.html'
+
+    fileToRender = 'codeView.html'
 
 
 
@@ -761,7 +763,7 @@ def prepareUserMatrix():
 
 def KNN(code):
     global code_tensors
-    global commments
+    global comments
 
     global code_dict
 
@@ -792,25 +794,26 @@ def KNN(code):
     # print(indices[0][0])
 
     words = dict()
-    print(comments[indices[0]], "\n\n")
-    for j in range(1, len(indices)):
+    # print(comments[indices[0]], "\n\n")
+    # for j in range(1, len(indices)):
 
-        index = indices[j]
-        print(comments[index])
+    #     index = indices[j]
+    #     print(comments[index])
 
-        for word in comments[index].split():
-            if (word not in stop):
-                if (word not in words):
-                    words[word] = 0
-                # if(distances[i][j] != 0):
-                words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
+    #     for word in comments[index].split():
+    #         if (word not in stop):
+    #             if (word not in words):
+    #                 words[word] = 0
+    #             # if(distances[i][j] != 0):
+    #             words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
 
-    words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
+    # words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
 
-    print(words_ordered)
+    # print(words_ordered)
 
-    tags = [x[0] for x in words_ordered[:5]]
+    # tags = [x[0] for x in words_ordered[:5]]
     # print(tags, "\n\n\n")
+    tags = []
     return tags
 
 
@@ -854,9 +857,9 @@ def clusterCodes():
             # comment = open('comments/' + f).read()
             # comments.append(comment)
 
-    f = open('unterseComments.txt','r+')
-    comments = f.read().splitlines()[0::3]
-
+    # f = open('unterseComments.txt','r+')
+    # comments = f.read().splitlines()[0::3]
+    comments = []
     code_tensors = []
 
     con = sqlite3.connect("database.db")
@@ -879,6 +882,10 @@ def clusterCodes():
 
 
     tagged_data = [TaggedDocument(list(filter(lambda x: x not in stop,word_tokenize(d.lower()))), tags=[d.lower()]) for i, d in enumerate(comments)]
+    print(tagged_data)
+    print(len(tagged_data))
+
+
 
     tagged_code = [TaggedDocument(word_tokenize(d.lower()), tags=[str(i)]) for i, d in enumerate(codes)]
 
@@ -908,19 +915,19 @@ def clusterCodes():
     doc2vec_model.save("d2v.model")
     print("Model Saved")
 
-    doc2vec_mode = Doc2Vec.load("d2v.model")
+    doc2vec_model = Doc2Vec.load("d2v.model")
 
     alpha = 0.125
     # global code2vec_model
-    #
+    
     # code2vec_model = Doc2Vec(size=300,
     #                 alpha=alpha,
     #                 min_alpha=0.00025,
     #                 min_count=1,
     #                 dm=1)
-    #
+    
     # code2vec_model.build_vocab(tagged_code)
-    #
+    
     # for epoch in range(400):
     #     code2vec_model.train(tagged_code,
     #                 total_examples=code2vec_model.corpus_count,
@@ -929,9 +936,9 @@ def clusterCodes():
     #     code2vec_model.alpha -= 0.0002
     #     # fix the learning rate, no decay
     #     code2vec_model.min_alpha = code2vec_model.alpha
-    #
+    
     # code2vec_model.save("c2v.model")
-    # print("Model Saved")
+    print("Model Saved")
 
 
 clusterCodes()
@@ -1171,4 +1178,4 @@ def __init__():
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0', port=80, threaded=True, debug= True)
+    app.run(host='0.0.0.0', port=5000, threaded=True, debug= True)
