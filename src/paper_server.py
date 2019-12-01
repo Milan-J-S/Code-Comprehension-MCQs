@@ -143,7 +143,7 @@ def generateTags(code):
     f.close()
 
     os.system("pcpp cleaned.txt --line-directive > test.txt")
-    os.system("python parseToJson.py test.txt > test1.txt")
+    os.system("python3 parseToJson.py test.txt > test1.txt")
 
     f = open("test1.txt", "r")
     AST = json.loads(f.read())
