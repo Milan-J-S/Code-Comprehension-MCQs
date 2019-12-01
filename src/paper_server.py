@@ -80,6 +80,7 @@ adaptive_difficulty_matrix = []
 new_users_reverse_map = []
 new_codes_reverse_map = []
 
+
 doc2vec_model = None
 
 
@@ -155,8 +156,6 @@ def generateTags(code):
 
     comments_Set.extend(re.findall("/*[^\*]*\*/\n.*", code))
     print(comments_Set)
-
-
 
     comments = []
 
@@ -763,7 +762,7 @@ def prepareUserMatrix():
 
 def KNN(code):
     global code_tensors
-    global comments
+    global tagcomments
 
     global code_dict
 
@@ -794,31 +793,32 @@ def KNN(code):
     # print(indices[0][0])
 
     words = dict()
-    # print(comments[indices[0]], "\n\n")
-    # for j in range(1, len(indices)):
+    print(tagcomments[indices[0]], "\n\n")
+    for j in range(1, len(indices)):
 
-    #     index = indices[j]
-    #     print(comments[index])
+        index = indices[j]
+        print(tagcomments[index])
 
-    #     for word in comments[index].split():
-    #         if (word not in stop):
-    #             if (word not in words):
-    #                 words[word] = 0
-    #             # if(distances[i][j] != 0):
-    #             words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
+        for word in tagcomments[index].split():
+            if (word not in stop):
+                if (word not in words):
+                    words[word] = 0
+                # if(distances[i][j] != 0):
+                words[word] += 1000 / ((distances[j] + 1)*(distances[j] + 1))
 
-    # words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
+    words_ordered = sorted(words.items(), key=lambda kv: kv[1], reverse=True)
 
-    # print(words_ordered)
+    print(words_ordered)
 
-    # tags = [x[0] for x in words_ordered[:5]]
-    # print(tags, "\n\n\n")
-    tags = []
+    tags = [x[0] for x in words_ordered[:5]]
+    print(tags, "\n\n\n")
+    # tags = []
     return tags
 
 
 code_tensors = []
 comments = []
+tagcomments = []
 code_dict = dict()
 nbrs = None
 difficulty_nbrs = None
@@ -835,10 +835,17 @@ def clusterCodes():
     global nbrs
     global codes_reverse_map
     global indices
+    global tagcomments
     filepath = 'code'
     codes = []
     comments = []
     code_vocab = set()
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    
+
     i = 0
     for root, dirs, files in os.walk(filepath):
         for f in files:
@@ -854,16 +861,15 @@ def clusterCodes():
             for word in word_tokenize(code):
                 code_vocab.add(word)
 
-            # comment = open('comments/' + f).read()
-            # comments.append(comment)
+            tagcomment = open('comments/' + f).read()
+            tagcomments.append(tagcomment)
 
     # f = open('unterseComments.txt','r+')
     # comments = f.read().splitlines()[0::3]
     comments = []
     code_tensors = []
 
-    con = sqlite3.connect("database.db")
-    cur = con.cursor()
+    
     cur.execute("SELECT comment from Comments" )
     new_comments = cur.fetchall()
     print(new_comments)
@@ -938,7 +944,7 @@ def clusterCodes():
     #     code2vec_model.min_alpha = code2vec_model.alpha
     
     # code2vec_model.save("c2v.model")
-    print("Model Saved")
+    # print("Model Saved")
 
 
 clusterCodes()
