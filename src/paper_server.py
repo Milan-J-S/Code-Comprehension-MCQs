@@ -143,7 +143,7 @@ def generateTags(code):
     f.close()
 
     os.system("pcpp cleaned.txt --line-directive > test.txt")
-    os.system("python3 parseToJson.py test.txt > test1.txt")
+    os.system("python parseToJson.py test.txt > test1.txt")
 
     f = open("test1.txt", "r")
     AST = json.loads(f.read())
@@ -263,7 +263,7 @@ def showCode():
         options.append((row[0],1))
         options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].lower().split())))]
         i = 1
-        while(len(options)!=4):
+        while(len(options)!=6):
             if( similar_docs[i][0] not in synonyms and len(similar_docs[i][0].split()) > 3 and ' '.join(list(filter(lambda x: x not in stop, similar_docs[i][0].lower().split()))) not in options_actual):
                 options.append((similar_docs[i][0], 0))
                 options_actual.append(' '.join(list(filter(lambda x: x not in stop,similar_docs[i][0].lower().split()))))
@@ -981,7 +981,7 @@ def search():
             cur.execute("SELECT code from CodeTags JOIN Codes WHERE tag like (?) AND lang = (?) and code=filename", (searchTerm+'%',lang))
         else:
             print("searching all")
-            cur.execute("SELECT code from CodeTags WHERE tag like (?)", (searchTerm+'%',))
+            cur.execute("SELECT code from CodeTags JOIN Codes WHERE tag like (?) AND code=filename", (searchTerm+'%',))
         rows = cur.fetchall()
         for row in rows:
             if (row[0] not in files_that_match):
@@ -1184,4 +1184,4 @@ def __init__():
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0', port=80, threaded=True, debug= True)
+    app.run(host='0.0.0.0', port=5000, threaded=True, debug= True)
