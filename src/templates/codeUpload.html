@@ -371,6 +371,7 @@
                 {
                     if(xhr.readyState == 4 && xhr.status == 200)
                     {
+                        alert("Thank you for Uploading your Code!! This will be available to users after validation");
                         window.location = "/showCode?filename="+JSON.parse(xhr.response).filename;
                     }
                 }
