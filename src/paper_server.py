@@ -448,7 +448,7 @@ def prepareAll(username, lang, difficulty):
 
 
     cur = con.cursor()
-    cur.execute("SELECT filename, difficulty FROM Codes INNER JOIN CodeViews where filename = code AND user = (?)", (username,))
+    cur.execute("SELECT filename, difficulty FROM GoodCodes INNER JOIN CodeViews where filename = code AND user = (?)", (username,))
     for row in cur.fetchall():
         if(row[0] in code_desc):
             code_difficulties[row[0]] = row[1]
@@ -461,11 +461,11 @@ def prepareAll(username, lang, difficulty):
     cur = con.cursor()
     if(lang == ''):
         cur.execute(
-        "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",
+        "SELECT filename, description, lang FROM GoodCodes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",
         (username,))
     else:
         cur.execute(
-            "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code AND lang = (?)",
+            "SELECT filename, description, lang FROM GoodCodes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code AND lang = (?)",
             (username,lang))
     seen = cur.fetchall()
 
