@@ -8,11 +8,15 @@ cur = con.cursor()
 # for row in rows:
 #     print(row[1])
 
-cur.execute("SELECT * from GoodCodes")
+cur.execute("SELECT * from Codes")
 rows = cur.fetchall()
 print(rows)
 
-cur.execute("SELECT * from GoodComments")
+cur.execute("SELECT * from Comments")
+rows = cur.fetchall()
+print(rows)
+
+cur.execute("SELECT * from ModifiedDistractors")
 rows = cur.fetchall()
 print(rows)
 
