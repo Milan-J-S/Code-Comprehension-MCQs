@@ -395,10 +395,10 @@ def prepareAll(username, lang, difficulty):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     if(lang == ''):
-        cur.execute("SELECT filename, description, lang  FROM Codes ")
+        cur.execute("SELECT filename, description, lang  FROM GoodCodes ")
 
     else:
-        cur.execute("SELECT filename, description,lang FROM Codes where lang=(?)", (lang,))
+        cur.execute("SELECT filename, description,lang FROM GoodCodes where lang=(?)", (lang,))
 
     rows = cur.fetchall()
 
@@ -870,7 +870,7 @@ def clusterCodes():
     code_tensors = []
 
     
-    cur.execute("SELECT comment from Comments" )
+    cur.execute("SELECT comment from GoodComments" )
     new_comments = cur.fetchall()
     print(new_comments)
     comments.extend(list(map(lambda x: x[0],new_comments)))
