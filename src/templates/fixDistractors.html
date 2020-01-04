@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
 
 </head>
-<body class="mw-100 ">
+<body class="mw-100 " onload="startTimer()">
 
 
 <nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
@@ -108,16 +108,17 @@
                 <br>
                 <h4>Correct answer : </h4><h3 id="correctAnswer">{{option_list[0][0]}}</h3></br>
 
-                <h5>Please choose the best 3 options and edit the options. Delete the rest</h5>
+                <h5>Please edit the below generated options if required, and rate the difficulty</h5>
                 {% for option in option_list[1:] %}
                 <div width="100%">
                 <input width="100%" size="100"
                        class = "distractor"
-                       onChange = "startTimer()"
+                       
                        id = "text{{loop.index}}"
                         value = "{{option[0]}}"/>
-                    <button id = "{{loop.index}}" onclick = "remove(event)"> Delete </button>
-                    <button id = "{{loop.index}}" onclick = "duplicate(event)"> Same as Correct Answer </button>
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Easy"/>Easy</Label>
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Medium"/>Medium</Label>
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Hard"/>Hard</Label>
                     </div>
                 {% endfor %}
                 <br>
@@ -137,9 +138,7 @@
 
 <script>
 
-
             timer = 0;
-
 
             listOfFunc = document.getElementsByClassName("funcDisplay");
             loopCodeMirror = []
@@ -204,6 +203,11 @@
 
                 distractors = Array.from(document.getElementsByClassName("distractor"));
 
+                difficulties = Array.from(document.getElementsByClassName("diff"));
+                difficulties = difficulties.filter( (diff) => ( diff.checked ) )
+
+                difficulties = difficulties.map( (diff) => (diff.value) )
+
                 if(distractors.length !== 3)
                 {
                     alert ("Please select only 3 options");
@@ -225,6 +229,7 @@
                         return dist.id;
                     } ),
                     time  : timeDiff,
+                    difficulties : difficulties,
                     filename: "{{filename}}"
                 };
 
