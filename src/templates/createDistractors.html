@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css"/>
 
 </head>
-<body class="mw-100 ">
+<body class="mw-100 " onload="startTimer()">
 
 
 <nav class="mb-1 navbar sticky-top navbar-expand-lg navbar-dark black lighten-1 ">
@@ -108,14 +108,16 @@
                 <br>
                 <h4>Correct answer : </h4><h3>{{option_list[0][0]}}</h3></br>
 
-                <h5>Please enter 3 good options for the given code and the correct answer</h5>
+                <h5>Please enter 3 good options for the given code and the correct answer, and rate the difficulty</h5>
                 {% for option in option_list[0:3] %}
                 <div width="100%">
                 <input width="100%" size="100"
                        class = "distractor"
-                       onChange = "startTimer()"
                        id = "text{{loop.index}}"
                         />
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Easy"/>Easy</Label>
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Medium"/>Medium</Label>
+                        <Label><input type="radio" class = "diff" name = "{{option[0]}}_diff" value = "Hard"/>Hard</Label>
                     </div>
                 {% endfor %}
                 <br>
@@ -199,6 +201,12 @@
                     }
                 }
 
+                difficulties = Array.from(document.getElementsByClassName("diff"));
+                difficulties = difficulties.filter( (diff) => ( diff.checked ) );
+
+                difficulties = difficulties.map( (diff) => (diff.value) );
+
+
                 xhr =  new XMLHttpRequest();
                 xhr.open("POST","/createDistractors");
                 xhr.setRequestHeader("Content-type", "application/json");
@@ -208,6 +216,7 @@
                         return dist.value;
                     } ),
                     time  : timeDiff,
+                    difficulties : difficulties,
                     filename : "{{filename}}"
                 };
 
