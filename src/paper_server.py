@@ -1135,14 +1135,16 @@ def modifiedDistractors():
     filename = payload.get("filename","")
     time = payload.get("time","")
     selected = payload.get("selected","")
+    difficulties = payload.get("difficulties","")
     user = request.cookies.get('user', '')
+
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     originalComment = [ ]
     for selection in selected:
         originalComment.append(original[int(selection[4:])][0])
-    cur.execute("INSERT INTO ModifiedDistractors VALUES (?,?,?,?,?,?,?,?,?)", (user, time, filename, modified[0], modified[1], modified[2], originalComment[0] , originalComment[1] , originalComment[2]))
+    cur.execute("INSERT INTO ModifiedDistractors VALUES (?,?,?,?,?,?,?,?,?, ?,?,? )", (user, time, filename, modified[0], modified[1], modified[2], originalComment[0] , originalComment[1] , originalComment[2], difficulties[0], difficulties[1], difficulties[2] ))
     con.commit()
 
     return (jsonify (success = True))
@@ -1154,12 +1156,13 @@ def createDistractors():
     created = payload.get("created","")
     filename = payload.get("filename","")
     time = payload.get("time","")
+    difficulties = payload.get("difficulties","")
     user = request.cookies.get('user', '')
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
 
-    cur.execute("INSERT INTO CreatedDistractors VALUES (?,?,?,?,?,?)", (user, time, created[0], created[1], created[2], filename))
+    cur.execute("INSERT INTO CreatedDistractors VALUES (?,?,?,?,?,?, ?, ?, ?)", (user, time, created[0], created[1], created[2], filename, difficulties[0], difficulties[1], difficulties[2]))
     con.commit()
 
     return (jsonify (success = True))
