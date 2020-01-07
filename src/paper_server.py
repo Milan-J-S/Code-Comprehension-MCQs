@@ -263,7 +263,7 @@ def showCode():
         options.append((row[0],1))
         options_actual = [' '.join(list(filter(lambda x: x not in stop, row[0].lower().split())))]
         i = 1
-        while(len(options)!=6):
+        while(len(options)!=4):
             if( similar_docs[i][0] not in synonyms and len(similar_docs[i][0].split()) > 3 and ' '.join(list(filter(lambda x: x not in stop, similar_docs[i][0].lower().split()))) not in options_actual):
                 options.append((similar_docs[i][0], 0))
                 options_actual.append(' '.join(list(filter(lambda x: x not in stop,similar_docs[i][0].lower().split()))))
@@ -287,11 +287,10 @@ def showCode():
 
     print(description)
 
-    # if random.random() < 0.5:
-    #     fileToRender =  'createDistractors.html'
-    # else:
-    fileToRender = 'fixDistractors.html'
-
+    if username == "group1":
+        fileToRender =  'createDistractors.html'
+    else:
+        fileToRender = 'fixDistractors.html'
 #     fileToRender = 'codeView.html'
 
 
