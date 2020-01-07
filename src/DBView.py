@@ -8,11 +8,11 @@ cur = con.cursor()
 # for row in rows:
 #     print(row[1])
 
-cur.execute("SELECT * from ModifiedDistractors")
-rows = cur.fetchall()
-print(rows)
+# cur.execute("SELECT * from ModifiedDistractors")
+# rows = cur.fetchall()
+# print(rows)
 
-cur.execute("SELECT * from CreatedDistractors")
+cur.execute("SELECT * from GoodComments")
 rows = cur.fetchall()
 
 # rows = set(map(lambda x: x[0], cur.execute("SELECT filename from Codes").fetchall()))
