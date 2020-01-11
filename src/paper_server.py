@@ -69,7 +69,10 @@ def convertToFilesDict(x):
     obj['filename'] = x[2]
     return obj
 
+group1 = [ "user_1", "user_3", "user_5", "user_7", "user_9" ]
+group2 = [ "user_2", "user_4", "user_6", "user_8", "user_10" ]
 
+workshop_codes = ['cccrvlcqyg', 'zqkerplfph', 'rezxuytlac', 'amdxxgrdxl', 'aiuqwxggdl', 'vqwfsnsyns', 'dinbahqulh', 'elurfearoz', 'sbnxjxfsvz', 'zqwafyxmfa', 'vqbbmbtztc', 'anjqhdtlyz', 'kaoozevbct', 'etadekqyjf', 'cucjxvynws', 'mykefmctbn', 'gkebhblrud', 'zipmfenkfi', 'zxvtqhvccc', 'idksdhnlbf', 'tlsxgzituz', 'nwdfdklgvt', 'jwvhpyyxmt', 'zwefgnxbhg', 'dfixlwwfgo'] 
 
 new_users_dict = {}
 new_codes_dict = {}
@@ -287,11 +290,25 @@ def showCode():
 
     print(description)
 
-    if username == "group1":
-        fileToRender =  'createDistractors.html'
+    
+    if username in group1:
+        if filename in workshop_codes:
+            if( workshop_codes.index(filename) % 2 ):
+                fileToRender =  'createDistractors.html'
+            else:
+                fileToRender = 'fixDistractors.html'
     else:
-        fileToRender = 'fixDistractors.html'
-#     fileToRender = 'codeView.html'
+        if filename in workshop_codes:
+            if( workshop_codes.index(filename) % 2 ):
+                fileToRender = 'fixDistractors.html'
+            else:
+                fileToRender =  'createDistractors.html'
+
+
+
+    # fileToRender = 'codeView.html'
+
+    # fileToRender = 'fixDistractors.html'
 
 
 
@@ -394,10 +411,10 @@ def prepareAll(username, lang, difficulty):
     con = sqlite3.connect("database.db")
     cur = con.cursor()
     if(lang == ''):
-        cur.execute("SELECT filename, description, lang  FROM GoodCodes ")
+        cur.execute("SELECT filename, description, lang  FROM Codes ")
 
     else:
-        cur.execute("SELECT filename, description,lang FROM GoodCodes where lang=(?)", (lang,))
+        cur.execute("SELECT filename, description,lang FROM Codes where lang=(?)", (lang,))
 
     rows = cur.fetchall()
 
@@ -447,7 +464,7 @@ def prepareAll(username, lang, difficulty):
 
 
     cur = con.cursor()
-    cur.execute("SELECT filename, difficulty FROM GoodCodes INNER JOIN CodeViews where filename = code AND user = (?)", (username,))
+    cur.execute("SELECT filename, difficulty FROM Codes INNER JOIN CodeViews where filename = code AND user = (?)", (username,))
     for row in cur.fetchall():
         if(row[0] in code_desc):
             code_difficulties[row[0]] = row[1]
@@ -460,17 +477,21 @@ def prepareAll(username, lang, difficulty):
     cur = con.cursor()
     if(lang == ''):
         cur.execute(
-        "SELECT filename, description, lang FROM GoodCodes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",
+        "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code",
         (username,))
     else:
         cur.execute(
-            "SELECT filename, description, lang FROM GoodCodes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code AND lang = (?)",
+            "SELECT filename, description, lang FROM Codes c INNER JOIN CodeViews v WHERE user=(?) AND c.filename=v.code AND lang = (?)",
             (username,lang))
     seen = cur.fetchall()
 
     rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
 
     items = list(map(convertToDict, rows))
+
+    print(items)
+
+    items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
 
 
     if(difficulty != ''):
@@ -869,7 +890,7 @@ def clusterCodes():
     code_tensors = []
 
     
-    cur.execute("SELECT comment from GoodComments" )
+    cur.execute("SELECT comment from Comments" )
     new_comments = cur.fetchall()
     print(new_comments)
     comments.extend(list(map(lambda x: x[0],new_comments)))
