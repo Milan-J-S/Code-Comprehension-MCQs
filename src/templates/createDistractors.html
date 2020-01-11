@@ -108,7 +108,7 @@
                 <br>
                 <h4>Correct answer : </h4><h3>{{option_list[0][0]}}</h3></br>
 
-                <h5>Please enter 3 distractors and rate each distractor's difficulty</h5>
+                <h5>Please enter 3 good options for the given code and the correct answer, and rate the difficulty</h5>
                 {% for option in option_list[0:3] %}
                 <div width="100%">
                 <input width="100%" size="100"
@@ -397,12 +397,12 @@
             function checkUser()
             {
                 email = document.getElementById("email").value;
-                re = /.+@.+\.com/;
-                if( !re.test(email) )
-                {
-                    alert("not a valid email");
-                    return;
-                }
+                // re = /.+@.+\.com/;
+                // if( !re.test(email) )
+                // {
+                //     alert("not a valid email");
+                //     return;
+                // }
 
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST","/userExists");
