@@ -771,7 +771,7 @@ def prepareUserMatrix():
 
     for row in rows:
         # print(new_codes_dict[row[0]])
-        if( row[0] in new_codes_dict):
+        if( row[0] in new_codes_dict and row[1] in new_users_dict ):
             user_codes_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[3]
             difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
             adaptive_difficulty_matrix[new_users_dict[row[1]]][new_codes_dict[row[0]]] = row[2]
