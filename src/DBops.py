@@ -7,10 +7,6 @@ cur = con.cursor()
 # cur.execute("DROP TABLE CreatedDistractors")
 # cur.execute("CREATE TABLE CreatedDistractors ( user TEXT, timeDiff NUMBER, option1 TEXT, option2 TEXT, option3 TEXT, filename TEXT, diff1 TEXT, diff2 TEXT, diff3 TEXT)")
 
-# cur.execute("CREATE TABLE GoodComments AS SELECT * FROM Comments;")
-cur.execute("CREATE TABLE GoodCodes AS SELECT * FROM Codes;")
-
-
 # cur.execute("CREATE TABLE Synonyms (answer TEXT, synonym TEXT)")
 
 # cur.execute("DROP TABLE Comments")
@@ -27,5 +23,7 @@ cur.execute("CREATE TABLE GoodCodes AS SELECT * FROM Codes;")
 # for entry in entries:
 #     cur.execute("INSERT INTO Codes values(?, ?, ? , ?)", (None, entry[0],"Some Description" ,'text/x-csrc'))
 
+# cur.execute("DROP TABLE CompletedCodes")
+cur.execute("CREATE TABLE CompletedCodes( user TEXT, filename TEXT )")
 
 con.commit()
