@@ -489,9 +489,12 @@ def prepareAll(username, lang, difficulty):
 
     items = list(map(convertToDict, rows))
 
-    print(items)
-
     items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
+
+    completed = set(map( lambda x: x[0] , cur.execute( "SELECT filename FROM CompletedCodes WHERE user=(?)", (username,) ).fetchall()))
+
+    items = list( filter( lambda x: x['filename'] not in completed, items ) )
+
 
 
     if(difficulty != ''):
@@ -1167,6 +1170,9 @@ def modifiedDistractors():
     cur.execute("INSERT INTO ModifiedDistractors VALUES (?,?,?,?,?,?,?,?,?, ?,?,? )", (user, time, filename, modified[0], modified[1], modified[2], originalComment[0] , originalComment[1] , originalComment[2], difficulties[0], difficulties[1], difficulties[2] ))
     con.commit()
 
+    cur.execute( "INSERT INTO CompletedCodes VALUES(?, ?)", (user, filename) )
+    con.commit()
+
     return (jsonify (success = True))
 
 @app.route("/createDistractors", methods = ["POST"])
@@ -1183,6 +1189,9 @@ def createDistractors():
     cur = con.cursor()
 
     cur.execute("INSERT INTO CreatedDistractors VALUES (?,?,?,?,?,?, ?, ?, ?)", (user, time, created[0], created[1], created[2], filename, difficulties[0], difficulties[1], difficulties[2]))
+    con.commit()
+
+    cur.execute( "INSERT INTO CompletedCodes VALUES(?, ?)", (user, filename) )
     con.commit()
 
     return (jsonify (success = True))
