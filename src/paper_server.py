@@ -492,7 +492,7 @@ def prepareAll(username, lang, difficulty):
     
     print( code_desc )
     
-    rows = [ ( new_codes_reverse_map[x], code_desc[x][0], 0 , code_desc[x][1]) for x in workshop_codes if x in code_desc ]
+    rows = [ ( x, code_desc[new_codes_dict[x]][0], 0 , code_desc[new_codes_dict[x]][1]) for x in workshop_codes if new_codes_dict[x] in code_desc ]
     items = list(map(convertToDict, rows))
 
     items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
