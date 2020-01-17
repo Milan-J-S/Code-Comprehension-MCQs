@@ -19,6 +19,14 @@ rows = cur.fetchall()
 
 print(rows)
 
+cur.execute("SELECT * from CompletedCodes")
+rows = cur.fetchall()
+
+# rows = set(map(lambda x: x[0], cur.execute("SELECT filename from Codes").fetchall()))
+
+print(rows)
+
+
 
 
 
