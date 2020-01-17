@@ -24,6 +24,13 @@ cur = con.cursor()
 #     cur.execute("INSERT INTO Codes values(?, ?, ? , ?)", (None, entry[0],"Some Description" ,'text/x-csrc'))
 
 # cur.execute("DROP TABLE CompletedCodes")
+
+cur.execute("DROP TABLE ModifiedDistractors")
+cur.execute("CREATE TABLE ModifiedDistractors ( user TEXT, timeDiff NUMBER, filename TEXT, option1 TEXT, option2 TEXT, option3 TEXT, originalOption1 TEXT, originalOption2 TEXT, originalOption3 TEXT, diff1 TEXT, diff2 TEXT, diff3 TEXT )")
+cur.execute("DROP TABLE CreatedDistractors")
+cur.execute("CREATE TABLE CreatedDistractors ( user TEXT, timeDiff NUMBER, option1 TEXT, option2 TEXT, option3 TEXT, filename TEXT, diff1 TEXT, diff2 TEXT, diff3 TEXT)")
+
+cur.execute("DROP TABLE CompletedCodes")
 cur.execute("CREATE TABLE CompletedCodes( user TEXT, filename TEXT )")
 
 # cur.execute("DELETE FROM ModifiedDistractors")
