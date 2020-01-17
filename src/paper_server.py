@@ -72,7 +72,7 @@ def convertToFilesDict(x):
 group1 = [ "user_1", "user_3", "user_5", "user_7", "user_9" ]
 group2 = [ "user_2", "user_4", "user_6", "user_8", "user_10" ]
 
-workshop_codes = ['zqkerplfph', 'vqwfsnsyns', 'elurfearoz', 'zqwafyxmfa', 'etadekqyjf', 'nwdfdklgvt', 'hhyraurxvs', 'ekxkkzhfyt', 'mqjgrlaovx', 'gyictbmqmf' ]
+workshop_codes = ['zqkerplfph', 'vqwfsnsyns', 'elurfearoz', 'zqwafyxmfa', 'etadekqyjf', 'nwdfdklgvt', 'mbsgtzqabz', 'rqejjolvzu', 'wmggdqsohi', 'qkrijbtmhw' ]
 
 new_users_dict = {}
 new_codes_dict = {}
