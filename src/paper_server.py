@@ -490,9 +490,7 @@ def prepareAll(username, lang, difficulty):
 
     rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
     
-    rows = (new_codes_reverse_map[x[0]], code_desc[x[0]][0], 0 , code_desc[x[0]][1]) for x in
-            workshop_codes if x[0] in code_desc ]
-
+    rows = [ ( new_codes_reverse_map[x[0]], code_desc[x[0]][0], 0 , code_desc[x[0]][1]) for x in workshop_codes if x[0] in code_desc ]
     items = list(map(convertToDict, rows))
 
     items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
