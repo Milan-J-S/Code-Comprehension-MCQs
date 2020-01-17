@@ -490,6 +490,8 @@ def prepareAll(username, lang, difficulty):
 
     rows.extend([(x[0], x[1], code_difficulties[new_codes_dict[x[0]]], x[2]) for x in seen])
     
+    print( code_desc )
+    
     rows = [ ( new_codes_reverse_map[x], code_desc[x][0], 0 , code_desc[x][1]) for x in workshop_codes if x in code_desc ]
     items = list(map(convertToDict, rows))
 
