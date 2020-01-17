@@ -24,11 +24,11 @@ cur = con.cursor()
 #     cur.execute("INSERT INTO Codes values(?, ?, ? , ?)", (None, entry[0],"Some Description" ,'text/x-csrc'))
 
 # cur.execute("DROP TABLE CompletedCodes")
-# cur.execute("CREATE TABLE CompletedCodes( user TEXT, filename TEXT )")
+cur.execute("CREATE TABLE CompletedCodes( user TEXT, filename TEXT )")
 
-cur.execute("DELETE FROM ModifiedDistractors")
-cur.execute("DELETE FROM CreatedDistractors")
-cur.execute("DELETE FROM CompletedCodes")
+# cur.execute("DELETE FROM ModifiedDistractors")
+# cur.execute("DELETE FROM CreatedDistractors")
+# cur.execute("DELETE FROM CompletedCodes")
 
 
 con.commit()
