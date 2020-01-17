@@ -497,7 +497,7 @@ def prepareAll(username, lang, difficulty):
 
     items = list( filter( lambda x: x['filename'] not in completed, items ) )
     
-    items = items.sort( key = lambda x: x['filename'])
+#     items = items.sort( key = lambda x: x['filename'])
 
 
 
