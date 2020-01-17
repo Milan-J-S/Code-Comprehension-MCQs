@@ -496,6 +496,8 @@ def prepareAll(username, lang, difficulty):
     completed = set(map( lambda x: x[0] , cur.execute( "SELECT filename FROM CompletedCodes WHERE user=(?)", (username,) ).fetchall()))
 
     items = list( filter( lambda x: x['filename'] not in completed, items ) )
+    
+    items = items.sort( key = lambda x: x['filename'])
 
 
 
