@@ -489,7 +489,7 @@ def prepareAll(username, lang, difficulty):
 
     items = list(map(convertToDict, rows))
 
-    items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
+#     items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
 
     completed = set(map( lambda x: x[0] , cur.execute( "SELECT filename FROM CompletedCodes WHERE user=(?)", (username,) ).fetchall()))
 
