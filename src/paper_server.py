@@ -734,6 +734,7 @@ def prepareUserMatrix():
     print(rows)
 
     new_codes_dict = {}
+    
 
     i = 0
     for row in rows:
