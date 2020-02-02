@@ -492,16 +492,16 @@ def prepareAll(username, lang, difficulty):
     
     print( code_desc )
     
-    rows = [ ( x, code_desc[new_codes_dict[x]][0], 0 , code_desc[new_codes_dict[x]][1]) for x in workshop_codes if new_codes_dict[x] in code_desc ]
+#     rows = [ ( x, code_desc[new_codes_dict[x]][0], 0 , code_desc[new_codes_dict[x]][1]) for x in workshop_codes if new_codes_dict[x] in code_desc ]
     items = list(map(convertToDict, rows))
 
-    items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
+#     items = list( filter( lambda x: x['filename'] in workshop_codes, items ) )
 
-    completed = set(map( lambda x: x[0] , cur.execute( "SELECT filename FROM CompletedCodes WHERE user=(?)", (username,) ).fetchall()))
+#     completed = set(map( lambda x: x[0] , cur.execute( "SELECT filename FROM CompletedCodes WHERE user=(?)", (username,) ).fetchall()))
 
-    items = list( filter( lambda x: x['filename'] not in completed, items ) )
+#     items = list( filter( lambda x: x['filename'] not in completed, items ) )
     
-    items.sort( key = lambda x: workshop_codes.index( x['filename'] ) )
+#     items.sort( key = lambda x: workshop_codes.index( x['filename'] ) )
 
 
     if(difficulty != ''):
