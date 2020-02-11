@@ -290,25 +290,25 @@ def showCode():
 
     print(description)
     
-    fileToRender = 'fixDistractors.html'
+    # fileToRender = 'fixDistractors.html'
 
     
-    if username in group1:
-        if filename in workshop_codes:
-            if( workshop_codes.index(filename) % 2 ):
-                fileToRender =  'createDistractors.html'
-            else:
-                fileToRender = 'fixDistractors.html'
-    else:
-        if filename in workshop_codes:
-            if( workshop_codes.index(filename) % 2 ):
-                fileToRender = 'fixDistractors.html'
-            else:
-                fileToRender =  'createDistractors.html'
+    # if username in group1:
+    #     if filename in workshop_codes:
+    #         if( workshop_codes.index(filename) % 2 ):
+    #             fileToRender =  'createDistractors.html'
+    #         else:
+    #             fileToRender = 'fixDistractors.html'
+    # else:
+    #     if filename in workshop_codes:
+    #         if( workshop_codes.index(filename) % 2 ):
+    #             fileToRender = 'fixDistractors.html'
+            # else:
+            #     fileToRender =  'createDistractors.html'
 
 
 
-    # fileToRender = 'codeView.html'
+    fileToRender = 'codeView.html'
 
     # fileToRender = 'fixDistractors.html'
 
@@ -1224,4 +1224,4 @@ def __init__():
 
 if __name__ == '__main__':
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0', port=80, threaded=True, debug= True)
+    app.run(host='0.0.0.0', port=5000, threaded=True, debug= True)
